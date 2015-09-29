@@ -1,7 +1,9 @@
 function InputManager(){
     this.events={};
     this.map={
-        49:1,
+        
+        //1~8
+        49:1, 
         50:2,
         51:3,
         52:4,
@@ -20,7 +22,7 @@ function InputManager(){
         104:8
     };
     this.bindEvent();
-k}
+}
 
 InputManager.prototype.on = function (event, callback) {
     if (!this.events[event])
@@ -46,9 +48,11 @@ InputManager.prototype.bindEvent=function(){
         if (!modifiers) {
             if (mapped !== undefined) {
                 event.preventDefault();
-                self.getFunc("changeType", mapped);
+                self.getFunc("shoot", mapped);
             }
         }
+        if(!modifiers && event.which==32)
+            self.getFunc("switchRocket");
 
     });
 };

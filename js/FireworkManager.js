@@ -1,24 +1,28 @@
 function fireworkManager(inputManager){
     this.firework1s=[];
     this.firework2s=[];
+    this.rocketOrNot=true;
     this.curPos=new vector(0,0);
     this.type=1;
+
     this.inputManager=inputManager;
-    this.inputManager.on("changeType",this.changeType.bind(this));
+    this.inputManager.on("shoot",this.shoot.bind(this));
+    this.inputManager.on("switchRocket",this.switchRocket.bind(this));
+    
     var self=this;
     this.init=function(){
         $canvas.on('mousemove',function(e){
             self.curPos.setVector(e.pageX,e.pageY);
         });
         setInterval(function(){
-            ctx.fillStyle="rgba(0,0,0,0.3)";
+            ctx.fillStyle="rgba(0,0,0,0.3)";//會透明
             ctx.beginPath();
             ctx.fillRect(0,0,canvasWidth,canvasHeight);
             ctx.fill();
             for(var i=0;i<self.firework1s.length;i++){
                 var fire=self.firework1s[i];
                 if(fire.update())
-            fire.draw();
+                    fire.draw();
                 else{
                     self.firework2s.push( (new firework2(fire.endPos.x,fire.endPos.y,fire.type)).init() );
                     self.firework1s.splice(i,1);
@@ -46,7 +50,7 @@ function fireworkManager(inputManager){
             this.y=y;
         }
     }
-    this.firework1=function(x,y,type){
+    this.firework1=function(x,y,type,rocketOrNot){
         this.type=type;
         this.startPos=new vector(x,canvasHeight);
         this.endPos=new vector(x,y);
@@ -54,6 +58,7 @@ function fireworkManager(inputManager){
         this.time=Math.random()*20+20;
         this.velocity=new vector( (this.endPos.x-this.startPos.x)/this.time , (this.endPos.y-this.startPos.y)/this.time);
         this.color="#FFFFFF";
+        this.rocketOrNot=rocketOrNot;
         this.update=function(){
             if(this.curPos.y>this.endPos.y){
                 this.curPos.x+=this.velocity.x;
@@ -65,6 +70,8 @@ function fireworkManager(inputManager){
         }
 
         this.draw=function(){
+            if(!this.rocketOrNot)
+                return;
             ctx.strokeStyle = '#FFFFFF';
             ctx.lineWidth = 3;
             ctx.beginPath();
@@ -217,11 +224,10 @@ function fireworkManager(inputManager){
         return 'hsl(' + Math.random()*360 + ',100%, 70%)';
     }
 }
-fireworkManager.prototype.changeType=function(type){
-    this.firework1s.push(new this.firework1(this.curPos.x,this.curPos.y,type));
+fireworkManager.prototype.shoot=function(type){
+    this.firework1s.push(new this.firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot));
 }
 
-
-
-
-
+fireworkManager.prototype.switchRocket=function(){
+    this.rocketOrNot=!this.rocketOrNot;
+}
