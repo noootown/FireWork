@@ -1,0 +1,36 @@
+html,body, .main{
+    height:100%;
+    width:100%;
+    overflow:hidden;
+    margin:0;
+    padding:0;
+    background-color:#000000;
+    font-family:Ubuntu,Varela Round,Verdana ,Droid Sans,Helvetica ,sans-serif;
+}
+.mainCanvas{
+    cursor:pointer;
+}
+.navbar{
+    position:absolute;
+    bottom:0;
+    width:100%;
+    color:#FFFFFF;
+    background-color:#000000;
+    opacity:0.75;
+    font-weight:700;
+    font-size:30px;
+    padding:10px 0;
+}
+.title{
+    float:left;
+    margin-left:30px;
+}
+.link{
+    float:right;
+    margin-right:30px;
+}
+a{
+    padding:0 10px;
+    text-decoration:none;
+    color:#FFFFFF;
+}
