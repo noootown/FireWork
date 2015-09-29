@@ -15,7 +15,7 @@ $(document).ready(function(){
     canvasHeight=$canvas.height();
     canvasWidth=$canvas.width();
     ctx=$canvas.get(0).getContext('2d');
-    bindEvents();
+    bindMouseEvents();
     times=0;
     setInterval(function(){
         times++;
@@ -232,7 +232,7 @@ function fireworkPoint(x,y,speed,angle,color,radius,timeMax,delay){
         ctx.closePath();
     }
 }
-function bindEvents(){
+function bindMouseEvents(){
     $canvas.on('click',function(e){
         firework1s.push(new firework1(e.pageX,e.pageY));
     });
