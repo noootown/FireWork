@@ -227,8 +227,5 @@ fireworkManager.prototype={
         },
     shoot:function(type){this.firework1s.push(new fireworkManager.prototype.firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot)); },
     switchRocket:function(){this.rocketOrNot=!this.rocketOrNot;},
-    getRandomColor:
-        function(){
-            return 'hsl(' + Math.random()*360 + ',100%, 70%)';
-        }
+    getRandomColor:function(){return 'hsl(' + Math.random()*360 + ',100%, 70%)';}
 };
