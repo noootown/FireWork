@@ -1,4 +1,4 @@
-function InputManager(){
+function inputManager(){
     this.events={};
     this.map={
         
@@ -24,13 +24,13 @@ function InputManager(){
     this.bindEvent();
 }
 
-InputManager.prototype.on = function (event, callback) {
+inputManager.prototype.on = function (event, callback) {
     if (!this.events[event])
         this.events[event] = [];
     this.events[event].push(callback);
 };
 
-InputManager.prototype.getFunc = function (event, data) {
+inputManager.prototype.getFunc = function (event, data) {
     var callbacks = this.events[event];
     if (callbacks) {
         _.each(callbacks,function (callback) {
@@ -39,7 +39,7 @@ InputManager.prototype.getFunc = function (event, data) {
     }
 };
 
-InputManager.prototype.bindEvent=function(){
+inputManager.prototype.bindEvent=function(){
     var self=this;
     document.addEventListener("keydown", function (event) {
         var modifiers = event.altKey||event.ctrlKey||event.metaKey||event.shiftKey;//加了這些key就不行

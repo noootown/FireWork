@@ -13,6 +13,6 @@ $(document).ready(function(){
     canvasHeight=$canvas.height();
     canvasWidth=$canvas.width();
     ctx=$canvas.get(0).getContext('2d');
-    fireworkAll=new fireworkManager(new InputManager());
+    fireworkAll=new fireworkManager(new inputManager());
     fireworkAll.init();
 });
