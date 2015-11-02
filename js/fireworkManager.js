@@ -2,7 +2,7 @@ function fireworkManager(inputManager){
     this.firework1s=[];
     this.firework2s=[];
     this.rocketOrNot=true;
-    this.curPos=new fireworkManager.prototype.vector(0,0);
+    this.curPos=new fireworkManager.prototype.vector(-1000,0);
     this.type=1;
 
     this.inputManager=inputManager;
@@ -21,9 +21,9 @@ function fireworkManager(inputManager){
             ctx.fill();
             for(var i=0;i<self.firework1s.length;i++){
                 var fire=self.firework1s[i];
-                if(fire.update())
-            fire.draw();
-                else{
+                if(fire.update())//如果還要繼續畫的話
+                    fire.draw();
+                else{//移除第一段火箭，並新增第二段煙火
                     self.firework2s.push( (new fireworkManager.prototype.firework2(fire.endPos.x,fire.endPos.y,fire.type)).init() );
                     self.firework1s.splice(i,1);
                     i--;
@@ -46,14 +46,14 @@ function fireworkManager(inputManager){
 fireworkManager.prototype={
     firework1:
         function(x,y,type,rocketOrNot){
-            this.type=type;
+            this.type=type;//哪一種煙火
             this.startPos=new fireworkManager.prototype.vector(x,canvasHeight);
             this.endPos=new fireworkManager.prototype.vector(x,y);
             this.curPos=new fireworkManager.prototype.vector(this.startPos.x,this.startPos.y);
-            this.time=Math.random()*20+20;
+            this.time=Math.random()*20+20;//在空中發射的時間
             this.velocity=new fireworkManager.prototype.vector( (this.endPos.x-this.startPos.x)/this.time , (this.endPos.y-this.startPos.y)/this.time);
             this.color="#FFFFFF";
-            this.rocketOrNot=rocketOrNot;
+            this.rocketOrNot=rocketOrNot;//是否有火箭，如果沒有︳就隱形
             this.update=function(){
                 if(this.curPos.y>this.endPos.y){
                     this.curPos.x+=this.velocity.x;
@@ -153,9 +153,9 @@ fireworkManager.prototype={
                 }
                 return this;
             }
-            this.checkFinish=function(){
-                if(this.fireworkPoints[0] && this.fireworkPoints[0].time>=1600){
-                    if(this.type==4){
+            this.checkFinish=function(){//檢查是否
+                if(this.fireworkPoints[0] && this.fireworkPoints[0].time>=1600){//1600是直接取一個大的值，比所有煙火的時間都還來的長
+                    if(this.type==4){//如果是第4種煙火的話，那就要加上之後的螢火蟲效果
                         for(var i=0;i<500;i++){
                             var self=this;
                             setTimeout(function(){
@@ -183,7 +183,7 @@ fireworkManager.prototype={
                 });
             }
         },
-    fireworkPoint:
+    fireworkPoint://每一個煙火點
         function(x,y,speed,angle,color,radius,timeMax,delay,acce){
             this.startPos=new fireworkManager.prototype.vector(x,y);
             this.curPos=new fireworkManager.prototype.vector(x,y);
@@ -192,7 +192,7 @@ fireworkManager.prototype={
             this.color=color;
             this.time=0;
             this.delay=delay;
-            this.timeMax=timeMax;
+            this.timeMax=timeMax;//顯示時間
             this.radius=radius;
             this.acceler=acce || 0.0003;
             this.update=function(){

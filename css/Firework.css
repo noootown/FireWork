@@ -8,7 +8,7 @@ html,body, .main{
     font-family:Ubuntu,Varela Round,Verdana ,Droid Sans,Helvetica ,sans-serif;
 }
 .mainCanvas{
-    cursor:pointer;
+    /*cursor:pointer;*/
 }
 .navbar{
     position:absolute;
@@ -17,8 +17,8 @@ html,body, .main{
     color:#FFFFFF;
     background-color:#000000;
     opacity:0.75;
-    font-weight:700;
-    font-size:30px;
+    font-weight:400;
+    font-size:25px;
     padding:10px 0;
 }
 .title{
@@ -33,4 +33,30 @@ a{
     padding:0 10px;
     text-decoration:none;
     color:#FFFFFF;
+}
+.sideBar{
+    padding:25px 8px 25px 10px;
+    position:fixed;
+    top:45%;
+    right:0%;
+    background-color:#CCCCCC;
+    cursor:pointer;
+    border-top-left-radius:50%;
+    border-bottom-left-radius:50%;
+}
+.sideBarBar{
+    width:20px;
+    height:3px;
+    background-color:black;
+    margin-bottom:3px;
+    display:block;
+}
+.sideBar .sideBarBar:first-child{
+    transform:rotate(-45deg);
+}
+.sideBar .sideBarBar:nth-child(2){
+    opacity:0;
+}
+.sideBar .sideBarBar:nth-child(3){
+    transform:rotate(45deg);
 }
