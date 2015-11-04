@@ -1,3 +1,5 @@
+'use strict';
+
 var $canvas=$('.mainCanvas');
 var ctx;
 var canvasHeight;
@@ -19,4 +21,8 @@ $(document).ready(function(){
     wordAll=new wordManager();
     wordAll.addWord("yeeeee");
     wordAll.draw();
+    $('.sideBarBtn').on('click',function(){
+        $(this).toggleClass('active');
+        $('.sidePanel').toggleClass('active');
+    });
 });

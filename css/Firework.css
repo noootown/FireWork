@@ -26,7 +26,7 @@ html,body, .main{
     margin-left:30px;
 }
 .link{
-    float:right;
+    float:left;
     margin-right:30px;
 }
 a{
@@ -34,15 +34,25 @@ a{
     text-decoration:none;
     color:#FFFFFF;
 }
-.sideBar{
+.sideBarBtn{
+    z-index:100;
     padding:25px 8px 25px 10px;
     position:fixed;
-    top:45%;
+    height:100%;
+    top:0%;
     right:0%;
     background-color:#CCCCCC;
     cursor:pointer;
-    border-top-left-radius:50%;
-    border-bottom-left-radius:50%;
+    border-right:solid 1px #999999;
+    /*border-top-left-radius:50%;*/
+    /*border-bottom-left-radius:50%;*/
+    -webkit-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+    -moz-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+    -o-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+    transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+}
+.sideBarBtn.active{
+    right:20%;
 }
 .sideBarBar{
     width:20px;
@@ -51,12 +61,46 @@ a{
     margin-bottom:3px;
     display:block;
 }
-.sideBar .sideBarBar:first-child{
+.sideBarBar{
+    position:relative;
+    top:46%;
+    -webkit-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+    -moz-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+    -o-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+    transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+}
+.sideBarBtn .sideBarBar:first-child{
     transform:rotate(-45deg);
 }
-.sideBar .sideBarBar:nth-child(2){
+.sideBarBtn .sideBarBar:nth-child(2){
     opacity:0;
 }
-.sideBar .sideBarBar:nth-child(3){
+.sideBarBtn .sideBarBar:nth-child(3){
     transform:rotate(45deg);
+}
+.sideBarBtn.active .sideBarBar:first-child{
+    transform:rotate(45deg);
+}
+.sideBarBtn.active .sideBarBar:nth-child(2){
+    opacity:0;
+}
+.sideBarBtn.active .sideBarBar:nth-child(3){
+    transform:rotate(-45deg);
+}
+.sidePanel{
+    padding-top:100px;
+    z-index:99;
+    height:100%;
+    width:20%;
+    position:fixed;
+    top:0;
+    right:-20%;
+    background-color:#CCCCCC;
+    -webkit-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+    -moz-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+    -o-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+    transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+}
+.sidePanel.active{
+    right:0%;
 }
