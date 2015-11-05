@@ -14,6 +14,30 @@
         <script src="https://fb.me/react-with-addons-0.14.2.min.js"></script>
         <script src="https://fb.me/react-dom-0.14.2.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.min.js"></script>
+        <style>
+            .draggable-handle {
+                background-color: grey;
+                width: 30px;
+                height: 50px;
+                cursor: move;
+                color: white;
+                font-size: 60px;
+                padding: 10px;
+            }
+            .react-reorderable-item-active {
+                width: 150px;
+                height: 70px;
+                margin-top: 5px;
+                border: 3px dashed #666;
+                background: none;
+            }
+            .react-reorderable-item-active * {
+                display: none;
+            }
+            .react-reorderable-handle {
+                position: absolute;
+            }
+        </style>
     </head>
     <body>
         <div class="main">
