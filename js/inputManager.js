@@ -1,7 +1,9 @@
-function inputManager(){
+function inputManager(fireworkToInput){
+    var self=this;
+    this.firework=fireworkToInput;
     this.events={};
     this.map={
-        
+
         //1~8
         49:1, 
         50:2,
@@ -22,12 +24,41 @@ function inputManager(){
         104:8
     };
     this.bindEvent();
+    this.manageInput=function(event){
+        var inputCharacter=function(key){
+            var wordInput = $("#word-input");
+            var nowValue = wordInput.val();
+            wordInput.val(nowValue+String.fromCharCode(key));
+            //TODO
+            //trigger onChange Event
+        }
+
+        if(event=='shoot')
+            return function(key){
+                if(fireworkAll!==undefined){
+                    if(!sideBarOpen)
+                        self.firework.shoot(self.map[key]);
+                    else
+                        inputCharacter(key);
+                }
+            };
+        else if(event=='switchRocket')
+            return function(key){
+                if(fireworkAll!==undefined){
+                    if(!sideBarOpen)
+                        self.firework.switchRocket();
+                    else
+                        inputCharacter(key);
+                }
+            };
+    }
 }
 
 inputManager.prototype.on = function (event, callback) {
     if (!this.events[event])
         this.events[event] = [];
     this.events[event].push(callback);
+    console.log(this.events[event]);
 };
 
 inputManager.prototype.getFunc = function (event, data) {
@@ -43,17 +74,14 @@ inputManager.prototype.bindEvent=function(){
     var self=this;
     document.addEventListener("keydown", function (event) {
         var modifiers = event.altKey||event.ctrlKey||event.metaKey||event.shiftKey;//加了這些key就不行
-        var mapped=self.map[event.which];
-
         if (!modifiers) {
-            if (mapped !== undefined) {
+            if (self.map[event.which] !== undefined) {
                 event.preventDefault();
-                self.getFunc("shoot", mapped);
+                self.getFunc("shoot",event.which);
             }
         }
         if(!modifiers && event.which==32)
-            self.getFunc("switchRocket");
-
+            self.getFunc("switchRocket",event.which);
     });
 };
 

@@ -15,12 +15,15 @@ var WordListContainer = React.createClass({
                 self.props.updateItems(data.map(dataToItem));
             },
             onChange: function (data) {}
-        },this.props.items.map(createItem));
-    }
+            },this.props.items.map(createItem));
+}
 });
 var Word = React.createClass({
     render: function() {
-        return React.createElement('div',{className:'draggable-handle'},this.props.text);
+        return React.createElement('div',{className:'draggable-element'},
+                React.createElement('div', { className: 'draggable-handle'}, this.props.text),
+                React.createElement('div', { className: 'draggable-remove' }, React.createElement('img', { className: 'img-remove'}))
+                );
     }
 });
 
@@ -33,10 +36,16 @@ var WordListAll = React.createClass({
     },
     onChange: function(e) {
         this.setState({text: e.target.value});
+        console.log('haha');
     },
     handleSubmit: function(e) {
         e.preventDefault();
-        var nextItems = this.state.items.concat([this.state.text]);
+        var nextItems;
+        if(this.state.text=="")
+            return;
+        else
+            nextItems = this.state.items.concat([this.state.text]);
+            
         var nextText = '';
         this.setState({items: nextItems, text: nextText});
     },
@@ -46,7 +55,7 @@ var WordListAll = React.createClass({
                 <h3>想說的話</h3>
                 <WordListContainer items={this.state.items} text={this.state.text} updateItems={this.handleUpdateItems}/>
                 <form onSubmit={this.handleSubmit}>
-                <input onChange={this.onChange} value={this.state.text} />
+                <input id={'word-input'}  onChange={this.onChange} value={this.state.text} />
                 <button>{'輸入'}</button>
                 </form>
                 </div>

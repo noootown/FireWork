@@ -6,6 +6,8 @@ var canvasHeight;
 var canvasWidth;
 var fireworkAll;
 var wordAll;
+var sideBarOpen;
+var myInputManager;
 $(document).ready(function(){
     $('body').attr('unselectable', 'on').css('user-select', 'none').on('selectstart', false);
     $canvas=$('.mainCanvas');
@@ -16,13 +18,24 @@ $(document).ready(function(){
     canvasHeight=$canvas.height();
     canvasWidth=$canvas.width();
     ctx=$canvas.get(0).getContext('2d');
-    fireworkAll=new fireworkManager(new inputManager());
+    fireworkAll=new fireworkManager();
     fireworkAll.init();
+    myInputManager=new inputManager(fireworkAll);
+    myInputManager.on("shoot",myInputManager.manageInput('shoot'));
+    myInputManager.on("switchRocket",myInputManager.manageInput('switchRocket'));
+
+    sideBarOpen=false;
+
     wordAll=new wordManager();
     wordAll.addWord("yeeeee");
     wordAll.draw();
     $('.sideBarBtn').on('click',function(){
+        sideBarOpen=!sideBarOpen;
         $(this).toggleClass('active');
         $('.sidePanel').toggleClass('active');
     });
 });
+
+
+
+

@@ -1,13 +1,9 @@
-function fireworkManager(inputManager){
+function fireworkManager(){
     this.firework1s=[];
     this.firework2s=[];
     this.rocketOrNot=true;
     this.curPos=new fireworkManager.prototype.vector(-1000,0);
     this.type=1;
-
-    this.inputManager=inputManager;
-    this.inputManager.on("shoot",this.shoot.bind(this));
-    this.inputManager.on("switchRocket",this.switchRocket.bind(this));
 
     var self=this;
     this.init=function(){
@@ -225,7 +221,9 @@ fireworkManager.prototype={
                 this.y=y;
             }
         },
-    shoot:function(type){this.firework1s.push(new fireworkManager.prototype.firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot)); },
+    shoot:function(type){
+        this.firework1s.push(new fireworkManager.prototype.firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot)); 
+    },
     switchRocket:function(){this.rocketOrNot=!this.rocketOrNot;},
     getRandomColor:function(){return 'hsl(' + Math.random()*360 + ',100%, 70%)';}
 };
