@@ -106,6 +106,7 @@ right:0%;
 }
 
 .draggable-element {
+position:relative;
 background-color: grey;
 height:100%;
 width:100%;
@@ -134,6 +135,7 @@ top:0;
 right:0;
 width:25px;
 height:25px;
+cursor:pointer;
 }
 .draggable-item{
 }

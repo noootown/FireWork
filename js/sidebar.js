@@ -1,34 +1,53 @@
 var WordListContainer = React.createClass({
+    handleRemoveBtnClick:function(which){
+        this.props.items.splice(which-1,1)
+        this.props.updateItems(this.props.items);
+    },
     render:function(){
-        var createItem = function(text, index) {
-            return <Word key={index + text} text={text}/>;
-        };
         var self=this;
-        return React.createElement(ReactReorderable,{
-            handle:'.draggable-handle',
-            mode:'list',
-            onDragStart: function (data) {},
-            onDrop: function (data) {//change WordListAll.state.items
-                var dataToItem=function(data,index){
-                    return data.props.text;
-                }
-                self.props.updateItems(data.map(dataToItem));
-            },
-            onChange: function (data) {}
-            },this.props.items.map(createItem));
-}
+        var createItem = function(text, index) {
+            return <Word key={index + text} text={text} btnClick={self.handleRemoveBtnClick}/>;
+        };
+        return(
+                <ReactReorderable handle={'.draggable-handle'} mode={'list'} 
+                onDragStart={function(data){}}
+                onDrop={function(data){
+                    var dataToItem=function(data,index){
+                        return data.props.text;
+                    }
+                    self.props.updateItems(data.map(dataToItem));
+                }}
+                onChange={function(data){}}
+                >
+                {this.props.items.map(createItem)}
+                </ReactReorderable>
+              );
+    }
 });
 var Word = React.createClass({
+    handleRemoveBtnClick:function(){
+        var which=$(this.getDOMNode()).parent().data("reorderableKey").substr(5);//get which node
+        this.props.btnClick(which);
+    },
     render: function() {
-        return React.createElement('div',{className:'draggable-element'},
-                React.createElement('div', { className: 'draggable-handle'}, this.props.text),
-                React.createElement('div', { className: 'draggable-remove' }, React.createElement('img', { className: 'img-remove'}))
-                );
+        return (
+                <div className={"draggable-element"}>
+                <div className={"draggable-handle"}>{this.props.text}</div>
+                <CrossBtn updateItems={this.props.updateItems} btnClick={this.handleRemoveBtnClick}/>
+                </div>
+               );
+    }
+});
+var CrossBtn = React.createClass({
+    render:function(){
+        return (
+                <img src={'img/cross.png'} className={'img-remove'} onClick={this.props.btnClick}></img>
+               );
     }
 });
 
 var WordListAll = React.createClass({
-    handleUpdateItems:function(wordItems){
+    handleUpdateItems: function(wordItems){
         this.setState({items:wordItems});
     },
     getInitialState: function() {
@@ -36,7 +55,6 @@ var WordListAll = React.createClass({
     },
     onChange: function(e) {
         this.setState({text: e.target.value});
-        console.log('haha');
     },
     handleSubmit: function(e) {
         e.preventDefault();
@@ -45,7 +63,7 @@ var WordListAll = React.createClass({
             return;
         else
             nextItems = this.state.items.concat([this.state.text]);
-            
+
         var nextText = '';
         this.setState({items: nextItems, text: nextText});
     },
@@ -62,6 +80,7 @@ var WordListAll = React.createClass({
                );
     }
 });
+
 
 ReactDOM.render(<WordListAll />, document.getElementById('sidePanel'));
 
