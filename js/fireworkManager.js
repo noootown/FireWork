@@ -1,3 +1,4 @@
+'use strict'
 function fireworkManager(){
     this.firework1s=[];
     this.firework2s=[];

@@ -1,3 +1,4 @@
+'use strict'
 function wordManager(){
     this.words=[];
     var pro=wordManager.prototype;

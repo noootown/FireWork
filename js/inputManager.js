@@ -1,3 +1,4 @@
+'use strict'
 function inputManager(fireworkToInput){
     var self=this;
     this.firework=fireworkToInput;
@@ -26,11 +27,12 @@ function inputManager(fireworkToInput){
     this.bindEvent();
     this.manageInput=function(event){
         var inputCharacter=function(key){
-            var wordInput = $("#word-input");
+            var wordInput = $('#word-input');
             var nowValue = wordInput.val();
             wordInput.val(nowValue+String.fromCharCode(key));
-            //TODO
-            //trigger onChange Event
+            
+            var event = new Event('input', { bubbles: true });//trigger onChange event
+            document.getElementById('word-input').dispatchEvent(event);
         }
 
         if(event=='shoot')
@@ -38,7 +40,7 @@ function inputManager(fireworkToInput){
                 if(fireworkAll!==undefined){
                     if(!sideBarOpen)
                         self.firework.shoot(self.map[key]);
-                    else
+                    else if($('#word-input').is(':focus'))
                         inputCharacter(key);
                 }
             };
@@ -47,7 +49,7 @@ function inputManager(fireworkToInput){
                 if(fireworkAll!==undefined){
                     if(!sideBarOpen)
                         self.firework.switchRocket();
-                    else
+                    else if($('#word-input').is(':focus'))
                         inputCharacter(key);
                 }
             };

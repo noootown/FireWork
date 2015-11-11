@@ -1,6 +1,7 @@
-var WordListContainer = React.createClass({
+'use strict'
+var WordListContainer = React.createClass({//裝Word[的container]
     handleRemoveBtnClick:function(which){
-        this.props.items.splice(which-1,1)
+        this.props.items.splice(which-1,1);//把選中的字串移除
         this.props.updateItems(this.props.items);
     },
     render:function(){
@@ -24,7 +25,7 @@ var WordListContainer = React.createClass({
               );
     }
 });
-var Word = React.createClass({
+var Word = React.createClass({//顯示的字
     handleRemoveBtnClick:function(){
         var which=$(this.getDOMNode()).parent().data("reorderableKey").substr(5);//get which node
         this.props.btnClick(which);
@@ -38,7 +39,7 @@ var Word = React.createClass({
                );
     }
 });
-var CrossBtn = React.createClass({
+var CrossBtn = React.createClass({//清除按鈕
     render:function(){
         return (
                 <img src={'img/cross.png'} className={'img-remove'} onClick={this.props.btnClick}></img>
@@ -59,7 +60,7 @@ var WordListAll = React.createClass({
     handleSubmit: function(e) {
         e.preventDefault();
         var nextItems;
-        if(this.state.text=="")
+        if(this.state.text.match(/\s*/)[0]==this.state.text)//判斷是否為空白鍵字串或者是空字串
             return;
         else
             nextItems = this.state.items.concat([this.state.text]);
