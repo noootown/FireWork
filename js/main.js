@@ -24,16 +24,8 @@ $(document).ready(function(){
     myInputManager.on("shoot",myInputManager.manageInput('shoot'));
     myInputManager.on("switchRocket",myInputManager.manageInput('switchRocket'));
 
-    sideBarOpen=false;
-
     wordAll=new wordManager();
-    wordAll.addWord("yeeeee");
     wordAll.draw();
-    $('.sideBarBtn').on('click',function(){
-        sideBarOpen=!sideBarOpen;
-        $(this).toggleClass('active');
-        $('.sidePanel').toggleClass('active');
-    });
 });
 
 

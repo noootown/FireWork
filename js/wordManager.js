@@ -2,13 +2,10 @@
 function wordManager(){
     this.words=[];
     var pro=wordManager.prototype;
-    this.addWord=function(str){
-        this.words.push(new pro.word(100,"#FFFFFF",str));
-    }
+    this.ptr=0;
     this.draw=function(){
-        _.each(this.words,function(fire){
-            fire.draw();
-        });
+        words[ptr].draw();
+        
     }
 }
 
