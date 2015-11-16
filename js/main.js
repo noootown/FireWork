@@ -21,8 +21,8 @@ $(document).ready(function(){
     fireworkAll=new fireworkManager();
     fireworkAll.init();
     myInputManager=new inputManager(fireworkAll);
-    myInputManager.on("shoot",myInputManager.manageInput('shoot'));
-    myInputManager.on("switchRocket",myInputManager.manageInput('switchRocket'));
+    myInputManager.on('shoot',myInputManager.manageInput('shoot'));
+    myInputManager.on('switchRocket',myInputManager.manageInput('switchRocket'));
 
     wordAll=new wordManager();
     wordAll.draw();

@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 function inputManager(fireworkToInput){
     var self=this;
     this.firework=fireworkToInput;
@@ -33,7 +33,7 @@ function inputManager(fireworkToInput){
             
             var event = new Event('input', { bubbles: true });//trigger onChange event
             document.getElementById('word-input').dispatchEvent(event);
-        }
+        };
 
         if(event=='shoot')
             return function(key){
@@ -53,14 +53,13 @@ function inputManager(fireworkToInput){
                         inputCharacter(key);
                 }
             };
-    }
+    };
 }
 
 inputManager.prototype.on = function (event, callback) {
     if (!this.events[event])
         this.events[event] = [];
     this.events[event].push(callback);
-    console.log(this.events[event]);
 };
 
 inputManager.prototype.getFunc = function (event, data) {
@@ -74,16 +73,16 @@ inputManager.prototype.getFunc = function (event, data) {
 
 inputManager.prototype.bindEvent=function(){
     var self=this;
-    document.addEventListener("keydown", function (event) {
+    document.addEventListener('keydown', function (event) {
         var modifiers = event.altKey||event.ctrlKey||event.metaKey||event.shiftKey;//加了這些key就不行
         if (!modifiers) {
             if (self.map[event.which] !== undefined) {
                 event.preventDefault();
-                self.getFunc("shoot",event.which);
+                self.getFunc('shoot',event.which);
             }
         }
         if(!modifiers && event.which==32)
-            self.getFunc("switchRocket",event.which);
+            self.getFunc('switchRocket',event.which);
     });
 };
 

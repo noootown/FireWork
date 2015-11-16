@@ -1,29 +1,31 @@
-'use strict'
+'use strict';
 function wordManager(){
+    var FADEOUTTIME=1000;
+    var FADEINTIME=1000;
+    var DELAYTIME=3000;
     this.words=[];
-    var pro=wordManager.prototype;
+    //var pro=wordManager.prototype;
     this.ptr=0;
     this.draw=function(){
-        words[ptr].draw();
-        
-    }
+        this.ptr=0;
+        var self=this;
+        var drawWord= function(){
+            if(self.ptr===self.words.length)
+                return;
+            else{
+                $('.showWord').html(self.words[self.ptr]).addClass('active');
+                self.ptr++;
+                setTimeout(removeWord,FADEOUTTIME);
+            }
+        };
+        var removeWord=function(){
+            $('.showWord').removeClass('active');
+            setTimeout(drawWord,FADEINTIME);
+        };
+        setTimeout(drawWord,DELAYTIME);
+    };
 }
 
 
 wordManager.prototype={
-    word:
-        function(y,color,str){
-            this.size=10;
-            this.x=canvasWidth-100;
-            this.y=y;
-            this.color=color;
-            //this.str=str;
-            this.draw=function(){
-                ctx.font=this.size+"px Verdana";
-                ctx.fillStyle=this.color;
-                ctx.beginPath();
-                ctx.fillText(str,this.x,this.y);
-            }
-
-        },
-}
+};

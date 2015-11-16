@@ -154,7 +154,21 @@ opacity:0;
 .react-reorderable-handle {
 position: absolute;
 }
-
+.showWord{
+position:fixed;
+width:100%;
+bottom:8%;
+text-align:center;
+color:#FFFFFF;
+opacity:0;
+-webkit-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+-moz-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+-o-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+}
+.showWord.active{
+opacity:1;
+}
 
 
 

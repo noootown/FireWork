@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 var SideBar =React.createClass({
     handleUpdateItems: function(wordItems){
         this.setState({items:wordItems});
@@ -17,8 +17,7 @@ var SideBar =React.createClass({
         else
             nextItems = this.state.items.concat([this.state.text]);
 
-        var nextText = '';
-        this.setState({items: nextItems, text: nextText});
+        this.setState({items: nextItems, text:''});
     },
     handleSlideClick:function(){
         this.state.sideBarOpen=!this.state.sideBarOpen;
@@ -29,9 +28,10 @@ var SideBar =React.createClass({
     handlePreviewClick:function(){
         this.handleSlideClick();
         wordAll.words=this.state.items;
+        wordAll.draw();
     },
     render:function(){
-        return(
+        return (
                 <div>
                 <div className={'sideBarBtn'} onClick={this.handleSlideClick}>
                 <span className={'sideBarBar'}></span>
@@ -43,11 +43,11 @@ var SideBar =React.createClass({
                 <PreviewBtn handlePreviewClick={this.handlePreviewClick}/>
                 </div>
                 </div>
-              );
+               );
     }
 });
 
-var WordListContainer = React.createClass({//裝Word[的container]
+var WordListContainer = React.createClass({//裝Word的container
     handleRemoveBtnClick:function(which){
         this.props.items.splice(which-1,1);//把選中的字串移除
         this.props.updateItems(this.props.items);
@@ -59,14 +59,14 @@ var WordListContainer = React.createClass({//裝Word[的container]
         };
         return(
                 <ReactReorderable handle={'.draggable-handle'} mode={'list'} 
-                onDragStart={function(data){}}
+                onDragStart={function(){}}
                 onDrop={function(data){
-                    var dataToItem=function(data,index){
+                    var dataToItem=function(data){
                         return data.props.text;
-                    }
+                    };
                     self.props.updateItems(data.map(dataToItem));
                 }}
-                onChange={function(data){}}
+                onChange={function(){}}
                 >
                 {this.props.items.map(createItem)}
                 </ReactReorderable>
@@ -75,7 +75,7 @@ var WordListContainer = React.createClass({//裝Word[的container]
 });
 var Word = React.createClass({//顯示的字
     handleRemoveBtnClick:function(){
-        var which=$(this.getDOMNode()).parent().data("reorderableKey").substr(5);//get which node
+        var which=$(this.getDOMNode()).parent().data('reorderableKey').substr(5);//get which node
         this.props.btnClick(which);
     },
     render: function() {
