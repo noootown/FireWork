@@ -20,6 +20,14 @@ opacity:0.75;
 font-weight:400;
 font-size:25px;
 padding:10px 0;
+-webkit-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+-moz-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+-o-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+}
+.navbar.active{
+bottom:-50px;
+
 }
 .title{
 float:left;
@@ -94,7 +102,7 @@ height:100%;
 width:20%;
 position:fixed;
 top:0;
-right:20%;
+right:-20%;
 background-color:#CCCCCC;
 -webkit-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
 -moz-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
@@ -128,6 +136,19 @@ background-color: #990000;
 float:right;
 cursor:pointer;
 }
+span.colorBox{
+border:1px;
+border-style:solid;
+border-radius:5px;
+border-color:#000000;
+position:absolute;
+background-color:#FFFFFF;
+top:8px;
+right:35px;
+width:25px;
+height:25px;
+cursor:pointer;
+}
 .img-remove{
 position:absolute;
 margin:5px 5px 0 0;
@@ -157,21 +178,49 @@ position: absolute;
 .showWord{
 position:fixed;
 width:100%;
-bottom:8%;
+bottom:5%;
 text-align:center;
 color:#FFFFFF;
 opacity:0;
--webkit-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
--moz-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
--o-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
+-webkit-transition: all 0.5s cubic-bezier(0.71,0,0.42,0.99);
+-moz-transition: all 0.5s cubic-bezier(0.71,0,0.42,0.99);
+-o-transition: all 0.5s cubic-bezier(0.71,0,0.42,0.99);
+transition: all 0.5s cubic-bezier(0.71,0,0.42,0.99);
 }
 .showWord.active{
 opacity:1;
 }
-
-
-
-
+.img-rec{
+position:absolute;
+margin:20px 0 0 20px;
+top:0;
+left:0;
+width:66px;
+height:21px;
+cursor:pointer;
+display:none;
+}
+.img-rec.active{
+display:inline;
+}
+.time-second{
+position:absolute;
+width:100%;
+height:180px;
+margin:-90px 0 0 0;
+text-align:center;
+color:#FFFFFF;
+font-size:150px;
+font-weight:400;
+top:50%;
+opacity:0;
+-webkit-transition: all 0.8s cubic-bezier(0.71,0,0.42,0.99);
+-moz-transition: all 0.8s cubic-bezier(0.71,0,0.42,0.99);
+-o-transition: all 0.8s cubic-bezier(0.71,0,0.42,0.99);
+transition: all 0.8s cubic-bezier(0.71,0,0.42,0.99);
+}
+.time-second.active{
+opacity:1;
+}
 
 

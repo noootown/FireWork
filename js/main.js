@@ -7,6 +7,7 @@ var canvasWidth;
 var fireworkAll;
 var wordAll;
 var sideBarOpen;
+var startAction;
 var myInputManager;
 $(document).ready(function(){
     $('body').attr('unselectable', 'on').css('user-select', 'none').on('selectstart', false);
@@ -25,7 +26,14 @@ $(document).ready(function(){
     myInputManager.on('switchRocket',myInputManager.manageInput('switchRocket'));
 
     wordAll=new wordManager();
-    wordAll.draw();
+    sideBarOpen=true;
+    startAction=false;
+    setInterval(function(){
+        if(!startAction)
+            $('.img-rec').removeClass('active');
+        else
+            $('.img-rec').toggleClass('active');
+    },800);
 });
 
 

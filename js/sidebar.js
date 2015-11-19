@@ -4,7 +4,10 @@ var SideBar =React.createClass({
         this.setState({items:wordItems});
     },
     getInitialState: function() {
-        return {items: [], text: '',sideBarOpen:false};
+        return {items: [], text: '',sideBarOpen:true, colors:[]};
+    },
+    handleColorUpdate:function(updateColors){
+        this.setState({colors:updateColors});
     },
     onChange: function(e) {
         this.setState({text: e.target.value});
@@ -24,33 +27,51 @@ var SideBar =React.createClass({
         sideBarOpen=this.state.sideBarOpen;
         $('.sideBarBtn').toggleClass('active');
         $('.sidePanel').toggleClass('active');
+        $('.navbar').toggleClass('active');
     },
     handlePreviewClick:function(){
         this.handleSlideClick();
+        setTimeout(function(){$('.time-second3').addClass('active');},500);
+        setTimeout(function(){$('.time-second2').addClass('active');},2500);
+        setTimeout(function(){$('.time-second1').addClass('active');},4500);
+        setTimeout(function(){$('.time-second0').addClass('active');},6500);
+        setTimeout(function(){$('.time-second3').removeClass('active');},1500);
+        setTimeout(function(){$('.time-second2').removeClass('active');},3500);
+        setTimeout(function(){$('.time-second1').removeClass('active');},5500);
+        setTimeout(function(){$('.time-second0').removeClass('active');},7500);
+        setTimeout(function(){startAction=true;wordAll.draw();},9000);
+    
         wordAll.words=this.state.items;
         wordAll.draw();
     },
     render:function(){
         return (
                 <div>
-                <div className={'sideBarBtn'} onClick={this.handleSlideClick}>
-                <span className={'sideBarBar'}></span>
-                <span className={'sideBarBar'}></span>
-                <span className={'sideBarBar'}></span>
+                <div className={'sideBarBtn active'} onClick={this.handleSlideClick}>
+                <span className={'sideBarBar active'}></span>
+                <span className={'sideBarBar active'}></span>
+                <span className={'sideBarBar active'}></span>
                 </div>
-                <div id={'sidePanel'} className={'sidePanel'}>
-                <WordListAll items={this.state.items} text={this.state.text} updateItems={this.handleUpdateItems} onSubmit={this.handleSubmit} onChange={this.onChange}/>
+                <div id={'sidePanel'} className={'sidePanel active'}>
+                <WordListAll 
+                items={this.state.items} 
+                text={this.state.text}
+                colors={this.state.colors}
+                updateItems={this.handleUpdateItems} 
+                onSubmit={this.handleSubmit} 
+                onChange={this.onChange}/>
                 <PreviewBtn handlePreviewClick={this.handlePreviewClick}/>
                 </div>
                 </div>
                );
     }
 });
-
 var WordListContainer = React.createClass({//裝Word的container
     handleRemoveBtnClick:function(which){
         this.props.items.splice(which-1,1);//把選中的字串移除
         this.props.updateItems(this.props.items);
+        this.props.colors.splice(which-1,1);//把選中的顏色移除
+        this.props.updateItems(this.colors.items);
     },
     render:function(){
         var self=this;
@@ -82,8 +103,23 @@ var Word = React.createClass({//顯示的字
         return (
                 <div className={"draggable-element"}>
                 <div className={"draggable-handle"}>{this.props.text}</div>
+                <ColorBox />
                 <CrossBtn updateItems={this.props.updateItems} btnClick={this.handleRemoveBtnClick}/>
                 </div>
+               );
+    }
+});
+
+var ColorBox =React.createClass({
+    getInitialState:function(){
+        return {color:0};//0~6 white red orange yellow green blue purple
+    },
+    handleBtnClick:function(){
+        this.setState({color:(this.state.color+1)%6});
+    },
+    render:function(){
+        return (
+                <span className={'colorBox'} onClick={this.handleBtnClick}></span>
                );
     }
 });
@@ -100,7 +136,7 @@ var WordListAll = React.createClass({
         return (
                 <div>
                 <h3>想說的話</h3>
-                <WordListContainer items={this.props.items} text={this.props.text} updateItems={this.props.updateItems}/>
+                <WordListContainer items={this.props.items} text={this.props.text} updateItems={this.props.updateItems} colors={this.props.colors}/>
                 <form onSubmit={this.props.onSubmit}>
                 <input id={'word-input'}  onChange={this.props.onChange} value={this.props.text} />
                 <button>{'輸入'}</button>
@@ -113,7 +149,7 @@ var WordListAll = React.createClass({
 var PreviewBtn =React.createClass({
     render:function(){
         return (
-                <button onClick={this.props.handlePreviewClick}>{'預覽'}</button>
+                <button onClick={this.props.handlePreviewClick}>{'錄製'}</button>
                );
     }
 });

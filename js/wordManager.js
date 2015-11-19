@@ -2,7 +2,7 @@
 function wordManager(){
     var FADEOUTTIME=1000;
     var FADEINTIME=1000;
-    var DELAYTIME=3000;
+    var DELAYTIME=9500;
     this.words=[];
     //var pro=wordManager.prototype;
     this.ptr=0;
