@@ -7,9 +7,6 @@ padding:0;
 background-color:#000000;
 font-family:Ubuntu,Varela Round,Verdana ,Droid Sans,Helvetica ,sans-serif;
 }
-.mainCanvas{
-/*cursor:pointer;*/
-}
 .navbar{
 position:absolute;
 bottom:0;
@@ -48,7 +45,7 @@ padding:25px 8px 25px 10px;
 position:fixed;
 height:100%;
 top:0%;
-right:0%;
+right:-5%;
 background-color:#CCCCCC;
 cursor:pointer;
 border-right:solid 1px #999999;
@@ -102,7 +99,7 @@ height:100%;
 width:20%;
 position:fixed;
 top:0;
-right:-20%;
+right:-25%;
 background-color:#CCCCCC;
 -webkit-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
 -moz-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
@@ -190,19 +187,6 @@ transition: all 0.5s cubic-bezier(0.71,0,0.42,0.99);
 .showWord.active{
 opacity:1;
 }
-.img-rec{
-position:absolute;
-margin:20px 0 0 20px;
-top:0;
-left:0;
-width:66px;
-height:21px;
-cursor:pointer;
-display:none;
-}
-.img-rec.active{
-display:inline;
-}
 .time-second{
 position:absolute;
 width:100%;
@@ -223,4 +207,32 @@ transition: all 0.8s cubic-bezier(0.71,0,0.42,0.99);
 opacity:1;
 }
 
-
+.startActionInstruction{
+margin:20px;
+position:absolute;
+top:0;
+left:0;
+}
+.startActionInstruction > *{
+    display:none;
+}
+.startActionInstruction > *.active{
+    display:inline;
+}
+.img-rec{
+width:66px;
+height:21px;
+cursor:pointer;
+}
+.startActionInstructionWords{
+margin:20px;
+position:absolute;
+bottom:0;
+right:0;
+font-size:20px;
+color:#FF0000;
+display:none;
+}
+.startActionInstructionWords{
+display:inline;
+}

@@ -2,8 +2,7 @@
 function inputManager(fireworkToInput){
     var self=this;
     this.firework=fireworkToInput;
-    this.events={};
-    this.map={
+    this.fireworkMap={
 
         //1~8
         49:1, 
@@ -25,50 +24,47 @@ function inputManager(fireworkToInput){
         104:8
     };
     this.bindEvent();
-    this.manageInput=function(event){
-        var inputCharacter=function(key){
-            var wordInput = $('#word-input');
-            var nowValue = wordInput.val();
-            wordInput.val(nowValue+String.fromCharCode(key));
-            
-            var event = new Event('input', { bubbles: true });//trigger onChange event
-            document.getElementById('word-input').dispatchEvent(event);
-        };
+    this.keyDownFunction={
+        inputCharacter:
+            function(key){
+                var wordInput = $('#word-input');
+                var nowValue = wordInput.val();
+                wordInput.val(nowValue+String.fromCharCode((96 <= key && key <= 105) ? key-48 : key));
 
-        if(event=='shoot')
-            return function(key){
+                var event = new Event('input', { bubbles: true });//trigger onChange event
+                document.getElementById('word-input').dispatchEvent(event);
+            },
+        shoot:
+            function(key){
                 if(fireworkAll!==undefined){
-                    if(!sideBarOpen)
-                        self.firework.shoot(self.map[key]);
-                    else if($('#word-input').is(':focus'))
-                        inputCharacter(key);
+                    if($('#word-input').is(':focus'))
+                        self.keyDownFunction['inputCharacter'](key);
+                    else
+                        self.firework.shoot(self.fireworkMap[key]);
                 }
-            };
-        else if(event=='switchRocket')
-            return function(key){
+            },
+        switchRocket:
+            function(key){
                 if(fireworkAll!==undefined){
-                    if(!sideBarOpen)
+                    if($('#word-input').is(':focus'))
+                        self.keyDownFunction['inputCharacter'](key);
+                    else    
                         self.firework.switchRocket();
-                    else if($('#word-input').is(':focus'))
-                        inputCharacter(key);
                 }
-            };
+            },
+        stopRecord:
+            function(key){
+                if(!$('#word-input').is(':focus')){
+                    clearScreen();
+                    if(startAction)startAction=false;
+                }
+            }
     };
 }
 
-inputManager.prototype.on = function (event, callback) {
-    if (!this.events[event])
-        this.events[event] = [];
-    this.events[event].push(callback);
-};
-
-inputManager.prototype.getFunc = function (event, data) {
-    var callbacks = this.events[event];
-    if (callbacks) {
-        _.each(callbacks,function (callback) {
-            callback(data);
-        });
-    }
+inputManager.prototype.execFunc = function (event, data) {
+    var callbacks = this.keyDownFunction[event];
+    callbacks(data);
 };
 
 inputManager.prototype.bindEvent=function(){
@@ -76,13 +72,14 @@ inputManager.prototype.bindEvent=function(){
     document.addEventListener('keydown', function (event) {
         var modifiers = event.altKey||event.ctrlKey||event.metaKey||event.shiftKey;//加了這些key就不行
         if (!modifiers) {
-            if (self.map[event.which] !== undefined) {
+            if (self.fireworkMap[event.which] !== undefined) {
                 event.preventDefault();
-                self.getFunc('shoot',event.which);
+                self.execFunc('shoot',event.which);
             }
         }
         if(!modifiers && event.which==32)
-            self.getFunc('switchRocket',event.which);
+            self.execFunc('switchRocket',event.which);
+        if(!modifiers && event.which==80)
+            self.execFunc('stopRecord',event.which);
     });
 };
-

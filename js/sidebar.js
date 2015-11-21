@@ -24,13 +24,11 @@ var SideBar =React.createClass({
     },
     handleSlideClick:function(){
         this.state.sideBarOpen=!this.state.sideBarOpen;
-        sideBarOpen=this.state.sideBarOpen;
-        $('.sideBarBtn').toggleClass('active');
-        $('.sidePanel').toggleClass('active');
-        $('.navbar').toggleClass('active');
+        clearScreen();
     },
     handlePreviewClick:function(){
         this.handleSlideClick();
+        wordAll.words=this.state.items;
         setTimeout(function(){$('.time-second3').addClass('active');},500);
         setTimeout(function(){$('.time-second2').addClass('active');},2500);
         setTimeout(function(){$('.time-second1').addClass('active');},4500);
@@ -39,10 +37,8 @@ var SideBar =React.createClass({
         setTimeout(function(){$('.time-second2').removeClass('active');},3500);
         setTimeout(function(){$('.time-second1').removeClass('active');},5500);
         setTimeout(function(){$('.time-second0').removeClass('active');},7500);
-        setTimeout(function(){startAction=true;wordAll.draw();},9000);
-    
-        wordAll.words=this.state.items;
-        wordAll.draw();
+        setTimeout(function(){startAction=true;wordAll.draw();},9000);//delay time
+
     },
     render:function(){
         return (
@@ -156,8 +152,7 @@ var PreviewBtn =React.createClass({
 
 
 
-ReactDOM.render(<SideBar />, document.getElementById('side'));
-
+ReactDOM.render(<SideBar/>, document.getElementById('side'));
 
 
 

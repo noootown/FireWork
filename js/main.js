@@ -9,6 +9,7 @@ var wordAll;
 var sideBarOpen;
 var startAction;
 var myInputManager;
+var recordTime;
 $(document).ready(function(){
     $('body').attr('unselectable', 'on').css('user-select', 'none').on('selectstart', false);
     $canvas=$('.mainCanvas');
@@ -22,20 +23,24 @@ $(document).ready(function(){
     fireworkAll=new fireworkManager();
     fireworkAll.init();
     myInputManager=new inputManager(fireworkAll);
-    myInputManager.on('shoot',myInputManager.manageInput('shoot'));
-    myInputManager.on('switchRocket',myInputManager.manageInput('switchRocket'));
 
     wordAll=new wordManager();
     sideBarOpen=true;
     startAction=false;
     setInterval(function(){
         if(!startAction)
-            $('.img-rec').removeClass('active');
+            $('.startActionInstruction').children().removeClass('active');
         else
-            $('.img-rec').toggleClass('active');
+            $('.startActionInstruction').children().toggleClass('active');
     },800);
 });
 
 
+function clearScreen(){
+    sideBarOpen=!sideBarOpen;
+    $('.sideBarBtn').toggleClass('active');
+    $('.sidePanel').toggleClass('active');
+    $('.navbar').toggleClass('active');
+}
 
 

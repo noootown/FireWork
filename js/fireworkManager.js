@@ -5,7 +5,6 @@ function fireworkManager(){
     this.rocketOrNot=true;
     this.curPos=new fireworkManager.prototype.vector(-1000,0);
     this.type=1;
-
     var self=this;
     this.init=function(){
         $canvas.on('mousemove',function(e){
@@ -18,7 +17,7 @@ function fireworkManager(){
             ctx.fill();
             for(var i=0;i<self.firework1s.length;i++){
                 var fire=self.firework1s[i];
-                if(fire.update())//如果還要繼續畫的話
+                if(fire.update() && fire.rocketOrNot)//如果還要繼續畫的話
                     fire.draw();
                 else{//移除第一段火箭，並新增第二段煙火
                     self.firework2s.push( (new fireworkManager.prototype.firework2(fire.endPos.x,fire.endPos.y,fire.type)).init() );
@@ -50,7 +49,7 @@ fireworkManager.prototype={
             this.time=Math.random()*20+20;//在空中發射的時間
             this.velocity=new fireworkManager.prototype.vector( (this.endPos.x-this.startPos.x)/this.time , (this.endPos.y-this.startPos.y)/this.time);
             this.color='#FFFFFF';
-            this.rocketOrNot=rocketOrNot;//是否有火箭，如果沒有，就隱形
+            this.rocketOrNot=rocketOrNot//是否有火箭，如果沒有，就隱形
             this.update=function(){
                 if(this.curPos.y>this.endPos.y){
                     this.curPos.x+=this.velocity.x;
@@ -62,8 +61,6 @@ fireworkManager.prototype={
             };
 
             this.draw=function(){
-                if(!this.rocketOrNot)
-                    return;
                 ctx.strokeStyle = '#FFFFFF';
                 ctx.lineWidth = 3;
                 ctx.beginPath();
@@ -95,46 +92,45 @@ fireworkManager.prototype={
         function(x,y,type){
             this.startPos=new fireworkManager.prototype.vector(x,y);
             this.fireworkPoints=[];
-            this.type=type;
             this.init=function(){
                 var x=this.startPos.x;
                 var y=this.startPos.y;
                 var tmpColor=fireworkManager.prototype.getRandomColor();
                 var tmpNum;
-                if(this.type==1){//正常
+                if(type==1){//正常
                     tmpNum=Math.random()*200+200;
                     for(var i=0;i<tmpNum;i++)
                         this.fireworkPoints.push(new fireworkManager.prototype.fireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,tmpColor,Math.random()*2,Math.random()*400+800,0));
                 }
-                else if(this.type==2){//同心圓
+                else if(type==2){//同心圓
                     tmpNum=360;
                     for(i=0;i<6;i++)
                         for(var j=0;j<tmpNum/6;j++)
                             this.fireworkPoints.push(new fireworkManager.prototype.fireworkPoint(x,y,i/24+Math.random()*0.02,2*Math.PI*j/(tmpNum/6),tmpColor,Math.random()*2,Math.random()*200+800,0,0.00005));
                 }
-                else if(this.type==3){//圓
+                else if(type==3){//圓
                     tmpNum=360;
                     for(i=0;i<tmpNum;i++)
                         this.fireworkPoints.push(new fireworkManager.prototype.fireworkPoint(x,y,0.5,2*Math.PI*i/tmpNum,tmpColor,Math.random()*2,Math.random()*200+800,0));
                 }
-                else if(this.type==4){//大煙火
+                else if(type==4){//大煙火
                     tmpNum=1800;
                     for(i=0;i<tmpNum;i++)
                         this.fireworkPoints.push(new fireworkManager.prototype.fireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,tmpColor,Math.random()*2,Math.random()*1000+600,0));
                 }
-                else if(this.type==5){//破碎圓
+                else if(type==5){//破碎圓
                     tmpNum=720;
                     for(i=0;i<8;i++)
                         for(j=0;j<tmpNum/8;j++)
                             this.fireworkPoints.push(new fireworkManager.prototype.fireworkPoint(x,y,0.5,2*Math.PI* (i/8+(Math.random()*15+15)/360) ,tmpColor,Math.random()*2,Math.random()*200+800,0));
                 }
-                else if(this.type==6){//太陽
+                else if(type==6){//太陽
                     tmpNum=720;
                     for(i=0;i<20;i++)
                         for(j=0;j<tmpNum/20;j++)
                             this.fireworkPoints.push(new fireworkManager.prototype.fireworkPoint(x,y,Math.random()*0.3,2*Math.PI*i/20 ,tmpColor,Math.random()*2,Math.random()*200+800,0));
                 }
-                else if(this.type==7){//放射狀
+                else if(type==7){//放射狀
                     tmpNum=3000;
                     for(i=0;i<150;i++){
                         var angle=2*Math.PI*Math.random();
@@ -143,7 +139,7 @@ fireworkManager.prototype={
                             this.fireworkPoints.push(new fireworkManager.prototype.fireworkPoint(x,y,Math.random()*speedMax,angle ,tmpColor,Math.random()*2,Math.random()*400+600,0,0.00005));
                     }
                 }
-                else if(this.type==8){//小炮
+                else if(type==8){//小炮
                     tmpNum=200;
                     for(i=0;i<tmpNum;i++)
                         this.fireworkPoints.push(new fireworkManager.prototype.fireworkPoint(x,y,Math.random()*0.3,2*Math.PI*Math.random(),tmpColor,Math.random()*2,Math.random()*100+200,0));
@@ -152,7 +148,7 @@ fireworkManager.prototype={
             };
             this.checkFinish=function(){//檢查是否
                 if(this.fireworkPoints[0] && this.fireworkPoints[0].time>=1600){//1600是直接取一個大的值，比所有煙火的時間都還來的長
-                    if(this.type==4){//如果是第4種煙火的話，那就要加上之後的螢火蟲效果
+                    if(type==4){//如果是第4種煙火的話，那就要加上之後的螢火蟲效果
                         for(var i=0;i<500;i++){
                             var self=this;
                             setTimeout(function(){

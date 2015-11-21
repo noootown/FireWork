@@ -1,8 +1,7 @@
 'use strict';
 function wordManager(){
-    var FADEOUTTIME=1000;
-    var FADEINTIME=1000;
-    var DELAYTIME=9500;
+    var FADEOUTTIME=2000;
+    var FADEINTIME=2000;
     this.words=[];
     //var pro=wordManager.prototype;
     this.ptr=0;
@@ -22,10 +21,7 @@ function wordManager(){
             $('.showWord').removeClass('active');
             setTimeout(drawWord,FADEINTIME);
         };
-        setTimeout(drawWord,DELAYTIME);
+        drawWord();
     };
 }
 
-
-wordManager.prototype={
-};
