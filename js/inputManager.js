@@ -1,7 +1,8 @@
 'use strict';
-function inputManager(fireworkToInput){
+function inputManager(){
     var self=this;
-    this.firework=fireworkToInput;
+    //this.firework=fireworkToInput;
+    this.firework;
     this.fireworkMap={
 
         //1~8
@@ -83,3 +84,5 @@ inputManager.prototype.bindEvent=function(){
             self.execFunc('stopRecord',event.which);
     });
 };
+
+export default inputManager;

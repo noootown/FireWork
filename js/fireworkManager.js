@@ -49,7 +49,7 @@ fireworkManager.prototype={
             this.time=Math.random()*20+20;//在空中發射的時間
             this.velocity=new fireworkManager.prototype.vector( (this.endPos.x-this.startPos.x)/this.time , (this.endPos.y-this.startPos.y)/this.time);
             this.color='#FFFFFF';
-            this.rocketOrNot=rocketOrNot//是否有火箭，如果沒有，就隱形
+            this.rocketOrNot=rocketOrNot;//是否有火箭，如果沒有，就隱形
             this.update=function(){
                 if(this.curPos.y>this.endPos.y){
                     this.curPos.x+=this.velocity.x;
@@ -224,3 +224,5 @@ fireworkManager.prototype={
     switchRocket:function(){this.rocketOrNot=!this.rocketOrNot;},
     getRandomColor:function(){return 'hsl(' + Math.random()*360 + ',100%, 70%)';}
 };
+
+export default fireworkManager;

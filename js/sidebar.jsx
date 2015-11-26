@@ -1,18 +1,25 @@
 'use strict';
-var SideBar =React.createClass({
-    handleUpdateItems: function(wordItems){
+import React,{Component}  from 'react';
+import ReactReorderable from './react-reorderable.min.js';
+class SideBar extends Component{
+    constructor(){
+        super();
+        this.state={items: [], text: '',sideBarOpen:true, colors:[]};
+    }
+
+    handleUpdateItems(wordItems){
         this.setState({items:wordItems});
-    },
-    getInitialState: function() {
-        return {items: [], text: '',sideBarOpen:true, colors:[]};
-    },
-    handleColorUpdate:function(updateColors){
+    }
+
+    handleColorUpdate(updateColors){
         this.setState({colors:updateColors});
-    },
-    onChange: function(e) {
+    }
+
+    onChange(e){
         this.setState({text: e.target.value});
-    },
-    handleSubmit: function(e) {
+    }
+
+    handleSubmit(e) {
         e.preventDefault();
         var nextItems;
         if(this.state.text.match(/\s*/)[0]==this.state.text)//判斷是否為空白鍵字串或者是空字串
@@ -21,12 +28,14 @@ var SideBar =React.createClass({
             nextItems = this.state.items.concat([this.state.text]);
 
         this.setState({items: nextItems, text:''});
-    },
-    handleSlideClick:function(){
+    }
+
+    handleSlideClick(){
         this.state.sideBarOpen=!this.state.sideBarOpen;
         clearScreen();
-    },
-    handlePreviewClick:function(){
+    }
+
+    handlePreviewClick(){
         this.handleSlideClick();
         wordAll.words=this.state.items;
         setTimeout(function(){$('.time-second3').addClass('active');},500);
@@ -38,9 +47,9 @@ var SideBar =React.createClass({
         setTimeout(function(){$('.time-second1').removeClass('active');},5500);
         setTimeout(function(){$('.time-second0').removeClass('active');},7500);
         setTimeout(function(){startAction=true;wordAll.draw();},9000);//delay time
+    }
 
-    },
-    render:function(){
+    render(){
         return (
                 <div>
                 <div className={'sideBarBtn active'} onClick={this.handleSlideClick}>
@@ -61,15 +70,16 @@ var SideBar =React.createClass({
                 </div>
                );
     }
-});
-var WordListContainer = React.createClass({//裝Word的container
-    handleRemoveBtnClick:function(which){
+}
+class WordListContainer extends Component{
+    handleRemoveBtnClick(which){
         this.props.items.splice(which-1,1);//把選中的字串移除
         this.props.updateItems(this.props.items);
         this.props.colors.splice(which-1,1);//把選中的顏色移除
         this.props.updateItems(this.colors.items);
-    },
-    render:function(){
+    }
+
+    render(){
         var self=this;
         var createItem = function(text, index) {
             return <Word key={index + text} text={text} btnClick={self.handleRemoveBtnClick}/>;
@@ -89,13 +99,14 @@ var WordListContainer = React.createClass({//裝Word的container
                 </ReactReorderable>
               );
     }
-});
-var Word = React.createClass({//顯示的字
-    handleRemoveBtnClick:function(){
+}
+class Word extends Component{
+    handleRemoveBtnClick(){
         var which=$(this.getDOMNode()).parent().data('reorderableKey').substr(5);//get which node
         this.props.btnClick(which);
-    },
-    render: function() {
+    }
+
+    render() {
         return (
                 <div className={"draggable-element"}>
                 <div className={"draggable-handle"}>{this.props.text}</div>
@@ -104,31 +115,32 @@ var Word = React.createClass({//顯示的字
                 </div>
                );
     }
-});
+}
+class ColorBox extends Component{
+    constructor(){
+        super();
+        this.state={color:0};
+    }
 
-var ColorBox =React.createClass({
-    getInitialState:function(){
-        return {color:0};//0~6 white red orange yellow green blue purple
-    },
-    handleBtnClick:function(){
+    handleBtnClick(){
         this.setState({color:(this.state.color+1)%6});
-    },
-    render:function(){
+    }
+
+    render(){
         return (
                 <span className={'colorBox'} onClick={this.handleBtnClick}></span>
                );
     }
-});
-var CrossBtn = React.createClass({//清除按鈕
-    render:function(){
+}
+class CrossBtn extends Component{
+    render(){
         return (
                 <img src={'img/cross.png'} className={'img-remove'} onClick={this.props.btnClick}></img>
                );
     }
-});
-
-var WordListAll = React.createClass({
-    render: function() {
+}
+class WordListAll extends Component{
+    render() {
         return (
                 <div>
                 <h3>想說的話</h3>
@@ -140,19 +152,15 @@ var WordListAll = React.createClass({
                 </div>
                );
     }
-});
-
-var PreviewBtn =React.createClass({
-    render:function(){
+}
+class PreviewBtn extends Component{
+    render(){
         return (
                 <button onClick={this.props.handlePreviewClick}>{'錄製'}</button>
                );
     }
-});
+}
 
 
 
-ReactDOM.render(<SideBar/>, document.getElementById('side'));
-
-
-
+export default SideBar;
