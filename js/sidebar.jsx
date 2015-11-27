@@ -1,10 +1,11 @@
 'use strict';
 import React,{Component}  from 'react';
+import ReactDOM from 'react-dom';
 import ReactReorderable from './react-reorderable.min.js';
-class SideBar extends Component{
+class SideBar extends React.Component{
     constructor(){
         super();
-        this.state={items: [], text: '',sideBarOpen:true, colors:[]};
+        this.state={items: [], text: '', colors:[]};
     }
 
     handleUpdateItems(wordItems){
@@ -30,29 +31,15 @@ class SideBar extends Component{
         this.setState({items: nextItems, text:''});
     }
 
-    handleSlideClick(){
-        this.state.sideBarOpen=!this.state.sideBarOpen;
-        clearScreen();
-    }
-
     handlePreviewClick(){
-        this.handleSlideClick();
-        wordAll.words=this.state.items;
-        setTimeout(function(){$('.time-second3').addClass('active');},500);
-        setTimeout(function(){$('.time-second2').addClass('active');},2500);
-        setTimeout(function(){$('.time-second1').addClass('active');},4500);
-        setTimeout(function(){$('.time-second0').addClass('active');},6500);
-        setTimeout(function(){$('.time-second3').removeClass('active');},1500);
-        setTimeout(function(){$('.time-second2').removeClass('active');},3500);
-        setTimeout(function(){$('.time-second1').removeClass('active');},5500);
-        setTimeout(function(){$('.time-second0').removeClass('active');},7500);
-        setTimeout(function(){startAction=true;wordAll.draw();},9000);//delay time
+        this.props.toggleSideBar();
+        this.props.startRecord(this.state.items);
     }
 
     render(){
         return (
                 <div>
-                <div className={'sideBarBtn active'} onClick={this.handleSlideClick}>
+                <div className={'sideBarBtn active'} onClick={this.props.toggleSideBar}>
                 <span className={'sideBarBar active'}></span>
                 <span className={'sideBarBar active'}></span>
                 <span className={'sideBarBar active'}></span>
@@ -62,10 +49,10 @@ class SideBar extends Component{
                 items={this.state.items} 
                 text={this.state.text}
                 colors={this.state.colors}
-                updateItems={this.handleUpdateItems} 
-                onSubmit={this.handleSubmit} 
-                onChange={this.onChange}/>
-                <PreviewBtn handlePreviewClick={this.handlePreviewClick}/>
+                updateItems={this.handleUpdateItems.bind(this)} 
+                onSubmit={this.handleSubmit.bind(this)} 
+                onChange={this.onChange.bind(this)}/>
+                <PreviewBtn handlePreviewClick={this.handlePreviewClick.bind(this)}/>
                 </div>
                 </div>
                );
@@ -76,14 +63,13 @@ class WordListContainer extends Component{
         this.props.items.splice(which-1,1);//把選中的字串移除
         this.props.updateItems(this.props.items);
         this.props.colors.splice(which-1,1);//把選中的顏色移除
-        this.props.updateItems(this.colors.items);
+        //this.props.updateItems(this.colors.items);
     }
 
     render(){
-        var self=this;
         var createItem = function(text, index) {
-            return <Word key={index + text} text={text} btnClick={self.handleRemoveBtnClick}/>;
-        };
+            return <Word key={index + text} text={text} btnClick={this.handleRemoveBtnClick.bind(this)}/>;
+        }.bind(this);
         return(
                 <ReactReorderable handle={'.draggable-handle'} mode={'list'} 
                 onDragStart={function(){}}
@@ -91,8 +77,8 @@ class WordListContainer extends Component{
                     var dataToItem=function(data){
                         return data.props.text;
                     };
-                    self.props.updateItems(data.map(dataToItem));
-                }}
+                    this.props.updateItems(data.map(dataToItem));
+                }.bind(this)}
                 onChange={function(){}}
                 >
                 {this.props.items.map(createItem)}
@@ -102,16 +88,17 @@ class WordListContainer extends Component{
 }
 class Word extends Component{
     handleRemoveBtnClick(){
-        var which=$(this.getDOMNode()).parent().data('reorderableKey').substr(5);//get which node
+        //var which=$(this.getDOMNode()).parent().data('reorderableKey').substr(5);//get which node
+        var which=$(ReactDOM.findDOMNode(this)).parent().data('reorderableKey').substr(5);//get which node
         this.props.btnClick(which);
     }
 
     render() {
         return (
-                <div className={"draggable-element"}>
-                <div className={"draggable-handle"}>{this.props.text}</div>
+                <div className={'draggable-element'}>
+                <div className={'draggable-handle'}>{this.props.text}</div>
                 <ColorBox />
-                <CrossBtn updateItems={this.props.updateItems} btnClick={this.handleRemoveBtnClick}/>
+                <CrossBtn updateItems={this.props.updateItems} btnClick={this.handleRemoveBtnClick.bind(this)}/>
                 </div>
                );
     }
@@ -128,14 +115,14 @@ class ColorBox extends Component{
 
     render(){
         return (
-                <span className={'colorBox'} onClick={this.handleBtnClick}></span>
+                <span className={'colorBox'} onClick={this.handleBtnClick.bind(this)}></span>
                );
     }
 }
 class CrossBtn extends Component{
     render(){
         return (
-                <img src={'img/cross.png'} className={'img-remove'} onClick={this.props.btnClick}></img>
+                <img src={'img/cross.png'} className={'img-remove'} onClick={this.props.btnClick.bind(this)}></img>
                );
     }
 }
@@ -144,9 +131,9 @@ class WordListAll extends Component{
         return (
                 <div>
                 <h3>想說的話</h3>
-                <WordListContainer items={this.props.items} text={this.props.text} updateItems={this.props.updateItems} colors={this.props.colors}/>
-                <form onSubmit={this.props.onSubmit}>
-                <input id={'word-input'}  onChange={this.props.onChange} value={this.props.text} />
+                <WordListContainer items={this.props.items} text={this.props.text} updateItems={this.props.updateItems.bind(this)} colors={this.props.colors}/>
+                <form onSubmit={this.props.onSubmit.bind(this)}>
+                <input id={'word-input'}  onChange={this.props.onChange.bind(this)} value={this.props.text} />
                 <button>{'輸入'}</button>
                 </form>
                 </div>
@@ -156,7 +143,7 @@ class WordListAll extends Component{
 class PreviewBtn extends Component{
     render(){
         return (
-                <button onClick={this.props.handlePreviewClick}>{'錄製'}</button>
+                <button onClick={this.props.handlePreviewClick.bind(this)}>{'錄製'}</button>
                );
     }
 }
