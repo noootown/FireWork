@@ -1,6 +1,6 @@
 'use strict';
 import React, {Component}  from 'react';
-//import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom';
 import SideBar from './sidebar';
 import SaveDialog from './dialog';
 class Main extends React.Component{
@@ -8,11 +8,15 @@ class Main extends React.Component{
         super();
         this.state={
             sideBarOpen:true,
-            recordId:null
+            recordId:null,
+            startAction:false,
+            flashRecId:null,
+            modal:false
         };
     }
     setupInputManager(fireworkManager){
         Main.defaultProps.myInputManager.firework=fireworkManager;
+        Main.defaultProps.myInputManager.virtualDOM=this;
     }
     setWords(words){
         Main.defaultProps.wordAll.words=words;
@@ -20,12 +24,12 @@ class Main extends React.Component{
     }
     startRecord(){
         this.refs.timer.timerCountDown();
-        Main.defaultProps.myInputManager.startAction=true;
+        this.state.startAction=true;
         clearTimeout(this.state.recordId);
         this.state.recordId=setTimeout(function(){
-            if(Main.defaultProps.myInputManager.startAction){
+            if(this.state.startAction){
                 Main.defaultProps.wordAll.draw();
-                Main.defaultProps.myInputManager.flashRecId
+                this.state.flashRecId
                     =setInterval(function(){
                         $('.startActionInstruction').children().toggleClass('active');
                     },800);
@@ -33,8 +37,8 @@ class Main extends React.Component{
         }.bind(this),9000);//delay time
     }
     toggleSideBar(){
-        if(Main.defaultProps.myInputManager.startAction){
-            Main.defaultProps.myInputManager.startAction=false;
+        if(this.state.startAction){
+            this.state.startAction=false;
             this.refs.startActionInstruction.stopFlashRec();
         }
         this.state.sideBarOpen=!this.state.sideBarOpen;
@@ -46,7 +50,7 @@ class Main extends React.Component{
 
     }
     saveDialogAgainClick(){
-        Main.defaultProps.myInputManager.modal=false;
+        this.state.modal=false;
         $('.optionBtn').removeClass('active');
         $('.dialogSaveOrAbort').removeClass('active');
         $('.modal').removeClass('active');
@@ -56,7 +60,8 @@ class Main extends React.Component{
         }.bind(this),800);
     }
     saveDialogQuitClick(){
-        Main.defaultProps.myInputManager.modal=false;
+        this.state.modal=false;
+        this.refs.timer.clearTimer();
         $('.optionBtn').removeClass('active');
         $('.dialogSaveOrAbort').removeClass('active');
         $('.modal').removeClass('active');
@@ -65,7 +70,7 @@ class Main extends React.Component{
     render(){
         return(
                 <div className={'main'}>
-                <MainCanvas setupInputManager={this.setupInputManager}/>
+                <MainCanvas setupInputManager={this.setupInputManager.bind(this)}/>
                 <Navbar/>
                 <Timer ref='timer'/>
                 <SideBar toggleSideBar={this.toggleSideBar.bind(this)} setWords={this.setWords.bind(this)}/>
@@ -428,9 +433,7 @@ function getRandomColor(){
 function InputManager(){
     var self=this;
     this.firework;
-    this.startAction;
-    this.flashRecId;
-    this.modal=false;
+    this.virtualDOM;
     this.fireworkMap={
 
         //1~8
@@ -483,7 +486,7 @@ InputManager.keyDownFunction={
         },
     shoot:
         function(key){
-            if(this.firework!==undefined && !this.modal){
+            if(this.firework!==undefined && !this.virtualDOM.state.modal){
                 if($('#word-input').is(':focus'))
                     InputManager.keyDownFunction['inputCharacter'](key);
                 else
@@ -492,7 +495,7 @@ InputManager.keyDownFunction={
         },
     switchRocket:
         function(key){
-            if(this.firework!==undefined && !this.modal){
+            if(this.firework!==undefined && !this.virtualDOM.state.modal){
                 if($('#word-input').is(':focus'))
                     InputManager.keyDownFunction['inputCharacter'](key);
                 else    
@@ -501,12 +504,12 @@ InputManager.keyDownFunction={
         },
     stopRecord:
         function(){
-            if(!this.modal){
-                if(this.startAction){
-                    this.startAction=false;
-                    clearInterval(this.flashRecId);
+            if(!this.virtualDOM.state.modal){
+                if(this.virtualDOM.state.startAction){
+                    this.virtualDOM.state.startAction=false;
+                    clearInterval(this.virtualDOM.state.flashRecId);
                     $('.startActionInstruction').children().removeClass('active');
-                    this.modal=true;
+                    this.virtualDOM.state.modal=true;
                     $('.optionBtn').addClass('active');
                     $('.dialogSaveOrAbort').addClass('active');
                     $('.modal').addClass('active');
