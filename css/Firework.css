@@ -214,10 +214,10 @@ top:0;
 left:0;
 }
 .startActionInstruction > *{
-    display:none;
+display:none;
 }
 .startActionInstruction > *.active{
-    display:inline;
+display:inline;
 }
 .img-rec{
 width:66px;
@@ -235,4 +235,83 @@ display:none;
 }
 .startActionInstructionWords{
 display:inline;
+}
+.modal{
+position:absolute;
+top:0;
+left:0;
+visibility:hidden;
+min-height:100%;
+width:100%;
+z-index:99999;
+background-color:#000000;
+opacity:1;
+}
+.modal.active{
+visibility:visible;
+}
+
+.dialogSaveOrAbort{
+position:absolute;
+width:800px;
+height:180px;
+background-color:transparent;
+z-index:-100;
+display:inline;
+top:40%;
+margin-top:-120px;
+left:50%;
+margin-left:-400px;
+
+}
+
+.dialogSaveOrAbort.active{
+z-index:100000;
+display:inline;
+}
+.dialogTitle{
+width:100%;
+text-align:center;
+color:#FFFFFF;
+font-size:40px;
+font-weight:200;
+margin-bottom:10px;
+}
+.dialogBtnDiv{
+position:relative;
+width:100%;
+height:30px;
+top:60px;
+text-align:center;
+}
+.optionBtn{
+width:0px;
+height:0px;
+opacity:0;
+border-radius:30px;
+border-width:3px;
+border-style:solid;
+border-color:#00FF00;
+background-color:transparent;
+display:inline;
+margin:0 20px 0 20px;
+font-size:20px;
+color:#FFFFFF;
+cursor:pointer;
+padding: 10px 20px;
+-webkit-transition: all 0.5s cubic-bezier(0.71,0,0.42,0.99);
+-moz-transition: all 0.5s cubic-bezier(0.71,0,0.42,0.99);
+-o-transition: all 0.5s cubic-bezier(0.71,0,0.42,0.99);
+transition: all 0.5s cubic-bezier(0.71,0,0.42,0.99);
+}
+.optionBtn.active{
+width:130px;
+height:50px;
+opacity:1;
+}
+.optionBtn.active:hover{
+background:#008000;
+}
+.optionBtn.active:focus{
+outline:none;
 }

@@ -33,7 +33,7 @@ class SideBar extends React.Component{
 
     handlePreviewClick(){
         this.props.toggleSideBar();
-        this.props.startRecord(this.state.items);
+        this.props.setWords(this.state.items);
     }
 
     render(){
@@ -97,28 +97,27 @@ class Word extends Component{
         return (
                 <div className={'draggable-element'}>
                 <div className={'draggable-handle'}>{this.props.text}</div>
-                <ColorBox />
                 <CrossBtn updateItems={this.props.updateItems} btnClick={this.handleRemoveBtnClick.bind(this)}/>
                 </div>
                );
     }
 }
-class ColorBox extends Component{
-    constructor(){
-        super();
-        this.state={color:0};
-    }
+//class ColorBox extends Component{
+    //constructor(){
+        //super();
+        //this.state={color:0};
+    //}
 
-    handleBtnClick(){
-        this.setState({color:(this.state.color+1)%6});
-    }
+    //handleBtnClick(){
+        //this.setState({color:(this.state.color+1)%6});
+    //}
 
-    render(){
-        return (
-                <span className={'colorBox'} onClick={this.handleBtnClick.bind(this)}></span>
-               );
-    }
-}
+    //render(){
+        //return (
+                //<span className={'colorBox'} onClick={this.handleBtnClick.bind(this)}></span>
+               //);
+    //}
+//}
 class CrossBtn extends Component{
     render(){
         return (
