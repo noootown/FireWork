@@ -2,32 +2,43 @@
 import React, {Component}  from 'react';
 //import ReactDOM from 'react-dom';
 import SideBar from './sidebar';
+import SaveDialog from './dialog';
 class Main extends React.Component{
     constructor(){
         super();
         this.state={
             sideBarOpen:true,
+            recordId:null,
+            startAction:false,
+            flashRecId:null,
+            modal:false
         };
     }
     setupInputManager(fireworkManager){
         Main.defaultProps.myInputManager.firework=fireworkManager;
+        Main.defaultProps.myInputManager.virtualDOM=this;
     }
-    startRecord(words){
+    setWords(words){
         Main.defaultProps.wordAll.words=words;
+        this.startRecord();
+    }
+    startRecord(){
         this.refs.timer.timerCountDown();
-        setTimeout(function(){
-            Main.defaultProps.myInputManager.startAction=true;
-            Main.defaultProps.wordAll.draw();
-            Main.defaultProps.myInputManager.flashRecId
-                =setInterval(function(){
-                    $('.startActionInstruction').children().toggleClass('active');
-                },800);
+        this.state.startAction=true;
+        clearTimeout(this.state.recordId);
+        this.state.recordId=setTimeout(function(){
+            if(this.state.startAction){
+                Main.defaultProps.wordAll.draw();
+                this.state.flashRecId
+                    =setInterval(function(){
+                        $('.startActionInstruction').children().toggleClass('active');
+                    },800);
+            }
         }.bind(this),9000);//delay time
     }
     toggleSideBar(){
-        console.log(Main.defaultProps.myInputManager.startAction);
-        if(Main.defaultProps.myInputManager.startAction){
-            Main.defaultProps.myInputManager.startAction=false;
+        if(this.state.startAction){
+            this.state.startAction=false;
             this.refs.startActionInstruction.stopFlashRec();
         }
         this.state.sideBarOpen=!this.state.sideBarOpen;
@@ -35,16 +46,42 @@ class Main extends React.Component{
         $('.sidePanel').toggleClass('active');
         $('.navbar').toggleClass('active');
     }
+    saveDialogSaveClick(){
+        //TODO
+    }
+    saveDialogAgainClick(){
+        this.state.modal=false;
+        $('.optionBtn').removeClass('active');
+        $('.dialogSaveOrAbort').removeClass('active');
+        $('.modal').removeClass('active');
+        this.refs.timer.clearTimer();
+        setTimeout(function(){
+            this.startRecord();
+        }.bind(this),800);
+    }
+    saveDialogQuitClick(){
+        this.state.modal=false;
+        this.refs.timer.clearTimer();
+        $('.optionBtn').removeClass('active');
+        $('.dialogSaveOrAbort').removeClass('active');
+        $('.modal').removeClass('active');
+        this.toggleSideBar();
+    }
     render(){
         return(
                 <div className={'main'}>
-                <MainCanvas setupInputManager={this.setupInputManager}/>
+                <MainCanvas setupInputManager={this.setupInputManager.bind(this)}/>
                 <Navbar/>
                 <Timer ref='timer'/>
-                <SideBar toggleSideBar={this.toggleSideBar.bind(this)} startRecord={this.startRecord.bind(this)}/>
+                <SideBar toggleSideBar={this.toggleSideBar.bind(this)} setWords={this.setWords.bind(this)}/>
                 <ShowWord />
                 <StartActionInstruction ref='startActionInstruction'/>
                 <StartActionInstructionWords/>
+                <SaveDialog 
+                saveClick={this.saveDialogSaveClick.bind(this)} 
+                againClick={this.saveDialogAgainClick.bind(this)} 
+                quitClick={this.saveDialogQuitClick.bind(this)}/>
+                <Modal/>
                 </div>
               );
     }
@@ -73,17 +110,47 @@ class MainCanvas extends Component{
 MainCanvas.defaultProps={
     fireworkAll:new fireworkManager()
 };
-
+class Modal extends Component{
+    show(){
+        $('modal').css('visibility','visible');
+    }
+    hide(){
+        $('modal').css('visibility','hidden');
+    }
+    render(){
+        return(
+                <div className={'modal'}>
+                </div>
+              );
+    }
+}
 class Timer extends Component{
+    constructor(){
+        super();
+        this.state={
+            timerId:[]
+        };
+    }
+    clearTimer(){
+        $('.time-second').removeClass('active');
+        $('.time-second').addClass('hide');
+        this.state.timerId.map(function(timer){
+            clearTimeout(timer);
+            return null;
+        });
+        setTimeout(function(){
+            $('.time-second').removeClass('hide');
+        },800);
+    }
     timerCountDown(){
-        setTimeout(function(){$('.time-second3').addClass('active');},500);
-        setTimeout(function(){$('.time-second2').addClass('active');},2500);
-        setTimeout(function(){$('.time-second1').addClass('active');},4500);
-        setTimeout(function(){$('.time-second0').addClass('active');},6500);
-        setTimeout(function(){$('.time-second3').removeClass('active');},1500);
-        setTimeout(function(){$('.time-second2').removeClass('active');},3500);
-        setTimeout(function(){$('.time-second1').removeClass('active');},5500);
-        setTimeout(function(){$('.time-second0').removeClass('active');},7500);
+        this.state.timerId[0]=setTimeout(function(){$('.time-second3').addClass('active');},500);
+        this.state.timerId[1]=setTimeout(function(){$('.time-second2').addClass('active');},2500);
+        this.state.timerId[2]=setTimeout(function(){$('.time-second1').addClass('active');},4500);
+        this.state.timerId[3]=setTimeout(function(){$('.time-second0').addClass('active');},6500);
+        this.state.timerId[4]=setTimeout(function(){$('.time-second3').removeClass('active');},1500);
+        this.state.timerId[5]=setTimeout(function(){$('.time-second2').removeClass('active');},3500);
+        this.state.timerId[6]=setTimeout(function(){$('.time-second1').removeClass('active');},5500);
+        this.state.timerId[7]=setTimeout(function(){$('.time-second0').removeClass('active');},7500);
     }
     render(){
         return(
@@ -370,8 +437,7 @@ function getRandomColor(){
 function InputManager(){
     var self=this;
     this.firework;
-    this.startAction;
-    this.flashRecId;
+    this.virtualDOM;
     this.fireworkMap={
 
         //1~8
@@ -424,7 +490,7 @@ InputManager.keyDownFunction={
         },
     shoot:
         function(key){
-            if(this.firework!==undefined){
+            if(this.firework!==undefined && !this.virtualDOM.state.modal){
                 if($('#word-input').is(':focus'))
                     InputManager.keyDownFunction['inputCharacter'](key);
                 else
@@ -433,7 +499,7 @@ InputManager.keyDownFunction={
         },
     switchRocket:
         function(key){
-            if(this.firework!==undefined){
+            if(this.firework!==undefined && !this.virtualDOM.state.modal){
                 if($('#word-input').is(':focus'))
                     InputManager.keyDownFunction['inputCharacter'](key);
                 else    
@@ -442,14 +508,22 @@ InputManager.keyDownFunction={
         },
     stopRecord:
         function(){
-            if(!$('#word-input').is(':focus')){
-                $('.sideBarBtn').toggleClass('active');
-                $('.sidePanel').toggleClass('active');
-                $('.navbar').toggleClass('active');
-                if(this.startAction){
-                    this.startAction=false;
-                    clearInterval(this.flashRecId);
+            if(!this.virtualDOM.state.modal){
+                if(this.virtualDOM.state.startAction){
+                    this.virtualDOM.state.startAction=false;
+                    clearInterval(this.virtualDOM.state.flashRecId);
                     $('.startActionInstruction').children().removeClass('active');
+                    this.virtualDOM.state.modal=true;
+                    $('.optionBtn').addClass('active');
+                    $('.dialogSaveOrAbort').addClass('active');
+                    $('.modal').addClass('active');
+                }
+                else{
+                    if(!$('#word-input').is(':focus') && !this.modal){
+                        $('.sideBarBtn').toggleClass('active');
+                        $('.sidePanel').toggleClass('active');
+                        $('.navbar').toggleClass('active');
+                    }
                 }
             }
         }

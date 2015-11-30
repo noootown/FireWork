@@ -33,7 +33,7 @@ class SideBar extends React.Component{
 
     handlePreviewClick(){
         this.props.toggleSideBar();
-        this.props.startRecord(this.state.items);
+        this.props.setWords(this.state.items);
     }
 
     render(){
@@ -52,7 +52,9 @@ class SideBar extends React.Component{
                 updateItems={this.handleUpdateItems.bind(this)} 
                 onSubmit={this.handleSubmit.bind(this)} 
                 onChange={this.onChange.bind(this)}/>
-                <PreviewBtn handlePreviewClick={this.handlePreviewClick.bind(this)}/>
+                <a className={'sidePanelBtn'} onClick={this.handlePreviewClick.bind(this)}>{'Make'}</a>
+                <a className={'sidePanelBtn'} onClick={this.handlePreviewClick.bind(this)}>{'Load'}</a>
+                <a className={'sidePanelBtn'} onClick={this.handlePreviewClick.bind(this)}>{'Help'}</a>
                 </div>
                 </div>
                );
@@ -71,6 +73,7 @@ class WordListContainer extends Component{
             return <Word key={index + text} text={text} btnClick={this.handleRemoveBtnClick.bind(this)}/>;
         }.bind(this);
         return(
+                <div className={'wordListContainer'}>
                 <ReactReorderable handle={'.draggable-handle'} mode={'list'} 
                 onDragStart={function(){}}
                 onDrop={function(data){
@@ -83,6 +86,7 @@ class WordListContainer extends Component{
                 >
                 {this.props.items.map(createItem)}
                 </ReactReorderable>
+                </div>
               );
     }
 }
@@ -97,28 +101,27 @@ class Word extends Component{
         return (
                 <div className={'draggable-element'}>
                 <div className={'draggable-handle'}>{this.props.text}</div>
-                <ColorBox />
                 <CrossBtn updateItems={this.props.updateItems} btnClick={this.handleRemoveBtnClick.bind(this)}/>
                 </div>
                );
     }
 }
-class ColorBox extends Component{
-    constructor(){
-        super();
-        this.state={color:0};
-    }
+//class ColorBox extends Component{
+//constructor(){
+//super();
+//this.state={color:0};
+//}
 
-    handleBtnClick(){
-        this.setState({color:(this.state.color+1)%6});
-    }
+//handleBtnClick(){
+//this.setState({color:(this.state.color+1)%6});
+//}
 
-    render(){
-        return (
-                <span className={'colorBox'} onClick={this.handleBtnClick.bind(this)}></span>
-               );
-    }
-}
+//render(){
+//return (
+//<span className={'colorBox'} onClick={this.handleBtnClick.bind(this)}></span>
+//);
+//}
+//}
 class CrossBtn extends Component{
     render(){
         return (
@@ -127,27 +130,21 @@ class CrossBtn extends Component{
     }
 }
 class WordListAll extends Component{
+    componentDidMount(){
+        $('#word-input').attr('placeholder','寫下想說的話');
+    }
     render() {
         return (
-                <div>
-                <h3>想說的話</h3>
+                <div className={'wordListAll'}>
+                <h3 className={'sidePanelTitle'}>寫下想說的話</h3>
                 <WordListContainer items={this.props.items} text={this.props.text} updateItems={this.props.updateItems.bind(this)} colors={this.props.colors}/>
-                <form onSubmit={this.props.onSubmit.bind(this)}>
+                <form id={'word-inputform'} onSubmit={this.props.onSubmit.bind(this)}>
                 <input id={'word-input'}  onChange={this.props.onChange.bind(this)} value={this.props.text} />
-                <button>{'輸入'}</button>
+                <button className={'sidePanelBtn enterBtn'}>{'輸入'}</button>
                 </form>
                 </div>
                );
     }
 }
-class PreviewBtn extends Component{
-    render(){
-        return (
-                <button onClick={this.props.handlePreviewClick.bind(this)}>{'錄製'}</button>
-               );
-    }
-}
-
-
 
 export default SideBar;
