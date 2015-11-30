@@ -8,6 +8,7 @@ class SaveDialog extends React.Component{
                 <div className={'dialogBtnDiv'}>
                     <button className={'optionBtn'} onClick={this.props.saveClick}>save</button>
                     <button className={'optionBtn'} onClick={this.props.againClick}>again</button>
+                    <button className={'optionBtn'} onClick={this.props.saveClick}>continue</button>
                     <button className={'optionBtn'} onClick={this.props.quitClick}>quit</button>
                 </div>
                 </div>

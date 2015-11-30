@@ -39,18 +39,20 @@ padding:0 10px;
 text-decoration:none;
 color:#FFFFFF;
 }
+
+/*sidebar*/
+
 .sideBarBtn{
 z-index:100;
-padding:25px 8px 25px 10px;
+padding:0 8px 0 10px;
 position:fixed;
-height:100%;
-top:0%;
+margin-right:10px;
+height:20%;
+top:40%;
 right:-5%;
-background-color:#CCCCCC;
+background-color:transparent;
 cursor:pointer;
-border-right:solid 1px #999999;
-/*border-top-left-radius:50%;*/
-/*border-bottom-left-radius:50%;*/
+border:solid 1px #00FF00;
 -webkit-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
 -moz-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
 -o-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
@@ -59,10 +61,13 @@ transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
 .sideBarBtn.active{
 right:20%;
 }
+.sideBarBtn:hover{
+background:#008000;
+}
 .sideBarBar{
 width:20px;
-height:3px;
-background-color:black;
+height:4px;
+background-color:#FFFFFF;
 margin-bottom:3px;
 display:block;
 }
@@ -93,14 +98,14 @@ opacity:0;
 transform:rotate(-45deg);
 }
 .sidePanel{
-padding-top:100px;
 z-index:99;
-height:100%;
+height:80%;
 width:20%;
+/*max-width:380px;*/
 position:fixed;
-top:0;
+top:10%;
 right:-25%;
-background-color:#CCCCCC;
+background-color:transparent;
 -webkit-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
 -moz-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
 -o-transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
@@ -109,21 +114,58 @@ transition: all 0.4s cubic-bezier(0.71,0,0.42,0.99);
 .sidePanel.active{
 right:0%;
 }
-
+.wordListAll{
+height:80%;
+}
+.sidePanelTitle{
+color:#FFFFFF;
+text-align:center;
+margin:10px;
+font-size:25px;
+}
+.wordListContainer{
+height:300px;
+margin:0 5px 0 5px;
+overflow-y:scroll;
+}
+.wordListContainer > *{
+    margin-right:5px;
+}
+.sidePanelBtn{
+cursor:pointer;
+padding:10px 20px;
+border:solid;
+border-radius:30px;
+border-width:3px;
+border-style:solid;
+border-color:#00FF00;
+background-color:transparent;
+font-size:16px;
+color:#FFFFFF;
+margin: 0 5px;
+}
+.sidePanelBtn:hover{
+background:#008000;
+}
+.enterBtn{
+    padding:8px 20px;
+}
+Button:focus{
+    outline:none;
+}
 .draggable-element {
 position:relative;
-background-color: grey;
 height:100%;
 width:100%;
+background:rgba(0,100,255,0.6);
 display:inline-flex;
 }
 .draggable-handle {
 width:85%;
-background-color: grey;
 cursor: move;
 color: white;
 font-size: 20px;
-padding:10px 25px 10px 10px;
+padding:8px 25px 8px 10px;
 overflow-wrap:break-word;
 }
 .draggable-remove{
@@ -160,6 +202,7 @@ cursor:pointer;
 .react-reorderable-item {
 display:block;
 width:100%;
+margin: 5px 0 5px 0;
 }
 .react-reorderable-item-active {
 font-size:15px;
@@ -172,6 +215,23 @@ opacity:0;
 .react-reorderable-handle {
 position: absolute;
 }
+
+#word-inputform{
+    margin: 0 10px;
+}
+#word-input{
+max-width:50%;
+margin-right:5px;
+height:25px;
+border-radius:10px;
+margin-top:20px;
+padding: 0 10px;
+font-size:18px;
+}
+#word-input:focus{
+outline:none;
+}
+
 .showWord{
 position:fixed;
 width:100%;
@@ -205,6 +265,9 @@ transition: all 0.8s cubic-bezier(0.71,0,0.42,0.99);
 }
 .time-second.active{
 opacity:1;
+}
+.time-second.hide{
+display:none;
 }
 
 .startActionInstruction{

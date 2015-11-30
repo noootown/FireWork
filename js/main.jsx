@@ -1,6 +1,6 @@
 'use strict';
 import React, {Component}  from 'react';
-import ReactDOM from 'react-dom';
+//import ReactDOM from 'react-dom';
 import SideBar from './sidebar';
 import SaveDialog from './dialog';
 class Main extends React.Component{
@@ -47,7 +47,7 @@ class Main extends React.Component{
         $('.navbar').toggleClass('active');
     }
     saveDialogSaveClick(){
-
+        //TODO
     }
     saveDialogAgainClick(){
         this.state.modal=false;
@@ -133,10 +133,14 @@ class Timer extends Component{
     }
     clearTimer(){
         $('.time-second').removeClass('active');
+        $('.time-second').addClass('hide');
         this.state.timerId.map(function(timer){
             clearTimeout(timer);
             return null;
         });
+        setTimeout(function(){
+            $('.time-second').removeClass('hide');
+        },800);
     }
     timerCountDown(){
         this.state.timerId[0]=setTimeout(function(){$('.time-second3').addClass('active');},500);
