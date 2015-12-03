@@ -11,12 +11,14 @@ class Main extends React.Component{
             recordId:null,
             startAction:false,
             flashRecId:null,
-            modal:false
+            modal:false,
+            saveRecord:[]
         };
     }
     setupInputManager(fireworkManager){
         Main.defaultProps.myInputManager.firework=fireworkManager;
         Main.defaultProps.myInputManager.virtualDOM=this;
+        Main.defaultProps.myInputManager.firework.virtualDOM=this;
     }
     setWords(words){
         Main.defaultProps.wordAll.words=words;
@@ -35,6 +37,11 @@ class Main extends React.Component{
                     },800);
             }
         }.bind(this),9000);//delay time
+
+        setTimeout(function(){//start record timer
+            Main.defaultProps.myInputManager.firework.startTime=new Date().getTime();
+            Main.defaultProps.myInputManager.firework.saveRecord=[];
+        },8300);
     }
     toggleSideBar(){
         if(this.state.startAction){
@@ -47,25 +54,36 @@ class Main extends React.Component{
         $('.navbar').toggleClass('active');
     }
     saveDialogSaveClick(){
-        //TODO
+        this.state.saveRecord=Main.defaultProps.myInputManager.firework.saveRecord;
+        //console.log(this.state.saveRecord);
+        this.saveDialogQuitClick();
+        this.refs.centerShowWords.showRecordSave();
     }
     saveDialogAgainClick(){
-        this.state.modal=false;
-        $('.optionBtn').removeClass('active');
-        $('.dialogSaveOrAbort').removeClass('active');
-        $('.modal').removeClass('active');
-        this.refs.timer.clearTimer();
+        this.resetRecordState();
         setTimeout(function(){
             this.startRecord();
         }.bind(this),800);
     }
+    saveDialogContinueClick(){
+        this.state.modal=false;
+        $('.optionBtn').removeClass('active');
+        $('.dialogSaveOrAbort').removeClass('active');
+        $('.modal').removeClass('active');
+    }
     saveDialogQuitClick(){
+        this.resetRecordState();
+        this.toggleSideBar();
+    }
+    resetRecordState(){
+        this.state.startAction=false;
+        clearInterval(this.state.flashRecId);
+        $('.startActionInstruction').children().removeClass('active');
         this.state.modal=false;
         this.refs.timer.clearTimer();
         $('.optionBtn').removeClass('active');
         $('.dialogSaveOrAbort').removeClass('active');
         $('.modal').removeClass('active');
-        this.toggleSideBar();
     }
     render(){
         return(
@@ -80,8 +98,10 @@ class Main extends React.Component{
                 <SaveDialog 
                 saveClick={this.saveDialogSaveClick.bind(this)} 
                 againClick={this.saveDialogAgainClick.bind(this)} 
+                continueClick={this.saveDialogContinueClick.bind(this)} 
                 quitClick={this.saveDialogQuitClick.bind(this)}/>
                 <Modal/>
+                <CenterShowWords ref='centerShowWords'/>
                 </div>
               );
     }
@@ -108,7 +128,7 @@ class MainCanvas extends Component{
     }
 }
 MainCanvas.defaultProps={
-    fireworkAll:new fireworkManager()
+    fireworkAll:new FireworkManager()
 };
 class Modal extends Component{
     show(){
@@ -206,15 +226,28 @@ class Navbar extends Component{
     }
 }
 
+class CenterShowWords extends Component{
+    showRecordSave(){
+        $('.recordSave').addClass('active');
+        setTimeout(function(){$('.recordSave').removeClass('active');},1000);
+    }
+    render(){
+        return(
+                <h1 className={"centerShowWords recordSave"}>SAVED</h1>
+              );
+    }
+}
 export default Main;
 
 
-function fireworkManager(){
+function FireworkManager(){
     this.firework1s=[];
     this.firework2s=[];
     this.rocketOrNot=true;
+    this.saveRecord=[];
     this.curPos=new vector(-1000,0);
-    //this.type=1;
+    this.virtualDOM;
+    this.startTime;
     let self=this;
     this.$canvas;
     this.ctx;
@@ -226,10 +259,13 @@ function fireworkManager(){
             this.ctx.fill();
             for(var i=0;i<this.firework1s.length;i++){
                 var fire=this.firework1s[i];
-                if(fire.update() && fire.rocketOrNot)//如果還要繼續畫的話
+                if(!this.virtualDOM.state.modal && fire.update() && fire.rocketOrNot)//如果還要繼續畫的話
                     fire.draw();
                 else{//移除第一段火箭，並新增第二段煙火
-                    this.firework2s.push( new firework2(fire.endPos.x,fire.endPos.y,fire.type,this.ctx).init() );
+                    let newFire= new Firework2(fire.endPos.x,fire.endPos.y,fire.type,this.ctx, getTime(this.startTime) );
+                    this.firework2s.push(newFire);
+                    this.saveRecord.push(newFire);
+                    newFire.init();
                     this.firework1s.splice(i,1);
                     i--;
                 }
@@ -240,7 +276,7 @@ function fireworkManager(){
                     this.firework2s.splice(i,1);
                     i--;
                 }
-                else{
+                else if(!this.virtualDOM.state.modal){
                     fire.update();
                     fire.draw();
                 }
@@ -249,7 +285,9 @@ function fireworkManager(){
     };
 
     this.shoot=function(type){
-        this.firework1s.push(new firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx)); 
+        let newFire=new Firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx, getTime(this.startTime) );
+        this.saveRecord.push(newFire);
+        this.firework1s.push(newFire); 
     };
 
     this.switchRocket=function(){this.rocketOrNot=!this.rocketOrNot;};
@@ -264,7 +302,7 @@ function vector(x,y){
     };
 }
 
-function firework1(x,y,type,rocketOrNot,ctx){
+function Firework1(x,y,type,rocketOrNot,ctx,startTime){
     this.type=type;//哪一種煙火
     this.startPos=new vector(x,$(window).height());
     this.endPos=new vector(x,y);
@@ -273,6 +311,7 @@ function firework1(x,y,type,rocketOrNot,ctx){
     this.velocity=new vector( (this.endPos.x-this.startPos.x)/this.time , (this.endPos.y-this.startPos.y)/this.time);
     this.color='#FFFFFF';
     this.rocketOrNot=rocketOrNot;//是否有火箭，如果沒有，就隱形
+    this.startTime=startTime;
     this.update=function(){
         if(this.curPos.y>this.endPos.y){
             this.curPos.x+=this.velocity.x;
@@ -311,9 +350,10 @@ function firework1(x,y,type,rocketOrNot,ctx){
         }
     };
 }
-function firework2(x,y,type,ctx){
+function Firework2(x,y,type,ctx,time){
     this.startPos=new vector(x,y);
     this.fireworkPoints=[];
+    this.startTime=time;
     this.init=function(){
         var x=this.startPos.x;
         var y=this.startPos.y;
@@ -322,35 +362,35 @@ function firework2(x,y,type,ctx){
         if(type==1){//正常
             tmpNum=Math.random()*200+200;
             for(var i=0;i<tmpNum;i++)
-                this.fireworkPoints.push(new fireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,tmpColor,Math.random()*2,Math.random()*400+800,0,0.0003,ctx));
+                this.fireworkPoints.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,tmpColor,Math.random()*2,Math.random()*400+800,0,0.0003,ctx));
         }
         else if(type==2){//同心圓
             tmpNum=360;
             for(i=0;i<6;i++)
                 for(var j=0;j<tmpNum/6;j++)
-                    this.fireworkPoints.push(new fireworkPoint(x,y,i/24+Math.random()*0.02,2*Math.PI*j/(tmpNum/6),tmpColor,Math.random()*2,Math.random()*200+800,0,0.00005,ctx));
+                    this.fireworkPoints.push(new FireworkPoint(x,y,i/24+Math.random()*0.02,2*Math.PI*j/(tmpNum/6),tmpColor,Math.random()*2,Math.random()*200+800,0,0.00005,ctx));
         }
         else if(type==3){//圓
             tmpNum=360;
             for(i=0;i<tmpNum;i++)
-                this.fireworkPoints.push(new fireworkPoint(x,y,0.5,2*Math.PI*i/tmpNum,tmpColor,Math.random()*2,Math.random()*200+800,0,0.0003,ctx));
+                this.fireworkPoints.push(new FireworkPoint(x,y,0.5,2*Math.PI*i/tmpNum,tmpColor,Math.random()*2,Math.random()*200+800,0,0.0003,ctx));
         }
         else if(type==4){//大煙火
             tmpNum=1800;
             for(i=0;i<tmpNum;i++)
-                this.fireworkPoints.push(new fireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,tmpColor,Math.random()*2,Math.random()*1000+600,0,0.0003,ctx));
+                this.fireworkPoints.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,tmpColor,Math.random()*2,Math.random()*1000+600,0,0.0003,ctx));
         }
         else if(type==5){//破碎圓
             tmpNum=720;
             for(i=0;i<8;i++)
                 for(j=0;j<tmpNum/8;j++)
-                    this.fireworkPoints.push(new fireworkPoint(x,y,0.5,2*Math.PI* (i/8+(Math.random()*15+15)/360) ,tmpColor,Math.random()*2,Math.random()*200+800,0,0.0003,ctx));
+                    this.fireworkPoints.push(new FireworkPoint(x,y,0.5,2*Math.PI* (i/8+(Math.random()*15+15)/360) ,tmpColor,Math.random()*2,Math.random()*200+800,0,0.0003,ctx));
         }
         else if(type==6){//太陽
             tmpNum=720;
             for(i=0;i<20;i++)
                 for(j=0;j<tmpNum/20;j++)
-                    this.fireworkPoints.push(new fireworkPoint(x,y,Math.random()*0.3,2*Math.PI*i/20 ,tmpColor,Math.random()*2,Math.random()*200+800,0,0.0003,ctx));
+                    this.fireworkPoints.push(new FireworkPoint(x,y,Math.random()*0.3,2*Math.PI*i/20 ,tmpColor,Math.random()*2,Math.random()*200+800,0,0.0003,ctx));
         }
         else if(type==7){//放射狀
             tmpNum=3000;
@@ -358,13 +398,13 @@ function firework2(x,y,type,ctx){
                 var angle=2*Math.PI*Math.random();
                 var speedMax=Math.random()*0.15+0.15;
                 for(j=0;j<tmpNum/150;j++)
-                    this.fireworkPoints.push(new fireworkPoint(x,y,Math.random()*speedMax,angle ,tmpColor,Math.random()*2,Math.random()*400+600,0,0.00005,ctx));
+                    this.fireworkPoints.push(new FireworkPoint(x,y,Math.random()*speedMax,angle ,tmpColor,Math.random()*2,Math.random()*400+600,0,0.00005,ctx));
             }
         }
         else if(type==8){//小炮
             tmpNum=200;
             for(i=0;i<tmpNum;i++)
-                this.fireworkPoints.push(new fireworkPoint(x,y,Math.random()*0.3,2*Math.PI*Math.random(),tmpColor,Math.random()*2,Math.random()*100+200,0,0.0003,ctx));
+                this.fireworkPoints.push(new FireworkPoint(x,y,Math.random()*0.3,2*Math.PI*Math.random(),tmpColor,Math.random()*2,Math.random()*100+200,0,0.0003,ctx));
         }
         return this;
     };
@@ -398,7 +438,7 @@ function firework2(x,y,type,ctx){
         });
     };
 }
-function fireworkPoint(x,y,speed,angle,color,radius,timeMax,delay,acce,ctx){//每一個煙火點
+function FireworkPoint(x,y,speed,angle,color,radius,timeMax,delay,acce,ctx){//每一個煙火點
     this.startPos=new vector(x,y);
     this.curPos=new vector(x,y);
     this.speed=speed;
@@ -510,9 +550,6 @@ InputManager.keyDownFunction={
         function(){
             if(!this.virtualDOM.state.modal){
                 if(this.virtualDOM.state.startAction){
-                    this.virtualDOM.state.startAction=false;
-                    clearInterval(this.virtualDOM.state.flashRecId);
-                    $('.startActionInstruction').children().removeClass('active');
                     this.virtualDOM.state.modal=true;
                     $('.optionBtn').addClass('active');
                     $('.dialogSaveOrAbort').addClass('active');
@@ -532,24 +569,35 @@ InputManager.keyDownFunction={
 function WordManager(){
     var FADEOUTTIME=2000;
     var FADEINTIME=2000;
+
     this.words=[];
     this.ptr=0;
+    this.opacity=0;
+    this.init=function(){
+        setInterval(function(){
+            this.draw
+        })
+    }
     this.draw=function(){
-        this.ptr=0;
-        var self=this;
-        var drawWord= function(){
-            if(self.ptr===self.words.length)
-                return;
-            else{
-                $('.showWord').html(self.words[self.ptr]).addClass('active');
-                self.ptr++;
-                setTimeout(removeWord,FADEOUTTIME);
-            }
-        };
-        var removeWord=function(){
-            $('.showWord').removeClass('active');
-            setTimeout(drawWord,FADEINTIME);
-        };
-        drawWord();
+        //this.ptr=0;
+        //var self=this;
+        //var drawWord= function(){
+            //if(self.ptr===self.words.length)
+                //return;
+            //else{
+                //$('.showWord').html(self.words[self.ptr]).addClass('active');
+                //self.ptr++;
+                //setTimeout(removeWord,FADEOUTTIME);
+            //}
+        //};
+        //var removeWord=function(){
+            //$('.showWord').removeClass('active');
+            //setTimeout(drawWord,FADEINTIME);
+        //};
+        //drawWord();
     };
+}
+
+function getTime(startTime){
+    return new Date().getTime()-startTime;
 }

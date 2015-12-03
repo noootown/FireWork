@@ -31,9 +31,17 @@ class SideBar extends React.Component{
         this.setState({items: nextItems, text:''});
     }
 
-    handlePreviewClick(){
+    handleMakeClick(){
         this.props.toggleSideBar();
         this.props.setWords(this.state.items);
+    }
+
+    handleLoadClick(){
+    //TODO
+    }
+
+    handleHelpClick(){
+    //TODO
     }
 
     render(){
@@ -52,9 +60,9 @@ class SideBar extends React.Component{
                 updateItems={this.handleUpdateItems.bind(this)} 
                 onSubmit={this.handleSubmit.bind(this)} 
                 onChange={this.onChange.bind(this)}/>
-                <a className={'sidePanelBtn'} onClick={this.handlePreviewClick.bind(this)}>{'Make'}</a>
-                <a className={'sidePanelBtn'} onClick={this.handlePreviewClick.bind(this)}>{'Load'}</a>
-                <a className={'sidePanelBtn'} onClick={this.handlePreviewClick.bind(this)}>{'Help'}</a>
+                <a className={'sidePanelBtn'} onClick={this.handleMakeClick.bind(this)}>{'Make'}</a>
+                <a className={'sidePanelBtn'} onClick={this.handleLoadClick.bind(this)}>{'Load'}</a>
+                <a className={'sidePanelBtn'} onClick={this.handleHelpClick.bind(this)}>{'Help'}</a>
                 </div>
                 </div>
                );
