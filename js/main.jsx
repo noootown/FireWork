@@ -10,6 +10,7 @@ class Main extends React.Component{
             sideBarOpen:true,
             recordId:null,
             startAction:false,
+            pressRecord:false,
             flashRecId:null,
             modal:false,
             saveRecord:[]
@@ -18,23 +19,36 @@ class Main extends React.Component{
     setupInputManager(fireworkManager){
         Main.defaultProps.myInputManager.firework=fireworkManager;
         Main.defaultProps.myInputManager.virtualDOM=this;
-        Main.defaultProps.myInputManager.firework.virtualDOM=this;
+        Main.defaultProps.wordAll.$canvas=$('#mainCanvas');
+        Main.defaultProps.wordAll.ctx=fireworkManager.ctx;
+        setInterval(function(){
+            if(!this.state.startAction){
+                Main.defaultProps.wordAll.ptr=0;
+            }
+            if(!this.state.modal){
+                Main.defaultProps.myInputManager.firework.init();
+            }
+            if(this.state.startAction && !this.state.modal){
+                Main.defaultProps.wordAll.init();
+            }
+
+        }.bind(this),25);
     }
     setWords(words){
         Main.defaultProps.wordAll.words=words;
         this.startRecord();
     }
     startRecord(){
+        this.state.pressRecord=true;
         this.refs.timer.timerCountDown();
-        this.state.startAction=true;
         clearTimeout(this.state.recordId);
         this.state.recordId=setTimeout(function(){
-            if(this.state.startAction){
-                Main.defaultProps.wordAll.draw();
+            if(this.state.pressRecord){
+                this.state.startAction=true;
                 this.state.flashRecId
-                    =setInterval(function(){
-                        $('.startActionInstruction').children().toggleClass('active');
-                    },800);
+                =setInterval(function(){
+                    $('.startActionInstruction').children().toggleClass('active');
+                },800);
             }
         }.bind(this),9000);//delay time
 
@@ -74,6 +88,7 @@ class Main extends React.Component{
     saveDialogQuitClick(){
         this.resetRecordState();
         this.toggleSideBar();
+        this.state.pressRecord=false;
     }
     resetRecordState(){
         this.state.startAction=false;
@@ -92,7 +107,6 @@ class Main extends React.Component{
                 <Navbar/>
                 <Timer ref='timer'/>
                 <SideBar toggleSideBar={this.toggleSideBar.bind(this)} setWords={this.setWords.bind(this)}/>
-                <ShowWord />
                 <StartActionInstruction ref='startActionInstruction'/>
                 <StartActionInstructionWords/>
                 <SaveDialog 
@@ -184,14 +198,6 @@ class Timer extends Component{
     }
 }
 
-class ShowWord extends Component{
-    render(){
-        return(
-                <h1 className={'showWord'}>123123123</h1>
-              );
-    }
-}
-
 class StartActionInstructionWords extends Component{
     render(){
         return(
@@ -248,40 +254,37 @@ function FireworkManager(){
     this.curPos=new vector(-1000,0);
     this.virtualDOM;
     this.startTime;
-    let self=this;
     this.$canvas;
     this.ctx;
     this.init=function(){
-        setInterval(function(){
-            this.ctx.fillStyle='rgba(0,0,0,0.3)';//會透明
-            this.ctx.beginPath();
-            this.ctx.fillRect(0,0,this.$canvas.width(),this.$canvas.height());
-            this.ctx.fill();
-            for(var i=0;i<this.firework1s.length;i++){
-                var fire=this.firework1s[i];
-                if(!this.virtualDOM.state.modal && fire.update() && fire.rocketOrNot)//如果還要繼續畫的話
-                    fire.draw();
-                else{//移除第一段火箭，並新增第二段煙火
-                    let newFire= new Firework2(fire.endPos.x,fire.endPos.y,fire.type,this.ctx, getTime(this.startTime) );
-                    this.firework2s.push(newFire);
-                    this.saveRecord.push(newFire);
-                    newFire.init();
-                    this.firework1s.splice(i,1);
-                    i--;
-                }
+        this.ctx.fillStyle='rgba(0,0,0,0.3)';//會透明
+        this.ctx.beginPath();
+        this.ctx.fillRect(0,0,this.$canvas.width(),this.$canvas.height());
+        this.ctx.fill();
+        for(var i=0;i<this.firework1s.length;i++){
+            var fire=this.firework1s[i];
+            if(fire.update() && fire.rocketOrNot)//如果還要繼續畫的話
+                fire.draw();
+            else{//移除第一段火箭，並新增第二段煙火
+                let newFire= new Firework2(fire.endPos.x,fire.endPos.y,fire.type,this.ctx, getTime(this.startTime) );
+                this.firework2s.push(newFire);
+                this.saveRecord.push(newFire);
+                newFire.init();
+                this.firework1s.splice(i,1);
+                i--;
             }
-            for(i=0;i<this.firework2s.length;i++){
-                fire=this.firework2s[i];
-                if(fire.checkFinish()){
-                    this.firework2s.splice(i,1);
-                    i--;
-                }
-                else if(!this.virtualDOM.state.modal){
-                    fire.update();
-                    fire.draw();
-                }
+        }
+        for(i=0;i<this.firework2s.length;i++){
+            fire=this.firework2s[i];
+            if(fire.checkFinish()){
+                this.firework2s.splice(i,1);
+                i--;
             }
-        }.bind(self),30);
+            else{
+                fire.update();
+                fire.draw();
+            }
+        }
     };
 
     this.shoot=function(type){
@@ -549,7 +552,7 @@ InputManager.keyDownFunction={
     stopRecord:
         function(){
             if(!this.virtualDOM.state.modal){
-                if(this.virtualDOM.state.startAction){
+                if(this.virtualDOM.state.pressRecord){
                     this.virtualDOM.state.modal=true;
                     $('.optionBtn').addClass('active');
                     $('.dialogSaveOrAbort').addClass('active');
@@ -566,35 +569,54 @@ InputManager.keyDownFunction={
         }
 };
 
-function WordManager(){
+function WordManager(ctx){
     var FADEOUTTIME=2000;
     var FADEINTIME=2000;
 
+    this.ctx=ctx;
     this.words=[];
     this.ptr=0;
     this.opacity=0;
+    this.timeCounter=0;
+    this.timeInterval=25;
+    this.size=40;
+    this.x=$(window).width()/2;
+    this.y=$(window).height()*0.9;
+    this.color;
+    this.$canvas;
     this.init=function(){
-        setInterval(function(){
-            this.draw
-        })
-    }
+        if(!this.checkfinish() ){
+            this.update();
+            this.draw();
+        }
+    };
+
     this.draw=function(){
-        //this.ptr=0;
-        //var self=this;
-        //var drawWord= function(){
-            //if(self.ptr===self.words.length)
-                //return;
-            //else{
-                //$('.showWord').html(self.words[self.ptr]).addClass('active');
-                //self.ptr++;
-                //setTimeout(removeWord,FADEOUTTIME);
-            //}
-        //};
-        //var removeWord=function(){
-            //$('.showWord').removeClass('active');
-            //setTimeout(drawWord,FADEINTIME);
-        //};
-        //drawWord();
+        this.color = 'rgba(255,255,255,' + this.opacity + ')';
+        this.ctx.font='200 '+this.size+'px Verdana';
+        this.ctx.fillStyle=this.color;
+        this.ctx.textAlign='center';
+        this.ctx.beginPath();
+        this.ctx.fillText(this.words[this.ptr],this.x,this.y);
+    };
+
+    this.update=function(){
+        this.timeCounter+=25;
+        if(this.timeCounter<=500)
+            this.opacity+=0.05;
+        else if(this.timeCounter>=FADEINTIME && this.timeCounter<FADEINTIME+500)
+            this.opacity-=0.05;
+        else if(this.timeCounter===FADEINTIME+FADEOUTTIME){
+            //this.ptr=(this.ptr+1)%this.words.length;
+            this.ptr=this.ptr+1;
+            this.timeCounter=0;
+        }
+    };
+    this.checkfinish=function(){
+        if(this.ptr==this.words.length)
+            return true;
+        else 
+            return false;
     };
 }
 
