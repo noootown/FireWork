@@ -32,22 +32,21 @@ class SideBar extends React.Component{
     }
 
     handleMakeClick(){
-        this.props.toggleSideBar();
-        this.props.setWords(this.state.items);
+        this.props.sidebarMakeClick(this.state.items);
     }
 
     handleLoadClick(){
-    //TODO
+        this.props.sidebarLoadClick();
     }
 
     handleHelpClick(){
-    //TODO
+        this.props.sidebarHelpClick();
     }
 
     render(){
         return (
                 <div>
-                <div className={'sideBarBtn active'} onClick={this.props.toggleSideBar}>
+                <div className={'sideBarBtn active'} onClick={this.props.toggleSidebar}>
                 <span className={'sideBarBar active'}></span>
                 <span className={'sideBarBar active'}></span>
                 <span className={'sideBarBar active'}></span>
@@ -139,7 +138,7 @@ class CrossBtn extends Component{
 }
 class WordListAll extends Component{
     componentDidMount(){
-        $('#word-input').attr('placeholder','寫下想說的話');
+        $('#showword-input').attr('placeholder','寫下想說的話');
     }
     render() {
         return (
@@ -147,7 +146,7 @@ class WordListAll extends Component{
                 <h3 className={'sidePanelTitle'}>寫下想說的話</h3>
                 <WordListContainer items={this.props.items} text={this.props.text} updateItems={this.props.updateItems.bind(this)} colors={this.props.colors}/>
                 <form id={'word-inputform'} onSubmit={this.props.onSubmit.bind(this)}>
-                <input id={'word-input'}  onChange={this.props.onChange.bind(this)} value={this.props.text} />
+                <input id={'showword-input'} className={'word-input'}  onChange={this.props.onChange.bind(this)} value={this.props.text} />
                 <button className={'sidePanelBtn enterBtn'}>{'輸入'}</button>
                 </form>
                 </div>
