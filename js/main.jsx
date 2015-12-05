@@ -21,8 +21,6 @@ class Main extends React.Component{
                 saveRecord2:[],
                 endTime:0
             },
-                //saveRecord1:[],
-                //saveRecord2:[],
             replay:false
         };
     }
@@ -39,7 +37,7 @@ class Main extends React.Component{
             if(!this.state.modal){
                 Main.defaultProps.myInputManager.firework.init();
             }
-            if(this.state.startAction && !this.state.modal){
+            if(this.state.startAction && !this.state.modal ){
                 Main.defaultProps.wordAll.init();
             }
 
@@ -73,9 +71,9 @@ class Main extends React.Component{
                         $('.startActionInstruction').children().toggleClass('active');
                     },800);
             }
-        }.bind(this),9000);//delay time
+        }.bind(this),9000);//delay time 延遲讓文字顯示的時間
 
-        setTimeout(function(){//start record timer
+        setTimeout(function(){//start record timer  GO結束
             Main.defaultProps.myInputManager.firework.time=0;
             Main.defaultProps.myInputManager.firework.realStartTime=new Date().getTime();
             Main.defaultProps.myInputManager.firework.saveRecord1=[];
@@ -116,8 +114,8 @@ class Main extends React.Component{
         let index1=0;
         let index2=0;
         var self=this;
+        let time=0;
         setTimeout(function(){
-            let time=0;
             self.state.replayId=setInterval(function(){
                 time+=25;
                 for(let i=index1;i<self.state.fireworkRecord.saveRecord1.length;i++){
@@ -151,8 +149,13 @@ class Main extends React.Component{
                 $('.dialogSaveOrAbort').addClass('active');
                 $('#dialogSaveContinueBtn').addClass('hide');
                 self.state.replay=false;
+                self.state.startAction=false;
             },self.state.fireworkRecord.endTime);
-        },1000);
+            setTimeout(function(){
+                Main.defaultProps.wordAll.ptr=0;
+                self.state.startAction=true;
+            },700);
+        },500);
     }
     saveDialogContinueClick(){
         this.refs.saveDialog.closeDialog();
@@ -251,7 +254,6 @@ class MainCanvas extends Component{
         }.bind(this));
         this.props.fireworkAll.$canvas=$('#mainCanvas');
         this.props.fireworkAll.ctx=$('#mainCanvas').get(0).getContext('2d');
-        //this.props.fireworkAll.init();
         this.props.setupInputManager(this.props.fireworkAll);
     }
     render(){

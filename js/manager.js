@@ -46,7 +46,7 @@ export function FireworkManager(){
     };
 
     this.shoot=function(type){
-        if(!this.virtualDOM.replay){
+        if(!this.virtualDOM.state.replay){
             let newFire=new Firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx, this.time);
             this.saveRecord1.push(newFire);
             this.firework1s.push(newFire); 
@@ -345,12 +345,11 @@ InputManager.keyDownFunction={
         function(){
             if(InputManager.keyDownFunction.checkInputOrNot())
                 InputManager.keyDownFunction['inputCharacter'](key);
-            else if(!this.virtualDOM.state.modal){
+            else if(!this.virtualDOM.state.modal && !this.virtualDOM.state.replay){
                 if(this.virtualDOM.state.pressRecord){
                     this.virtualDOM.state.modal=true;
                     $('.modal').addClass('active');
                     $('.dialogSaveOrAbort').addClass('active');
-                    //this.virtualDOM.state.fireworkRecord.endTime=this.firework.time;
                     this.virtualDOM.state.fireworkRecord.endTime=getTime(this.firework.realStartTime);
                 }
                 else{
@@ -373,7 +372,6 @@ export function WordManager(ctx){
     this.ptr=0;
     this.opacity=0;
     this.timeCounter=0;
-    this.timeInterval=25;
     this.size=40;
     this.x=$(window).width()/2;
     this.y=$(window).height()*0.9;
@@ -387,6 +385,7 @@ export function WordManager(ctx){
     };
 
     this.draw=function(){
+        //console.log(this.ptr);
         this.color = 'rgba(255,255,255,' + this.opacity + ')';
                 this.ctx.font='200 '+this.size+'px Verdana';
                 this.ctx.fillStyle=this.color;
