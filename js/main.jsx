@@ -2,7 +2,7 @@
 import React, {Component}  from 'react';
 //import ReactDOM from 'react-dom';
 import SideBar from './sidebar';
-import {SaveDialog,LoadDialog} from './dialog';
+import {SaveDialog,LoadDialog,UploadDialog} from './dialog';
 import {FireworkManager,InputManager,WordManager} from './manager';
 
 class Main extends React.Component{
@@ -15,11 +15,20 @@ class Main extends React.Component{
             pressRecord:false, //press make
             flashRecId:null,
             modal:false,
-            saveRecord:[]
+            replayId:null,
+            fireworkRecord:{
+                saveRecord1:[],
+                saveRecord2:[],
+                endTime:0
+            },
+                //saveRecord1:[],
+                //saveRecord2:[],
+            replay:false
         };
     }
     setupInputManager(fireworkManager){
         Main.defaultProps.myInputManager.firework=fireworkManager;
+        Main.defaultProps.myInputManager.firework.virtualDOM=this;
         Main.defaultProps.myInputManager.virtualDOM=this;
         Main.defaultProps.wordAll.$canvas=$('#mainCanvas');
         Main.defaultProps.wordAll.ctx=fireworkManager.ctx;
@@ -45,6 +54,9 @@ class Main extends React.Component{
         this.toggleSidebar();
         this.state.modal=true;
         $('.dialogLoad').addClass('active');
+        if(this.state.fireworkRecord.saveRecord1.length!==0 && this.state.fireworkRecord.saveRecord2.length!==0 )
+            $('.dialogLoadNoFile').removeClass('.dialogLoadNoFile');
+
     }
     sidebarHelpClick(){
         //TODO
@@ -57,15 +69,17 @@ class Main extends React.Component{
             if(this.state.pressRecord){
                 this.state.startAction=true;
                 this.state.flashRecId
-                =setInterval(function(){
-                    $('.startActionInstruction').children().toggleClass('active');
-                },800);
+                    =setInterval(function(){
+                        $('.startActionInstruction').children().toggleClass('active');
+                    },800);
             }
         }.bind(this),9000);//delay time
 
         setTimeout(function(){//start record timer
-            Main.defaultProps.myInputManager.firework.startTime=new Date().getTime();
-            Main.defaultProps.myInputManager.firework.saveRecord=[];
+            Main.defaultProps.myInputManager.firework.time=0;
+            Main.defaultProps.myInputManager.firework.realStartTime=new Date().getTime();
+            Main.defaultProps.myInputManager.firework.saveRecord1=[];
+            Main.defaultProps.myInputManager.firework.saveRecord2=[];
         },8300);
     }
     toggleSidebar(){
@@ -79,22 +93,75 @@ class Main extends React.Component{
         $('.navbar').toggleClass('active');
     }
     saveDialogSaveClick(){
-        this.state.saveRecord=Main.defaultProps.myInputManager.firework.saveRecord;
-        this.saveDialogQuitClick();
-        this.refs.centerShowWords.showRecordSave();
+        this.refs.saveDialog.closeDialog();
+        $('.dialogUpload').addClass('active');
+        this.refs.saveDialog.getContinueBtnBack();
     }
     saveDialogAgainClick(){
+        this.refs.saveDialog.closeDialog();
         this.resetRecordState();
+        this.refs.saveDialog.getContinueBtnBack();
         setTimeout(function(){
             this.startRecord();
         }.bind(this),800);
     }
+    saveDialogReplayClick(){
+        this.state.replay=true;
+        this.state.fireworkRecord.saveRecord1=Main.defaultProps.myInputManager.firework.saveRecord1;
+        this.state.fireworkRecord.saveRecord2=Main.defaultProps.myInputManager.firework.saveRecord2;
+        this.refs.saveDialog.closeDialog();
+        this.resetRecordState();
+        Main.defaultProps.myInputManager.firework.firework1s=[];
+        Main.defaultProps.myInputManager.firework.firework2s=[];
+        let index1=0;
+        let index2=0;
+        var self=this;
+        setTimeout(function(){
+            let time=0;
+            self.state.replayId=setInterval(function(){
+                time+=25;
+                for(let i=index1;i<self.state.fireworkRecord.saveRecord1.length;i++){
+                    if(self.state.fireworkRecord.saveRecord1[i].startTime<time){
+                        index1++;
+                        self.state.fireworkRecord.saveRecord1[i].reset();
+                        Main.defaultProps.myInputManager.firework.firework1s.push(self.state.fireworkRecord.saveRecord1[i]);
+                    }
+                    else if(isNaN(self.state.fireworkRecord.saveRecord1[i].startTime))
+                        index1++;
+                    else
+                        break;
+                }
+                for(let i=index2;i<self.state.fireworkRecord.saveRecord2.length;i++){
+                    if(self.state.fireworkRecord.saveRecord2[i].startTime<time){
+                        index2++;
+                        self.state.fireworkRecord.saveRecord2[i].reset();
+                        Main.defaultProps.myInputManager.firework.firework2s.push(self.state.fireworkRecord.saveRecord2[i]);
+                        //console.log(i);
+                    }
+                    else if(isNaN(self.state.fireworkRecord.saveRecord2[i].startTime))
+                        index2++;
+                    else
+                        break;
+                }
+            },25);
+            setTimeout(function(){
+                clearInterval(self.state.replayId);
+                self.state.modal=true;
+                $('.modal').addClass('active');
+                $('.dialogSaveOrAbort').addClass('active');
+                $('#dialogSaveContinueBtn').addClass('hide');
+                self.state.replay=false;
+            },self.state.fireworkRecord.endTime);
+        },1000);
+    }
     saveDialogContinueClick(){
+        this.refs.saveDialog.closeDialog();
         this.state.modal=false;
-        $('.dialogSaveOrAbort').removeClass('active');
         $('.modal').removeClass('active');
     }
     saveDialogQuitClick(){
+        this.refs.saveDialog.closeDialog();
+        this.refs.saveDialog.getContinueBtnBack();
         this.resetRecordState();
         this.toggleSidebar();
         this.state.pressRecord=false;
@@ -105,18 +172,36 @@ class Main extends React.Component{
         $('.startActionInstruction').children().removeClass('active');
         this.state.modal=false;
         this.refs.timer.clearTimer();
-        $('.dialogSaveOrAbort').removeClass('active');
         $('.modal').removeClass('active');
     }
     loadDialogQuitClick(){
         this.toggleSidebar();
         $('.dialogLoad').removeClass('active');
+        this.state.modal=false;
     }
     loadDialogRemoteLoadClick(){
         //TODO
     }
     loadDialogLocalLoadClick(){
         //TODO
+    }
+    uploadDialogUploadClick(){
+        this.state.fireworkRecord.saveRecord1=Main.defaultProps.myInputManager.firework.saveRecord1;
+        this.state.fireworkRecord.saveRecord2=Main.defaultProps.myInputManager.firework.saveRecord2;
+        this.refs.upLoadDialog.closeDialog();
+        this.resetRecordState();
+        this.toggleSidebar();
+        this.state.pressRecord=false;
+        //TODO
+    }
+    uploadDialogQuitClick(){
+        this.state.fireworkRecord.saveRecord1=Main.defaultProps.myInputManager.firework.saveRecord1;
+        this.state.fireworkRecord.saveRecord2=Main.defaultProps.myInputManager.firework.saveRecord2;
+        this.refs.upLoadDialog.closeDialog();
+        this.resetRecordState();
+        this.toggleSidebar();
+        this.state.pressRecord=false;
+        this.refs.centerShowWords.showRecordSave();
     }
     render(){
         return(
@@ -131,8 +216,10 @@ class Main extends React.Component{
                 sidebarHelpClick={this.sidebarHelpClick.bind(this)}/>
                 <StartActionInstruction ref='startActionInstruction'/>
                 <StartActionInstructionWords/>
-                <SaveDialog 
+                <SaveDialog
+                ref='saveDialog'
                 saveClick={this.saveDialogSaveClick.bind(this)} 
+                replayClick={this.saveDialogReplayClick.bind(this)} 
                 againClick={this.saveDialogAgainClick.bind(this)} 
                 continueClick={this.saveDialogContinueClick.bind(this)} 
                 quitClick={this.saveDialogQuitClick.bind(this)}/>
@@ -141,10 +228,15 @@ class Main extends React.Component{
                 remoteLoadClick={this.loadDialogRemoteLoadClick.bind(this)}
                 localLoadClick={this.loadDialogLocalLoadClick.bind(this)}
                 />
-                <Modal/>
-                <CenterShowWords ref='centerShowWords'/>
-                </div>
-              );
+                    <UploadDialog
+                    ref='upLoadDialog'
+                    uploadClick={this.uploadDialogUploadClick.bind(this)}
+                quitClick={this.uploadDialogQuitClick.bind(this)}
+                />
+                    <Modal/>
+                    <CenterShowWords ref='centerShowWords'/>
+                    </div>
+                    );
     }
 }
 Main.defaultProps={
@@ -159,7 +251,7 @@ class MainCanvas extends Component{
         }.bind(this));
         this.props.fireworkAll.$canvas=$('#mainCanvas');
         this.props.fireworkAll.ctx=$('#mainCanvas').get(0).getContext('2d');
-        this.props.fireworkAll.init();
+        //this.props.fireworkAll.init();
         this.props.setupInputManager(this.props.fireworkAll);
     }
     render(){
@@ -271,6 +363,4 @@ class CenterShowWords extends Component{
     }
 }
 export default Main;
-
-
 

@@ -347,7 +347,7 @@ opacity:1;
 }
 .dialogSaveOrAbort{
 position:absolute;
-width:800px;
+width:1000px;
 height:180px;
 background-color:transparent;
 z-index:-100;
@@ -355,11 +355,11 @@ display:inline;
 top:40%;
 margin-top:-120px;
 left:50%;
-margin-left:-400px;
+margin-left:-500px;
 }
 
 .dialogTitle{
-width:100%;
+/*width:100%;*/
 text-align:center;
 color:#FFFFFF;
 font-size:40px;
@@ -387,6 +387,9 @@ font-size:20px;
 color:#FFFFFF;
 cursor:pointer;
 padding: 10px 20px;
+}
+#dialogSaveContinueBtn.hide{
+    display:none;
 }
 
 
@@ -428,7 +431,10 @@ font-size:25px;
 font-weight:200;
 margin:10px 0 5px 0;
 }
-#account-input, #password-input{
+.dialogLoadWord.dialogLoadNoFile{
+color:#666666;
+}
+#cardName-input, #password-input{
     margin:8px 0 0 0;
 }
 .dialogLoadLocalWord{
@@ -453,9 +459,68 @@ transform:translate(449px,50px);
 .dialogLoadLocalBtn{
 margin:4px 0 0 0;
 }
+.dialogLoadLocalBtn.dialogLoadNoFile{
+display:none;
+}
 .dialogLoadQuitBtn{
 position:relative;
 left:50%;
 margin:10px 0 0 -41px;
+}
+
+.dialogUpload{
+position:absolute;
+background-color:transparent;
+z-index:-100;
+display:inline;
+top:40%;
+margin-top:-120px;
+left:50%;
+margin-left:-275px;
+width:550px;
+height:180px;
+}
+.dialogUploadTitle{
+margin:10px;
+}
+.dialogUploadSpan{
+width:400px;
+position:relative;
+left:50%;
+margin-left:-200px;
+white-space:nowrap;
+display:flex;
+margin-top:5px;
+}
+.dialogUploadBtnSpan{
+width:340px;
+position:relative;
+left:50%;
+margin-left:-170px;
+}
+.dialogUploadBtn{
+border-radius:30px;
+border-width:2px;
+border-style:solid;
+border-color:#00FF00;
+background-color:transparent;
+font-size:18px;
+color:#FFFFFF;
+cursor:pointer;
+padding: 7px 14px;
+width:150px;
+height:45px;
+margin:30px 10px;
+}
+.dialogUploadWord{
+width:150px;
+text-align:left;
+color:#FFFFFF;
+font-size:25px;
+font-weight:200;
+margin:10px 30px 5px 0;
+}
+#uploadCardName-input, #uploadPassword-input{
+    margin:8px 0 0 0;
 }
 /*----------dialog-----------*/

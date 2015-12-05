@@ -1,13 +1,18 @@
+'use strict';
 export function FireworkManager(){
     this.firework1s=[];
     this.firework2s=[];
     this.rocketOrNot=true;
-    this.saveRecord=[];
+    this.saveRecord1=[];
+    this.saveRecord2=[];
     this.curPos=new vector(-1000,0);
-    this.startTime;
+    this.realStartTime;//統計總時間
+    this.time;
     this.$canvas;
     this.ctx;
+    this.virtualDOM;
     this.init=function(){
+        this.time+=25;
         this.ctx.fillStyle='rgba(0,0,0,0.3)';//會透明
         this.ctx.beginPath();
         this.ctx.fillRect(0,0,this.$canvas.width(),this.$canvas.height());
@@ -17,10 +22,12 @@ export function FireworkManager(){
             if(fire.update() && fire.rocketOrNot)//如果還要繼續畫的話
                 fire.draw();
             else{//移除第一段火箭，並新增第二段煙火
-                let newFire= new Firework2(fire.endPos.x,fire.endPos.y,fire.type,this.ctx, getTime(this.startTime) );
-                this.firework2s.push(newFire);
-                this.saveRecord.push(newFire);
-                newFire.init();
+                if(!this.virtualDOM.state.replay){
+                    let newFire= new Firework2(fire.endPos.x,fire.endPos.y,fire.type,this.ctx,this.time);
+                    newFire.init();
+                    this.firework2s.push(newFire);
+                    this.saveRecord2.push(newFire);
+                }
                 this.firework1s.splice(i,1);
                 i--;
             }
@@ -39,9 +46,11 @@ export function FireworkManager(){
     };
 
     this.shoot=function(type){
-        let newFire=new Firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx, getTime(this.startTime) );
-        this.saveRecord.push(newFire);
-        this.firework1s.push(newFire); 
+        if(!this.virtualDOM.replay){
+            let newFire=new Firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx, this.time);
+            this.saveRecord1.push(newFire);
+            this.firework1s.push(newFire); 
+        }
     };
 
     this.switchRocket=function(){this.rocketOrNot=!this.rocketOrNot;};
@@ -103,48 +112,51 @@ function Firework1(x,y,type,rocketOrNot,ctx,startTime){
             ctx.closePath();
         }
     };
+    this.reset=function(){
+        this.curPos=new vector(this.startPos.x,this.startPos.y);
+    };
 }
 function Firework2(x,y,type,ctx,time){
     this.startPos=new vector(x,y);
     this.fireworkPoints=[];
     this.startTime=time;
+    this.color=getRandomColor();
     this.init=function(){
         var x=this.startPos.x;
         var y=this.startPos.y;
-        var tmpColor=getRandomColor();
         var tmpNum;
         if(type==1){//正常
             tmpNum=Math.random()*200+200;
             for(var i=0;i<tmpNum;i++)
-                this.fireworkPoints.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,tmpColor,Math.random()*2,Math.random()*400+800,0,0.0003,ctx));
+                this.fireworkPoints.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,this.color,Math.random()*2,Math.random()*400+800,0,0.0003,ctx));
         }
         else if(type==2){//同心圓
             tmpNum=360;
             for(i=0;i<6;i++)
                 for(var j=0;j<tmpNum/6;j++)
-                    this.fireworkPoints.push(new FireworkPoint(x,y,i/24+Math.random()*0.02,2*Math.PI*j/(tmpNum/6),tmpColor,Math.random()*2,Math.random()*200+800,0,0.00005,ctx));
+                    this.fireworkPoints.push(new FireworkPoint(x,y,i/24+Math.random()*0.02,2*Math.PI*j/(tmpNum/6),this.color,Math.random()*2,Math.random()*200+800,0,0.00005,ctx));
         }
         else if(type==3){//圓
             tmpNum=360;
             for(i=0;i<tmpNum;i++)
-                this.fireworkPoints.push(new FireworkPoint(x,y,0.5,2*Math.PI*i/tmpNum,tmpColor,Math.random()*2,Math.random()*200+800,0,0.0003,ctx));
+                this.fireworkPoints.push(new FireworkPoint(x,y,0.5,2*Math.PI*i/tmpNum,this.color,Math.random()*2,Math.random()*200+800,0,0.0003,ctx));
         }
         else if(type==4){//大煙火
             tmpNum=1800;
             for(i=0;i<tmpNum;i++)
-                this.fireworkPoints.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,tmpColor,Math.random()*2,Math.random()*1000+600,0,0.0003,ctx));
+                this.fireworkPoints.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,this.color,Math.random()*2,Math.random()*1000+600,0,0.0003,ctx));
         }
         else if(type==5){//破碎圓
             tmpNum=720;
             for(i=0;i<8;i++)
                 for(j=0;j<tmpNum/8;j++)
-                    this.fireworkPoints.push(new FireworkPoint(x,y,0.5,2*Math.PI* (i/8+(Math.random()*15+15)/360) ,tmpColor,Math.random()*2,Math.random()*200+800,0,0.0003,ctx));
+                    this.fireworkPoints.push(new FireworkPoint(x,y,0.5,2*Math.PI* (i/8+(Math.random()*15+15)/360) ,this.color,Math.random()*2,Math.random()*200+800,0,0.0003,ctx));
         }
         else if(type==6){//太陽
             tmpNum=720;
             for(i=0;i<20;i++)
                 for(j=0;j<tmpNum/20;j++)
-                    this.fireworkPoints.push(new FireworkPoint(x,y,Math.random()*0.3,2*Math.PI*i/20 ,tmpColor,Math.random()*2,Math.random()*200+800,0,0.0003,ctx));
+                    this.fireworkPoints.push(new FireworkPoint(x,y,Math.random()*0.3,2*Math.PI*i/20 ,this.color,Math.random()*2,Math.random()*200+800,0,0.0003,ctx));
         }
         else if(type==7){//放射狀
             tmpNum=3000;
@@ -152,13 +164,13 @@ function Firework2(x,y,type,ctx,time){
                 var angle=2*Math.PI*Math.random();
                 var speedMax=Math.random()*0.15+0.15;
                 for(j=0;j<tmpNum/150;j++)
-                    this.fireworkPoints.push(new FireworkPoint(x,y,Math.random()*speedMax,angle ,tmpColor,Math.random()*2,Math.random()*400+600,0,0.00005,ctx));
+                    this.fireworkPoints.push(new FireworkPoint(x,y,Math.random()*speedMax,angle ,this.color,Math.random()*2,Math.random()*400+600,0,0.00005,ctx));
             }
         }
         else if(type==8){//小炮
             tmpNum=200;
             for(i=0;i<tmpNum;i++)
-                this.fireworkPoints.push(new FireworkPoint(x,y,Math.random()*0.3,2*Math.PI*Math.random(),tmpColor,Math.random()*2,Math.random()*100+200,0,0.0003,ctx));
+                this.fireworkPoints.push(new FireworkPoint(x,y,Math.random()*0.3,2*Math.PI*Math.random(),this.color,Math.random()*2,Math.random()*100+200,0,0.0003,ctx));
         }
         return this;
     };
@@ -189,6 +201,11 @@ function Firework2(x,y,type,ctx,time){
     this.draw=function(){
         _.each(this.fireworkPoints,function(fire){
             fire.draw();
+        });
+    };
+    this.reset=function(){
+        _.each(this.fireworkPoints,function(fire){
+            fire.time=0;
         });
     };
 }
@@ -279,7 +296,7 @@ InputManager.keyDownFunction={
     checkInputOrNot:
         function(){
             let returnValue=false;
-            $('.word-input').each(function(index){
+            $('.word-input').each(function(){
                 if($(this).is(':focus')){
                     returnValue=true;
                     return false;
@@ -290,7 +307,7 @@ InputManager.keyDownFunction={
     getWhichInput:
         function(){
             let returnInput;
-            $('.word-input').each(function(index){
+            $('.word-input').each(function(){
                 if($(this).is(':focus')){
                     returnInput=this;
                     return false;
@@ -333,6 +350,8 @@ InputManager.keyDownFunction={
                     this.virtualDOM.state.modal=true;
                     $('.modal').addClass('active');
                     $('.dialogSaveOrAbort').addClass('active');
+                    //this.virtualDOM.state.fireworkRecord.endTime=this.firework.time;
+                    this.virtualDOM.state.fireworkRecord.endTime=getTime(this.firework.realStartTime);
                 }
                 else{
                     if(!$('#word-input').is(':focus') && !this.modal){
