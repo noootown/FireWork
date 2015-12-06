@@ -2,7 +2,7 @@
 import React,{Component}  from 'react';
 export class SaveDialog extends React.Component{
     closeDialog(){
-        $('.dialogSaveOrAbort').removeClass('active');
+        $('.dialogSave').removeClass('active');
     }
     getBtnBack(){
         setTimeout(function(){
@@ -11,14 +11,14 @@ export class SaveDialog extends React.Component{
     }
     render(){
         return(
-                <div className={'dialogSaveOrAbort dialog'}>
+                <div className={'dialogSave dialog'}>
                 <h3 className={'dialogTitle'}>Choose</h3>
                 <div className={'dialogBtnDiv'}>
                 <button id={'dialogSaveSaveBtn'} className={'optionBtn'} onClick={this.props.saveClick}>Save</button>
                 <button id={'dialogSaveReplayBtn'} className={'optionBtn'} onClick={this.props.replayClick}>Replay</button>
-                <button className={'optionBtn'} onClick={this.props.againClick}>Again</button>
+                <button id={'dialogSaveAgainBtn'}className={'optionBtn'} onClick={this.props.againClick}>Again</button>
                 <button id={'dialogSaveContinueBtn'} className={'optionBtn'} onClick={this.props.continueClick}>Continue</button>
-                <button className={'optionBtn'} onClick={this.props.quitClick}>Quit</button>
+                <button id={'dialogSaveQuitBtn'}className={'optionBtn'} onClick={this.props.quitClick}>Quit</button>
                 </div>
                 </div>
               );
@@ -70,6 +70,22 @@ export class UploadDialog extends Component{
                 <button className={'dialogUploadBtn dialogUploadQuitBtn'} onClick={this.props.quitClick}>Don't Upload</button>
                 <button className={'dialogUploadBtn dialogUploadUploadBtn'} onClick={this.props.uploadClick}>Upload</button>
                 </span>
+                </div>
+              );
+    }
+}
+export class ReplayDialog extends React.Component{
+    closeDialog(){
+        $('.dialogReplay').removeClass('active');
+    }
+    render(){
+        return(
+                <div className={'dialogReplay dialog'}>
+                <h3 className={'dialogTitle'}>Choose</h3>
+                <div className={'dialogBtnDiv'}>
+                <button id={'dialogReplayReplayBtn'} className={'optionBtn'} onClick={this.props.replayClick}>Replay</button>
+                <button id={'dialogReplayQuitBtn'}className={'optionBtn'} onClick={this.props.quitClick}>Quit</button>
+                </div>
                 </div>
               );
     }

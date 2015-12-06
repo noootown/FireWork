@@ -345,7 +345,7 @@ z-index:100000;
 transform:scale(1,1);
 opacity:1;
 }
-.dialogSaveOrAbort{
+.dialogSave{
 position:absolute;
 width:1000px;
 height:180px;
@@ -388,7 +388,7 @@ color:#FFFFFF;
 cursor:pointer;
 padding: 10px 20px;
 }
-#dialogSaveContinueBtn.hide,#dialogSaveSaveBtn.hide,#dialogSaveReplayBtn.hide{
+.optionBtn.hide{
     display:none;
 }
 
@@ -523,5 +523,17 @@ margin:10px 30px 5px 0;
 }
 #uploadCardName-input, #uploadPassword-input{
     margin:8px 0 0 0;
+}
+.dialogReplay{
+position:absolute;
+width:500px;
+height:180px;
+background-color:transparent;
+z-index:-100;
+display:inline;
+top:40%;
+margin-top:-120px;
+left:50%;
+margin-left:-250px;
 }
 /*----------dialog-----------*/

@@ -352,7 +352,7 @@ InputManager.keyDownFunction={
                 if(this.virtualDOM.state.pressRecord){
                     this.virtualDOM.state.modal=true;
                     $('.modal').addClass('active');
-                    $('.dialogSaveOrAbort').addClass('active');
+                    $('.dialogSave').addClass('active');
                     this.firework.endTime+=getTime(this.firework.realStartTime);
                     this.virtualDOM.state.fireworkRecord.endTime=this.firework.endTime;
                     if(!this.virtualDOM.state.goOver){
