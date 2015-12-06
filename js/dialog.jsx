@@ -4,18 +4,18 @@ export class SaveDialog extends React.Component{
     closeDialog(){
         $('.dialogSaveOrAbort').removeClass('active');
     }
-    getContinueBtnBack(){
+    getBtnBack(){
         setTimeout(function(){
-            $('#dialogSaveContinueBtn').removeClass('hide');
-        },1000);
+            $('.optionBtn').removeClass('hide');
+        },600);
     }
     render(){
         return(
                 <div className={'dialogSaveOrAbort dialog'}>
                 <h3 className={'dialogTitle'}>Choose</h3>
                 <div className={'dialogBtnDiv'}>
-                <button className={'optionBtn'} onClick={this.props.saveClick}>Save</button>
-                <button className={'optionBtn'} onClick={this.props.replayClick}>Replay</button>
+                <button id={'dialogSaveSaveBtn'} className={'optionBtn'} onClick={this.props.saveClick}>Save</button>
+                <button id={'dialogSaveReplayBtn'} className={'optionBtn'} onClick={this.props.replayClick}>Replay</button>
                 <button className={'optionBtn'} onClick={this.props.againClick}>Again</button>
                 <button id={'dialogSaveContinueBtn'} className={'optionBtn'} onClick={this.props.continueClick}>Continue</button>
                 <button className={'optionBtn'} onClick={this.props.quitClick}>Quit</button>
@@ -70,7 +70,6 @@ export class UploadDialog extends Component{
                 <button className={'dialogUploadBtn dialogUploadQuitBtn'} onClick={this.props.quitClick}>Don't Upload</button>
                 <button className={'dialogUploadBtn dialogUploadUploadBtn'} onClick={this.props.uploadClick}>Upload</button>
                 </span>
-
                 </div>
               );
     }

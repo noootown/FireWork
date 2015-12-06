@@ -388,7 +388,7 @@ color:#FFFFFF;
 cursor:pointer;
 padding: 10px 20px;
 }
-#dialogSaveContinueBtn.hide{
+#dialogSaveContinueBtn.hide,#dialogSaveSaveBtn.hide,#dialogSaveReplayBtn.hide{
     display:none;
 }
 
@@ -452,6 +452,7 @@ cursor:pointer;
 padding: 7px 14px;
 width:100px;
 height:40px;
+display:inline;
 }
 .dialogLoadRemoteBtn{
 transform:translate(449px,50px);

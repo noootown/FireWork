@@ -9,10 +9,12 @@ class Main extends React.Component{
     constructor(){
         super();
         this.state={
-            sideBarOpen:true,
+            sidebarOpen:true,//在一般畫面下切換P
             recordId:null,
+            recordId2:null,
             startAction:false, //after Go disappear
-            pressRecord:false, //press make
+            pressRecord:false, //press make，開始做這個動作,true代表整個工作階段
+            goOver:false,   //Go 結束播映，到startAction這一段時間是開始的延遲
             flashRecId:null,
             modal:false,
             replayId:null,
@@ -20,6 +22,12 @@ class Main extends React.Component{
                 saveRecord1:[],
                 saveRecord2:[],
                 endTime:0
+            },
+            fireworkSaveRecord:{
+                saveRecord1:[],
+                saveRecord2:[],
+                endTime:0,
+                saveTime:null
             },
             replay:false
         };
@@ -33,6 +41,8 @@ class Main extends React.Component{
         setInterval(function(){
             if(!this.state.startAction){
                 Main.defaultProps.wordAll.ptr=0;
+                Main.defaultProps.wordAll.timeCounter=0;
+                Main.defaultProps.wordAll.opacity=0;
             }
             if(!this.state.modal){
                 Main.defaultProps.myInputManager.firework.init();
@@ -52,17 +62,20 @@ class Main extends React.Component{
         this.toggleSidebar();
         this.state.modal=true;
         $('.dialogLoad').addClass('active');
-        if(this.state.fireworkRecord.saveRecord1.length!==0 && this.state.fireworkRecord.saveRecord2.length!==0 )
-            $('.dialogLoadNoFile').removeClass('.dialogLoadNoFile');
-
+        if(this.state.fireworkSaveRecord.saveTime!==null){
+            $('.dialogLoadNoFile').removeClass('dialogLoadNoFile');
+            $('.dialogLoadLocalWord').html(this.state.fireworkSaveRecord.saveTime.toString().substr(0,24));
+        }
     }
     sidebarHelpClick(){
         //TODO
     }
     startRecord(){
         this.state.pressRecord=true;
+        this.state.goOver=false;
         this.refs.timer.timerCountDown();
         clearTimeout(this.state.recordId);
+        clearTimeout(this.state.recordId2);
         this.state.recordId=setTimeout(function(){
             if(this.state.pressRecord){
                 this.state.startAction=true;
@@ -73,19 +86,21 @@ class Main extends React.Component{
             }
         }.bind(this),9000);//delay time 延遲讓文字顯示的時間
 
-        setTimeout(function(){//start record timer  GO結束
+        this.state.recordId2=setTimeout(function(){//start record timer  GO結束
             Main.defaultProps.myInputManager.firework.time=0;
+            Main.defaultProps.myInputManager.firework.endTime=0;
             Main.defaultProps.myInputManager.firework.realStartTime=new Date().getTime();
             Main.defaultProps.myInputManager.firework.saveRecord1=[];
             Main.defaultProps.myInputManager.firework.saveRecord2=[];
-        },8300);
+            this.state.goOver=true;
+        }.bind(this),8300);
     }
     toggleSidebar(){
         if(this.state.startAction){
             this.state.startAction=false;
             this.refs.startActionInstruction.stopFlashRec();
         }
-        this.state.sideBarOpen=!this.state.sideBarOpen;
+        this.state.sidebarOpen=!this.state.sidebarOpen;
         $('.sideBarBtn').toggleClass('active');
         $('.sidePanel').toggleClass('active');
         $('.navbar').toggleClass('active');
@@ -93,12 +108,13 @@ class Main extends React.Component{
     saveDialogSaveClick(){
         this.refs.saveDialog.closeDialog();
         $('.dialogUpload').addClass('active');
-        this.refs.saveDialog.getContinueBtnBack();
+        this.refs.saveDialog.getBtnBack();
     }
     saveDialogAgainClick(){
         this.refs.saveDialog.closeDialog();
         this.resetRecordState();
-        this.refs.saveDialog.getContinueBtnBack();
+        this.refs.saveDialog.getBtnBack();
+        //this.state.goOver=false;
         setTimeout(function(){
             this.startRecord();
         }.bind(this),800);
@@ -152,19 +168,21 @@ class Main extends React.Component{
                 self.state.startAction=false;
             },self.state.fireworkRecord.endTime);
             setTimeout(function(){
-                Main.defaultProps.wordAll.ptr=0;
+                //Main.defaultProps.wordAll.ptr=0;
                 self.state.startAction=true;
+                //console.log(Main.defaultProps.wordAll.timeCounter);
             },700);
         },500);
     }
     saveDialogContinueClick(){
+        Main.defaultProps.myInputManager.firework.realStartTime=new Date().getTime();
         this.refs.saveDialog.closeDialog();
         this.state.modal=false;
         $('.modal').removeClass('active');
     }
     saveDialogQuitClick(){
         this.refs.saveDialog.closeDialog();
-        this.refs.saveDialog.getContinueBtnBack();
+        this.refs.saveDialog.getBtnBack();
         this.resetRecordState();
         this.toggleSidebar();
         this.state.pressRecord=false;
@@ -189,17 +207,20 @@ class Main extends React.Component{
         //TODO
     }
     uploadDialogUploadClick(){
-        this.state.fireworkRecord.saveRecord1=Main.defaultProps.myInputManager.firework.saveRecord1;
-        this.state.fireworkRecord.saveRecord2=Main.defaultProps.myInputManager.firework.saveRecord2;
-        this.refs.upLoadDialog.closeDialog();
-        this.resetRecordState();
-        this.toggleSidebar();
-        this.state.pressRecord=false;
+        //this.state.fireworkRecord.saveRecord1=Main.defaultProps.myInputManager.firework.saveRecord1;
+        //this.state.fireworkRecord.saveRecord2=Main.defaultProps.myInputManager.firework.saveRecord2;
+        //this.refs.upLoadDialog.closeDialog();
+        //this.resetRecordState();
+        //this.toggleSidebar();
+        //this.state.pressRecord=false;
         //TODO
+        //ajax
     }
     uploadDialogQuitClick(){
-        this.state.fireworkRecord.saveRecord1=Main.defaultProps.myInputManager.firework.saveRecord1;
-        this.state.fireworkRecord.saveRecord2=Main.defaultProps.myInputManager.firework.saveRecord2;
+        this.state.fireworkSaveRecord.saveRecord1=this.state.fireworkRecord.saveRecord1;
+        this.state.fireworkSaveRecord.saveRecord2=this.state.fireworkRecord.saveRecord2;
+        this.state.fireworkSaveRecord.endTime=this.state.fireworkRecord.endTime;
+        this.state.fireworkSaveRecord.saveTime=new Date();
         this.refs.upLoadDialog.closeDialog();
         this.resetRecordState();
         this.toggleSidebar();

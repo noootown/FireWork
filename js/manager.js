@@ -6,7 +6,8 @@ export function FireworkManager(){
     this.saveRecord1=[];
     this.saveRecord2=[];
     this.curPos=new vector(-1000,0);
-    this.realStartTime;//統計總時間
+    this.realStartTime;//開始的時間︳會不斷的累積到endTime
+    this.endTime;//統計總時間
     this.time;
     this.$canvas;
     this.ctx;
@@ -274,6 +275,8 @@ export function InputManager(){
         104:8
     };
     document.addEventListener('keydown', function (event) {
+        if(event.which==32)
+            event.preventDefault();
         let modifiers = event.altKey||event.ctrlKey||event.metaKey||event.shiftKey;//加了這些key就不行
         if (!modifiers) {
             if (self.fireworkMap[event.which] !== undefined) {
@@ -350,7 +353,14 @@ InputManager.keyDownFunction={
                     this.virtualDOM.state.modal=true;
                     $('.modal').addClass('active');
                     $('.dialogSaveOrAbort').addClass('active');
-                    this.virtualDOM.state.fireworkRecord.endTime=getTime(this.firework.realStartTime);
+                    this.firework.endTime+=getTime(this.firework.realStartTime);
+                    this.virtualDOM.state.fireworkRecord.endTime=this.firework.endTime;
+                    if(!this.virtualDOM.state.goOver){
+                        $('#dialogSaveContinueBtn').addClass('hide');
+                        $('#dialogSaveSaveBtn').addClass('hide');
+                        $('#dialogSaveReplayBtn').addClass('hide');
+                    }
+
                 }
                 else{
                     if(!$('#word-input').is(':focus') && !this.modal){
