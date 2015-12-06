@@ -44,10 +44,10 @@ class Main extends React.Component{
                 Main.defaultProps.wordAll.timeCounter=0;
                 Main.defaultProps.wordAll.opacity=0;
             }
-            if(!this.state.modal){
+            if(!this.state.modal){//for continue
                 Main.defaultProps.myInputManager.firework.init();
             }
-            if(this.state.startAction && !this.state.modal ){
+            if(this.state.startAction && !this.state.modal ){//for continue
                 Main.defaultProps.wordAll.init();
             }
 
@@ -60,7 +60,7 @@ class Main extends React.Component{
     }
     sidebarLoadClick(){
         this.toggleSidebar();
-        this.state.modal=true;
+        this.refs.instructionWords.hide();
         $('.dialogLoad').addClass('active');
         if(this.state.fireworkSaveRecord.saveTime!==null){
             $('.dialogLoadNoFile').removeClass('dialogLoadNoFile');
@@ -114,12 +114,12 @@ class Main extends React.Component{
         this.refs.saveDialog.closeDialog();
         this.resetRecordState();
         this.refs.saveDialog.getBtnBack();
-        //this.state.goOver=false;
         setTimeout(function(){
             this.startRecord();
         }.bind(this),800);
     }
     saveDialogReplayClick(){
+        this.refs.instructionWords.hide();
         this.state.replay=true;
         this.state.fireworkRecord.saveRecord1=Main.defaultProps.myInputManager.firework.saveRecord1;
         this.state.fireworkRecord.saveRecord2=Main.defaultProps.myInputManager.firework.saveRecord2;
@@ -133,7 +133,7 @@ class Main extends React.Component{
         let time=0;
         setTimeout(function(){
             self.state.replayId=setInterval(function(){
-                time+=25;
+                time+=10;
                 for(let i=index1;i<self.state.fireworkRecord.saveRecord1.length;i++){
                     if(self.state.fireworkRecord.saveRecord1[i].startTime<time){
                         index1++;
@@ -157,7 +157,7 @@ class Main extends React.Component{
                     else
                         break;
                 }
-            },25);
+            },10);
             setTimeout(function(){
                 clearInterval(self.state.replayId);
                 self.state.modal=true;
@@ -166,6 +166,7 @@ class Main extends React.Component{
                 $('#dialogSaveContinueBtn').addClass('hide');
                 self.state.replay=false;
                 self.state.startAction=false;
+                self.refs.instructionWords.show();
             },self.state.fireworkRecord.endTime);
             setTimeout(function(){
                 self.state.startAction=true;
@@ -195,8 +196,8 @@ class Main extends React.Component{
     }
     loadDialogQuitClick(){
         this.toggleSidebar();
+        this.refs.instructionWords.show();
         $('.dialogLoad').removeClass('active');
-        this.state.modal=false;
     }
     loadDialogRemoteLoadClick(){
         //TODO
@@ -206,6 +207,8 @@ class Main extends React.Component{
         this.state.pressRecord=true;
         this.state.replay=true;
         this.resetRecordState();
+        //this.state.modal=true;
+        //$('.modal').addClass('active');
         Main.defaultProps.myInputManager.firework.firework1s=[];
         Main.defaultProps.myInputManager.firework.firework2s=[];
         let index1=0;
@@ -241,7 +244,6 @@ class Main extends React.Component{
             },25);
             setTimeout(function(){
                 clearInterval(self.state.replayId);
-                self.state.modal=true;
                 $('.modal').addClass('active');
                 $('.dialogReplay').addClass('active');
                 self.state.replay=false;
@@ -266,8 +268,6 @@ class Main extends React.Component{
     uploadDialogQuitClick(){
         this.state.fireworkSaveRecord.saveRecord1=Main.defaultProps.myInputManager.firework.saveRecord1;
         this.state.fireworkSaveRecord.saveRecord2=Main.defaultProps.myInputManager.firework.saveRecord2;
-        //this.state.fireworkSaveRecord.saveRecord1=this.state.fireworkRecord.saveRecord1;
-        //this.state.fireworkSaveRecord.saveRecord2=this.state.fireworkRecord.saveRecord2;
         this.state.fireworkSaveRecord.endTime=this.state.fireworkRecord.endTime;
         this.state.fireworkSaveRecord.saveTime=new Date();
         this.refs.upLoadDialog.closeDialog();
@@ -284,6 +284,7 @@ class Main extends React.Component{
         this.refs.replayDialog.closeDialog();
         this.resetRecordState();
         this.toggleSidebar();
+        this.refs.instructionWords.show();
         this.state.pressRecord=false;
     }
     render(){
@@ -298,7 +299,7 @@ class Main extends React.Component{
                 sidebarLoadClick={this.sidebarLoadClick.bind(this)}
                 sidebarHelpClick={this.sidebarHelpClick.bind(this)}/>
                 <StartActionInstruction ref='startActionInstruction'/>
-                <StartActionInstructionWords/>
+                <StartActionInstructionWords ref='instructionWords'/>
                 <SaveDialog
                 ref='saveDialog'
                 saveClick={this.saveDialogSaveClick.bind(this)} 
@@ -405,6 +406,12 @@ class Timer extends Component{
 }
 
 class StartActionInstructionWords extends Component{
+    show(){
+        $('.startActionInstructionWords').removeClass('hide');
+    }
+    hide(){
+        $('.startActionInstructionWords').addClass('hide');
+    }
     render(){
         return(
                 <h3 className={'startActionInstructionWords'}>按P 停止/選單</h3>
