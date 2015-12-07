@@ -150,7 +150,6 @@ class Main extends React.Component{
                         index2++;
                         self.state.fireworkRecord.saveRecord2[i].reset();
                         Main.defaultProps.myInputManager.firework.firework2s.push(self.state.fireworkRecord.saveRecord2[i]);
-                        //console.log(i);
                     }
                     else if(isNaN(self.state.fireworkRecord.saveRecord2[i].startTime))
                         index2++;
@@ -207,8 +206,6 @@ class Main extends React.Component{
         this.state.pressRecord=true;
         this.state.replay=true;
         this.resetRecordState();
-        //this.state.modal=true;
-        //$('.modal').addClass('active');
         Main.defaultProps.myInputManager.firework.firework1s=[];
         Main.defaultProps.myInputManager.firework.firework2s=[];
         let index1=0;
@@ -352,12 +349,6 @@ MainCanvas.defaultProps={
     fireworkAll:new FireworkManager()
 };
 class Modal extends Component{
-    show(){
-        $('modal').css('visibility','visible');
-    }
-    hide(){
-        $('modal').css('visibility','hidden');
-    }
     render(){
         return(
                 <div className={'modal'}>

@@ -1,4 +1,6 @@
 'use strict';
+import {getFireworkPoints} from './fireworkpoints';
+
 export function FireworkManager(){
     this.firework1s=[];
     this.firework2s=[];
@@ -123,56 +125,7 @@ function Firework2(x,y,type,ctx,time){
     this.startTime=time;
     this.color=getRandomColor();
     this.init=function(){
-        var x=this.startPos.x;
-        var y=this.startPos.y;
-        var tmpNum;
-        if(type==1){//正常
-            tmpNum=Math.random()*200+200;
-            for(var i=0;i<tmpNum;i++)
-                this.fireworkPoints.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,this.color,Math.random()*2,Math.random()*400+800,0,0.0003,ctx));
-        }
-        else if(type==2){//同心圓
-            tmpNum=360;
-            for(i=0;i<6;i++)
-                for(var j=0;j<tmpNum/6;j++)
-                    this.fireworkPoints.push(new FireworkPoint(x,y,i/24+Math.random()*0.02,2*Math.PI*j/(tmpNum/6),this.color,Math.random()*2,Math.random()*200+800,0,0.00005,ctx));
-        }
-        else if(type==3){//圓
-            tmpNum=360;
-            for(i=0;i<tmpNum;i++)
-                this.fireworkPoints.push(new FireworkPoint(x,y,0.5,2*Math.PI*i/tmpNum,this.color,Math.random()*2,Math.random()*200+800,0,0.0003,ctx));
-        }
-        else if(type==4){//大煙火
-            tmpNum=1800;
-            for(i=0;i<tmpNum;i++)
-                this.fireworkPoints.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,this.color,Math.random()*2,Math.random()*1000+600,0,0.0003,ctx));
-        }
-        else if(type==5){//破碎圓
-            tmpNum=720;
-            for(i=0;i<8;i++)
-                for(j=0;j<tmpNum/8;j++)
-                    this.fireworkPoints.push(new FireworkPoint(x,y,0.5,2*Math.PI* (i/8+(Math.random()*15+15)/360) ,this.color,Math.random()*2,Math.random()*200+800,0,0.0003,ctx));
-        }
-        else if(type==6){//太陽
-            tmpNum=720;
-            for(i=0;i<20;i++)
-                for(j=0;j<tmpNum/20;j++)
-                    this.fireworkPoints.push(new FireworkPoint(x,y,Math.random()*0.3,2*Math.PI*i/20 ,this.color,Math.random()*2,Math.random()*200+800,0,0.0003,ctx));
-        }
-        else if(type==7){//放射狀
-            tmpNum=3000;
-            for(i=0;i<150;i++){
-                var angle=2*Math.PI*Math.random();
-                var speedMax=Math.random()*0.15+0.15;
-                for(j=0;j<tmpNum/150;j++)
-                    this.fireworkPoints.push(new FireworkPoint(x,y,Math.random()*speedMax,angle ,this.color,Math.random()*2,Math.random()*400+600,0,0.00005,ctx));
-            }
-        }
-        else if(type==8){//小炮
-            tmpNum=200;
-            for(i=0;i<tmpNum;i++)
-                this.fireworkPoints.push(new FireworkPoint(x,y,Math.random()*0.3,2*Math.PI*Math.random(),this.color,Math.random()*2,Math.random()*100+200,0,0.0003,ctx));
-        }
+        this.fireworkPoints=getFireworkPoints(this.startPos.x,this.startPos.y,this.color,type,ctx);
         return this;
     };
     this.checkFinish=function(){//檢查是否
@@ -210,7 +163,7 @@ function Firework2(x,y,type,ctx,time){
         });
     };
 }
-function FireworkPoint(x,y,speed,angle,color,radius,timeMax,delay,acce,ctx){//每一個煙火點
+export function FireworkPoint(x,y,speed,angle,color,radius,timeMax,delay,acce,ctx){//每一個煙火點
     this.startPos=new vector(x,y);
     this.curPos=new vector(x,y);
     this.speed=speed;
@@ -253,7 +206,7 @@ export function InputManager(){
     var self=this;
     this.firework;
     this.virtualDOM;
-    this.fireworkMap={
+    this.fireworkMap={//keycode to ascii code
 
         //1~8
         49:1, 
@@ -272,7 +225,35 @@ export function InputManager(){
         101:5,
         102:6,
         103:7,
-        104:8
+        104:8,
+
+        65:61,
+        66:62,
+        67:63,
+        68:64,
+        69:65,
+        70:66,
+        71:67,
+        72:68,
+        73:69,
+        73:69,
+        74:70,
+        75:71,
+        76:72,
+        77:73,
+        78:74,
+        79:75,
+        80:76,
+        81:77,
+        82:78,
+        83:79,
+        84:80,
+        85:81,
+        86:82,
+        87:83,
+        88:84,
+        89:85,
+        90:86
     };
     document.addEventListener('keydown', function (event) {
         if(event.which==32)
@@ -286,7 +267,7 @@ export function InputManager(){
         }
         if(!modifiers && event.which==32)
             self.execFunc('switchRocket',event.which);
-        if(!modifiers && event.which==80)
+        if(!modifiers && event.which==13)
             self.execFunc('stopRecord',event.which);
     });
     this.execFunc = function(event,data){
@@ -423,5 +404,3 @@ export function WordManager(ctx){
                         return false;
                 };
 }
-
-
