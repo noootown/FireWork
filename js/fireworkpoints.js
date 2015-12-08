@@ -54,7 +54,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
     }
     else if(type==61){//a
         tmpNum=360;
-        angle=20*ran()+20;
+        angle=-10*ran()+40;
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.08+ran()*0.01,2*Math.PI*i/tmpNum,color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         tmpNum=90;
@@ -101,154 +101,154 @@ export function getFireworkPoints(x,y,color,type,ctx){
         tmpNum=180;
         angle=-10+20*ran();
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.06+ran()*0.01,deg2rad(i+180),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.07+ran()*0.01,deg2rad(i+180),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         tmpNum=150;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.06/cos(abs(i/2))+ran()*0.01,deg2rad(180+angle-i/2),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.07/cos(abs(i/2))+ran()*0.01,deg2rad(180+angle-i/2),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
         tmpNum=80;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.06/cos(50)*cos(40)/cos(i-20),deg2rad(70+angle+i),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.07/cos(50)*cos(40)/cos(i-20),deg2rad(70+angle+i),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
     else if(type==67){//g
         tmpNum=360;
         angle=20*ran()-10;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.1+ran()*0.01,2*Math.PI*i/tmpNum,color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.079+ran()*0.01,2*Math.PI*i/tmpNum,color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         tmpNum=110;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.14*cos(40)/cos(abs(i-40))+ran()*0.01,deg2rad(angle+i-45),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.11*cos(40)/cos(abs(i-40))+ran()*0.01,deg2rad(angle+i-45),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
         tmpNum=5;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.14*cos(40)/cos(abs(i-70))+ran()*0.01,deg2rad(angle+65-i),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.11*cos(40)/cos(abs(i-70))+ran()*0.01,deg2rad(angle+65-i),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
         tmpNum=35;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.14*cos(40)/cos(70),deg2rad(angle+i+65),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.11*cos(40)/cos(70)+ran()*0.01,deg2rad(angle+i+65),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
     else if(type==68){//h
         tmpNum=80;
         angle=-10+ran()*20;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.11+ran()*0.01,deg2rad(-i-50+angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.12+ran()*0.01,deg2rad(-i-50+angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         tmpNum=60;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.11*cos(50)/cos(abs(i-50))+ran()*0.01,deg2rad(-50+i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.12*cos(50)/cos(abs(i-50))+ran()*0.01,deg2rad(-50+i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
         tmpNum=85;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.11*cos(50)/cos(abs(i-75))+ran()*0.01,deg2rad(-105-i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.12*cos(50)/cos(abs(i-75))+ran()*0.01,deg2rad(-105-i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
         tmpNum=25;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.11*cos(50)/cos(abs(i-75))+ran()*0.01,deg2rad(-105-i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.12*cos(50)/cos(abs(i-75))+ran()*0.01,deg2rad(-105-i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
     else if(type==69){//i
         angle=-100+20*ran();
         tmpNum=50;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.155+ran()*0.01,deg2rad(angle+ran()*4-2),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.124+ran()*0.01,deg2rad(angle+ran()*4-2),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         tmpNum=70;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.12*i/tmpNum,deg2rad(angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.096*i/tmpNum,deg2rad(angle-2+ran()*4),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         angle-=180;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.05*i/tmpNum,deg2rad(angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.04*i/tmpNum,deg2rad(angle-2+ran()*4),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
     }
     else if(type==70){//j
         tmpNum=180;
         angle=-10+20*ran();
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.06+ran()*0.01,deg2rad(i),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.055+ran()*0.01,deg2rad(i),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         tmpNum=140;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.06/cos(i/2)+ran()*0.01,deg2rad(angle-i/2),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.055/cos(i/2)+ran()*0.01,deg2rad(angle-i/2),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
         tmpNum=20;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.06/cos(77)-0.04,deg2rad(angle-75+4*ran()),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.055/cos(77)-0.04,deg2rad(angle-75+4*ran()),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
     }
     else if(type==71){//k
         angle=-55+20*ran();
         tmpNum=50;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.093*i/tmpNum,deg2rad(angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.117*i/tmpNum,deg2rad(angle-2+ran()*4),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         angle+=90;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.093*i/tmpNum,deg2rad(angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.117*i/tmpNum,deg2rad(angle-2+ran()*4),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         tmpNum=70;
         angle+=45;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.07*i/tmpNum,deg2rad(angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.0875*i/tmpNum,deg2rad(angle-2+ran()*4),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         angle-=180;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.14*i/tmpNum,deg2rad(angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.175*i/tmpNum,deg2rad(angle-2+ran()*4),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
             
     }
     else if(type==72){//l
         angle=-100+20*ran();
         tmpNum=70;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.17*i/tmpNum,deg2rad(angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.17*i/tmpNum,deg2rad(angle-2+ran()*4),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         angle-=180;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.07*i/tmpNum,deg2rad(angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.07*i/tmpNum,deg2rad(angle-2+ran()*4),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
     }
     else if(type==73){//m
         tmpNum=180;
         angle=-10+20*ran();
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.09*i/tmpNum,-Math.acos(i/tmpNum)-PI2*(0-angle/360),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.09*i/tmpNum+ran()*0.005,-Math.acos(i/tmpNum)-PI2*(0-angle/360),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.09*i/tmpNum,Math.acos(i/tmpNum)+PI2*(1/2+angle/360),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.09*i/tmpNum+ran()*0.005,Math.acos(i/tmpNum)+PI2*(1/2+angle/360),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         tmpNum=45;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.09/cos(i),deg2rad(i+angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.09/cos(i),deg2rad(i+angle)+ran()*0.01,color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.09*i/tmpNum,deg2rad(90+angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.09*i/tmpNum,deg2rad(90+angle)+ran()*0.01,color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         tmpNum=75;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.09/cos(i-45),deg2rad(i+135+angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.09/cos(i-45)+ran()*0.01,deg2rad(i+135+angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
     }
     else if(type==74){//n
         tmpNum=80;
         angle=-10+ran()*20;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.11+ran()*0.01,deg2rad(-i-50+angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.115+ran()*0.01,deg2rad(-i-50+angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         tmpNum=60;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.11*cos(50)/cos(abs(i-50))+ran()*0.01,deg2rad(-50+i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.115*cos(50)/cos(abs(i-50))+ran()*0.01,deg2rad(-50+i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
         tmpNum=70;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.11*cos(50)/cos(abs(i-60))+ran()*0.01,deg2rad(-120-i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.115*cos(50)/cos(abs(i-60))+ran()*0.01,deg2rad(-120-i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
     else if(type==75){//o
         tmpNum=360;
         angle=20*ran()+20;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.1+ran()*0.01,2*Math.PI*i/tmpNum,color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.09+ran()*0.01,2*Math.PI*i/tmpNum,color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
     }
     else if(type==76){//p
         tmpNum=360;
         angle=20*ran()+200;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.1+ran()*0.01,2*Math.PI*i/tmpNum,color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.08+ran()*0.01,2*Math.PI*i/tmpNum,color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         tmpNum=110;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.14*cos(40)/cos(abs(i-40))+ran()*0.01,deg2rad(angle-i),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.112*cos(40)/cos(abs(i-40))+ran()*0.01,deg2rad(angle-i),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
     else if(type==77){//q
         tmpNum=360;
         angle=-20*ran()-20;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.1+ran()*0.01,2*Math.PI*i/tmpNum,color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.08+ran()*0.01,2*Math.PI*i/tmpNum,color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         tmpNum=110;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.14*cos(40)/cos(abs(i-40))+ran()*0.01,deg2rad(angle+i),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.112*cos(40)/cos(abs(i-40))+ran()*0.01,deg2rad(angle+i),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
     else if(type==78){//r
         tmpNum=80;
         angle=-10+ran()*20;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.11+ran()*0.01,deg2rad(-i-50+angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.115+ran()*0.01,deg2rad(-i-50+angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         tmpNum=70;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.11*cos(50)/cos(abs(i-60))+ran()*0.01,deg2rad(-120-i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.115*cos(50)/cos(abs(i-60))+ran()*0.01,deg2rad(-120-i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
     else if(type==79){//s
         tmpNum=180;
@@ -291,20 +291,20 @@ export function getFireworkPoints(x,y,color,type,ctx){
         angle=180+ran()*20;
         tmpNum=100;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.14*cos(40)/cos(abs(i-40))+ran()*0.01,deg2rad(angle-i),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.1*cos(40)/cos(abs(i-40))+ran()*0.01,deg2rad(angle-i),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
         angle-=200;
         tmpNum=100;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.14*cos(40)/cos(abs(i-40))+ran()*0.01,deg2rad(i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.1*cos(40)/cos(abs(i-40))+ran()*0.01,deg2rad(i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
     else if(type==83){//w
         angle=105+30*ran();
         tmpNum=50;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.1*i/tmpNum,deg2rad(angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.1*i/tmpNum,deg2rad(angle-2+4*ran()),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         tmpNum=90;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.1*cos(40)/cos(abs(i-40))+ran()*0.01,deg2rad(angle+i),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.1*cos(40)/cos(abs(i-40))+ran()*0.01,deg2rad(angle+i-2+4*ran()),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
         tmpNum=50;
         angle-=60;
         for(i=0;i<tmpNum;i++)
@@ -317,38 +317,38 @@ export function getFireworkPoints(x,y,color,type,ctx){
         angle=-70+30*ran();
         tmpNum=50;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.1*i/tmpNum,deg2rad(angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.1*i/tmpNum,deg2rad(angle-2+4*ran()),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.1*i/tmpNum,deg2rad(angle+180),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.1*i/tmpNum,deg2rad(angle+180-2+4*ran()),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         angle+=110;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.1*i/tmpNum,deg2rad(angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.1*i/tmpNum,deg2rad(angle-2+4*ran()),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.1*i/tmpNum,deg2rad(angle+180),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.1*i/tmpNum,deg2rad(angle+180-2+4*ran()),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
     }
     else if(type==85){//y
         angle=-70+30*ran();
         tmpNum=50;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.1*i/tmpNum,deg2rad(angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.14*i/tmpNum,deg2rad(angle-2+4*ran()),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.1*i/tmpNum,deg2rad(angle+180),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.14*i/tmpNum,deg2rad(angle+180-2+4*ran()),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         angle+=110;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.1*i/tmpNum,deg2rad(angle+180),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.14*i/tmpNum,deg2rad(angle+180-2+4*ran()),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
     }
     else if(type==86){//z
         angle=-70+30*ran();
         tmpNum=50;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.1*i/tmpNum,deg2rad(angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.1*i/tmpNum,deg2rad(angle-2+4*ran()),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         tmpNum=70;
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.1*cos(35)/cos(abs(i-35))+ran()*0.01,deg2rad(-i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
         angle-=180;
         tmpNum=50;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.1*i/tmpNum,deg2rad(angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
+            fire.push(new FireworkPoint(x,y,0.1*i/tmpNum,deg2rad(angle-2+4*ran()),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
         tmpNum=70;
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.1*cos(35)/cos(abs(i-35))+ran()*0.01,deg2rad(-i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
