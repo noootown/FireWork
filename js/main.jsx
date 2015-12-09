@@ -29,7 +29,9 @@ class Main extends React.Component{
                 endTime:0,
                 saveTime:null
             },
-            replay:false
+            replay:false,
+            alphabet:false,
+            rocket:false
         };
     }
     setupInputManager(fireworkManager){
@@ -60,7 +62,7 @@ class Main extends React.Component{
     }
     sidebarLoadClick(){
         this.toggleSidebar();
-        this.refs.instructionWords.hide();
+        this.refs.settingWord.hide();
         $('.dialogLoad').addClass('active');
         if(this.state.fireworkSaveRecord.saveTime!==null){
             $('.dialogLoadNoFile').removeClass('dialogLoadNoFile');
@@ -92,6 +94,7 @@ class Main extends React.Component{
             Main.defaultProps.myInputManager.firework.realStartTime=new Date().getTime();
             Main.defaultProps.myInputManager.firework.saveRecord1=[];
             Main.defaultProps.myInputManager.firework.saveRecord2=[];
+            Main.defaultProps.myInputManager.firework.alphabetBuffer=[];
             this.state.goOver=true;
         }.bind(this),8300);
     }
@@ -119,7 +122,7 @@ class Main extends React.Component{
         }.bind(this),800);
     }
     saveDialogReplayClick(){
-        this.refs.instructionWords.hide();
+        this.refs.settingWord.hide();
         this.state.replay=true;
         this.state.fireworkRecord.saveRecord1=Main.defaultProps.myInputManager.firework.saveRecord1;
         this.state.fireworkRecord.saveRecord2=Main.defaultProps.myInputManager.firework.saveRecord2;
@@ -165,7 +168,7 @@ class Main extends React.Component{
                 $('#dialogSaveContinueBtn').addClass('hide');
                 self.state.replay=false;
                 self.state.startAction=false;
-                self.refs.instructionWords.show();
+                self.refs.settingWord.show();
             },self.state.fireworkRecord.endTime);
             setTimeout(function(){
                 self.state.startAction=true;
@@ -195,7 +198,7 @@ class Main extends React.Component{
     }
     loadDialogQuitClick(){
         this.toggleSidebar();
-        this.refs.instructionWords.show();
+        this.refs.settingWord.show();
         $('.dialogLoad').removeClass('active');
     }
     loadDialogRemoteLoadClick(){
@@ -281,7 +284,7 @@ class Main extends React.Component{
         this.refs.replayDialog.closeDialog();
         this.resetRecordState();
         this.toggleSidebar();
-        this.refs.instructionWords.show();
+        this.refs.settingWord.show();
         this.state.pressRecord=false;
     }
     render(){
@@ -296,7 +299,7 @@ class Main extends React.Component{
                 sidebarLoadClick={this.sidebarLoadClick.bind(this)}
                 sidebarHelpClick={this.sidebarHelpClick.bind(this)}/>
                 <StartActionInstruction ref='startActionInstruction'/>
-                <StartActionInstructionWords ref='instructionWords'/>
+                <SettingWord ref='settingWord'/>
                 <SaveDialog
                 ref='saveDialog'
                 saveClick={this.saveDialogSaveClick.bind(this)} 
@@ -396,16 +399,38 @@ class Timer extends Component{
     }
 }
 
-class StartActionInstructionWords extends Component{
+class SettingWord extends Component{
     show(){
-        $('.startActionInstructionWords').removeClass('hide');
+        $('.settingWord').removeClass('hide');
     }
     hide(){
-        $('.startActionInstructionWords').addClass('hide');
+        $('.settingWord').addClass('hide');
+    }
+    toggleAlphabet(){
+        $('.settingWord:nth-child(2)').toggleClass('active');
+        $('.settingWord:nth-child(4)').toggleClass('active');
+    }
+    toggleRocket(){
+        $('.settingWord:nth-child(7)').toggleClass('active');
+        $('.settingWord:nth-child(9)').toggleClass('active');
     }
     render(){
         return(
-                <h3 className={'startActionInstructionWords'}>按P 停止/選單</h3>
+                <div className={'settingWordDiv'}>
+                <h3 className={'settingWord settingWordKey'}>空白鍵</h3>
+                <h3 className={'settingWord active'}>煙火</h3>
+                <h3 className={'settingWord'}>/</h3>
+                <h3 className={'settingWord'}>英數</h3>
+                <h3 className={'settingWord settingWordKey'}>,</h3>
+                <h3 className={'settingWord active'}>沖天炮</h3>
+                <h3 className={'settingWord active'}>開</h3>
+                <h3 className={'settingWord'}>/</h3>
+                <h3 className={'settingWord'}>關</h3>
+                <h3 className={'settingWord settingWordKey'}>/</h3>
+                <h3 className={'settingWord active'}>發射煙火字</h3>
+                <h3 className={'settingWord settingWordKey'}>F4</h3>
+                <h3 className={'settingWord active'}>停止/選單</h3>
+                </div>
               );
     }
 }
@@ -419,6 +444,7 @@ class StartActionInstruction extends Component{
               );
     }
 }
+
 
 class Navbar extends Component{
     render(){

@@ -52,7 +52,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,Math.random()*0.3,2*Math.PI*Math.random(),color,Math.random()*2,Math.random()*100+200,0,0.0003,ctx));
     }
-    else if(type==61){//a
+    else if(type==97){//a
         tmpNum=360;
         angle=-10*ran()+40;
         for(i=0;i<tmpNum;i++)
@@ -61,7 +61,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.12*cos(50)/cos(abs(i-50))+ran()*0.01,deg2rad(-i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
-    else if(type==62){//b
+    else if(type==98){//b
         tmpNum=360;
         angle=20*ran()+120;
         for(i=0;i<tmpNum;i++)
@@ -70,13 +70,13 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.12*cos(40)/cos(abs(i-40))+ran()*0.01,deg2rad(i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
-    else if(type==63){//c
+    else if(type==99){//c
         tmpNum=300;
         angle=50*ran();
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.1+ran()*0.01,deg2rad(i+angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
     }
-    else if(type==64){//d
+    else if(type==100){//d
         tmpNum=360;
         angle=-20*ran()+40;
         for(i=0;i<tmpNum;i++)
@@ -85,7 +85,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.14*cos(40)/cos(abs(i-40))+ran()*0.01,deg2rad(-i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
-    else if(type==65){//e
+    else if(type==101){//e
         tmpNum=320;
         angle=70*ran();
         for(i=0;i<tmpNum;i++)
@@ -97,7 +97,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.1*i/tmpNum,deg2rad(angle+140),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
     }
-    else if(type==66){//f
+    else if(type==102){//f
         tmpNum=180;
         angle=-10+20*ran();
         for(i=0;i<tmpNum;i++)
@@ -109,7 +109,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.07/cos(50)*cos(40)/cos(i-20),deg2rad(70+angle+i),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
-    else if(type==67){//g
+    else if(type==103){//g
         tmpNum=360;
         angle=20*ran()-10;
         for(i=0;i<tmpNum;i++)
@@ -124,7 +124,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.11*cos(40)/cos(70)+ran()*0.01,deg2rad(angle+i+65),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
-    else if(type==68){//h
+    else if(type==104){//h
         tmpNum=80;
         angle=-10+ran()*20;
         for(i=0;i<tmpNum;i++)
@@ -139,7 +139,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.12*cos(50)/cos(abs(i-75))+ran()*0.01,deg2rad(-105-i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
-    else if(type==69){//i
+    else if(type==105){//i
         angle=-100+20*ran();
         tmpNum=50;
         for(i=0;i<tmpNum;i++)
@@ -151,7 +151,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.04*i/tmpNum,deg2rad(angle-2+ran()*4),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
     }
-    else if(type==70){//j
+    else if(type==106){//j
         tmpNum=180;
         angle=-10+20*ran();
         for(i=0;i<tmpNum;i++)
@@ -163,7 +163,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.055/cos(77)-0.04,deg2rad(angle-75+4*ran()),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
     }
-    else if(type==71){//k
+    else if(type==107){//k
         angle=-55+20*ran();
         tmpNum=50;
         for(i=0;i<tmpNum;i++)
@@ -180,7 +180,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
             fire.push(new FireworkPoint(x,y,0.175*i/tmpNum,deg2rad(angle-2+ran()*4),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
             
     }
-    else if(type==72){//l
+    else if(type==108){//l
         angle=-100+20*ran();
         tmpNum=70;
         for(i=0;i<tmpNum;i++)
@@ -189,7 +189,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.07*i/tmpNum,deg2rad(angle-2+ran()*4),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
     }
-    else if(type==73){//m
+    else if(type==109){//m
         tmpNum=180;
         angle=-10+20*ran();
         for(i=0;i<tmpNum;i++)
@@ -205,7 +205,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.09/cos(i-45)+ran()*0.01,deg2rad(i+135+angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
     }
-    else if(type==74){//n
+    else if(type==110){//n
         tmpNum=80;
         angle=-10+ran()*20;
         for(i=0;i<tmpNum;i++)
@@ -217,13 +217,13 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.115*cos(50)/cos(abs(i-60))+ran()*0.01,deg2rad(-120-i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
-    else if(type==75){//o
+    else if(type==111){//o
         tmpNum=360;
         angle=20*ran()+20;
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.09+ran()*0.01,2*Math.PI*i/tmpNum,color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
     }
-    else if(type==76){//p
+    else if(type==112){//p
         tmpNum=360;
         angle=20*ran()+200;
         for(i=0;i<tmpNum;i++)
@@ -232,7 +232,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.112*cos(40)/cos(abs(i-40))+ran()*0.01,deg2rad(angle-i),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
-    else if(type==77){//q
+    else if(type==113){//q
         tmpNum=360;
         angle=-20*ran()-20;
         for(i=0;i<tmpNum;i++)
@@ -241,7 +241,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.112*cos(40)/cos(abs(i-40))+ran()*0.01,deg2rad(angle+i),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
-    else if(type==78){//r
+    else if(type==114){//r
         tmpNum=80;
         angle=-10+ran()*20;
         for(i=0;i<tmpNum;i++)
@@ -250,7 +250,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.115*cos(50)/cos(abs(i-60))+ran()*0.01,deg2rad(-120-i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
-    else if(type==79){//s
+    else if(type==115){//s
         tmpNum=180;
         angle=-10+20*ran();
         for(i=0;i<tmpNum;i++)
@@ -263,7 +263,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.09,deg2rad(85+i+angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
     }
-    else if(type==80){//t
+    else if(type==116){//t
         tmpNum=180;
         angle=-10+20*ran();
         for(i=0;i<tmpNum;i++)
@@ -275,7 +275,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.06/cos(60)*cos(30)/cos(i-20),deg2rad(-70+angle-i),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
-    else if(type==81){//u
+    else if(type==117){//u
         tmpNum=60;
         angle=-10+ran()*20;
         for(i=0;i<tmpNum;i++)
@@ -287,7 +287,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.11*cos(60)/cos(abs(i-60))+ran()*0.01,deg2rad(120+i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
-    else if(type==82){//v
+    else if(type==118){//v
         angle=180+ran()*20;
         tmpNum=100;
         for(i=0;i<tmpNum;i++)
@@ -297,7 +297,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.1*cos(40)/cos(abs(i-40))+ran()*0.01,deg2rad(i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
-    else if(type==83){//w
+    else if(type==119){//w
         angle=105+30*ran();
         tmpNum=50;
         for(i=0;i<tmpNum;i++)
@@ -313,7 +313,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.1*cos(40)/cos(abs(i-40))+ran()*0.01,deg2rad(angle-i),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx));
     }
-    else if(type==84){//x
+    else if(type==120){//x
         angle=-70+30*ran();
         tmpNum=50;
         for(i=0;i<tmpNum;i++)
@@ -326,7 +326,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.1*i/tmpNum,deg2rad(angle+180-2+4*ran()),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
     }
-    else if(type==85){//y
+    else if(type==121){//y
         angle=-70+30*ran();
         tmpNum=50;
         for(i=0;i<tmpNum;i++)
@@ -337,7 +337,7 @@ export function getFireworkPoints(x,y,color,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.14*i/tmpNum,deg2rad(angle+180-2+4*ran()),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx));
     }
-    else if(type==86){//z
+    else if(type==122){//z
         angle=-70+30*ran();
         tmpNum=50;
         for(i=0;i<tmpNum;i++)

@@ -14,12 +14,31 @@ export function FireworkManager(){
     this.$canvas;
     this.ctx;
     this.virtualDOM;
+    this.alphabetBuffer=[];
+    this.clearBuffer=false;
     this.init=function(){
         this.time+=25;
         this.ctx.fillStyle='rgba(0,0,0,0.3)';//會透明
         this.ctx.beginPath();
         this.ctx.fillRect(0,0,this.$canvas.width(),this.$canvas.height());
         this.ctx.fill();
+        if(!this.clearBuffer){
+            this.alphabetBuffer.map(function(obj){
+                this.ctx.font='200 40px Verdana';
+                this.ctx.fillStyle='rgba(255,255,255,0.8)';
+                this.ctx.textAlign='center';
+                this.ctx.beginPath();
+                this.ctx.fillText(String.fromCharCode(obj.type),obj.endPos.x,obj.endPos.y);
+            }.bind(this));
+        }
+        else{
+            for(let i=0;i<this.alphabetBuffer.length;i++){
+                this.alphabetBuffer[i].startTime=this.time;
+                this.firework1s.push(this.alphabetBuffer[i]);
+            }
+            this.alphabetBuffer=[];
+            this.clearBuffer=false;
+        }
         for(var i=0;i<this.firework1s.length;i++){
             var fire=this.firework1s[i];
             if(fire.update() && fire.rocketOrNot)//如果還要繼續畫的話
@@ -48,11 +67,16 @@ export function FireworkManager(){
         }
     };
 
-    this.shoot=function(type){
+    this.shoot=function(type,bufferOrNot){//0 don't buffer
         if(!this.virtualDOM.state.replay){
-            let newFire=new Firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx, this.time);
-            this.saveRecord1.push(newFire);
-            this.firework1s.push(newFire); 
+            if(!bufferOrNot){
+                let newFire=new Firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx, this.time);
+                this.saveRecord1.push(newFire);
+                this.firework1s.push(newFire); 
+            }
+            else{
+                this.alphabetBuffer.push(new Firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx, this.time));
+            }
         }
     };
 
@@ -207,7 +231,6 @@ export function InputManager(){
     this.firework;
     this.virtualDOM;
     this.fireworkMap={//keycode to ascii code
-
         //1~8
         49:1, 
         50:2,
@@ -225,50 +248,54 @@ export function InputManager(){
         101:5,
         102:6,
         103:7,
-        104:8,
-
-        65:61,
-        66:62,
-        67:63,
-        68:64,
-        69:65,
-        70:66,
-        71:67,
-        72:68,
-        73:69,
-        73:69,
-        74:70,
-        75:71,
-        76:72,
-        77:73,
-        78:74,
-        79:75,
-        80:76,
-        81:77,
-        82:78,
-        83:79,
-        84:80,
-        85:81,
-        86:82,
-        87:83,
-        88:84,
-        89:85,
-        90:86
+        104:8
+    };
+    this.alphabetMap={
+        65:97,
+        66:98,
+        67:99,
+        68:100,
+        69:101,
+        70:102,
+        71:103,
+        72:104,
+        73:105,
+        74:106,
+        75:107,
+        76:108,
+        77:109,
+        78:110,
+        79:111,
+        80:112,
+        81:113,
+        82:114,
+        83:115,
+        84:116,
+        85:117,
+        86:118,
+        87:119,
+        88:120,
+        89:121,
+        90:122
     };
     document.addEventListener('keydown', function (event) {
-        if(event.which==32)
+        if(event.which==32 || event.which==115)
             event.preventDefault();
         let modifiers = event.altKey||event.ctrlKey||event.metaKey||event.shiftKey;//加了這些key就不行
         if (!modifiers) {
-            if (self.fireworkMap[event.which] !== undefined) {
+            if (self.fireworkMap[event.which] !== undefined || self.alphabetMap[event.which] !== undefined) {
                 event.preventDefault();
                 self.execFunc('shoot',event.which);
             }
         }
-        if(!modifiers && event.which==32)
+        if(!modifiers && event.which==188)//,<
             self.execFunc('switchRocket',event.which);
-        if(!modifiers && event.which==13)
+        if(!modifiers && event.which==191)// /
+            self.execFunc('flushWord',event.which);
+        if(!modifiers && event.which==115)//F4
             self.execFunc('stopRecord',event.which);
+        if(!modifiers && event.which==32)//space
+            self.execFunc('switchInsert',event.which);
     });
     this.execFunc = function(event,data){
         var callbacks = InputManager.keyDownFunction[event];
@@ -302,7 +329,12 @@ InputManager.keyDownFunction={
     inputCharacter:
         function(key,input){
             var nowValue = $(input).val();
-            $(input).val(nowValue+String.fromCharCode((96 <= key && key <= 105) ? key-48 : key));
+            if(key==188 || key==191)
+                $(input).val(nowValue);
+            else if(key==32)
+                $(input).val(nowValue+' ');
+            else
+                $(input).val(nowValue+String.fromCharCode((96 <= key && key <= 105) ? key-48 : key));
 
             var event = new Event('input', { bubbles: true });//trigger onChange event
             input.dispatchEvent(event);
@@ -312,8 +344,12 @@ InputManager.keyDownFunction={
             if(this.firework!==undefined){
                 if(InputManager.keyDownFunction.checkInputOrNot())
                     InputManager.keyDownFunction['inputCharacter'](key,InputManager.keyDownFunction.getWhichInput());
-                else if(!this.virtualDOM.state.modal)
-                    this.firework.shoot(this.fireworkMap[key]);
+                else if(!this.virtualDOM.state.modal){
+                    if(!this.virtualDOM.state.alphabet && this.fireworkMap[key]!==undefined)
+                        this.firework.shoot(this.fireworkMap[key],0);
+                    else if(this.virtualDOM.state.alphabet && this.alphabetMap[key]!==undefined)
+                        this.firework.shoot(this.alphabetMap[key],1);
+                }
             }
         },
     switchRocket:
@@ -321,14 +357,17 @@ InputManager.keyDownFunction={
             if(this.firework!==undefined){
                 if(InputManager.keyDownFunction.checkInputOrNot())
                     InputManager.keyDownFunction['inputCharacter'](key,InputManager.keyDownFunction.getWhichInput());
-                else if(!this.virtualDOM.state.modal)
+                else if(!this.virtualDOM.state.modal){
                     this.firework.switchRocket();
+                    this.virtualDOM.state.rocket=this.virtualDOM.state.rocket;
+                    this.virtualDOM.refs.settingWord.toggleRocket();
+                }
             }
         },
     stopRecord:
-        function(){
+        function(key){
             if(InputManager.keyDownFunction.checkInputOrNot())
-                InputManager.keyDownFunction['inputCharacter'](key);
+                InputManager.keyDownFunction['inputCharacter'](key,InputManager.keyDownFunction.getWhichInput());
             else if(!this.virtualDOM.state.modal && !this.virtualDOM.state.replay){
                 if(this.virtualDOM.state.pressRecord){
                     this.virtualDOM.state.modal=true;
@@ -351,6 +390,25 @@ InputManager.keyDownFunction={
                     }
                 }
             }
+        },
+    switchInsert:
+        function(key){
+            if(InputManager.keyDownFunction.checkInputOrNot())
+                InputManager.keyDownFunction['inputCharacter'](key,InputManager.keyDownFunction.getWhichInput());
+            else{
+                this.virtualDOM.state.alphabet=!this.virtualDOM.state.alphabet;
+                this.virtualDOM.refs.settingWord.toggleAlphabet();
+            }
+
+        },
+    flushWord:
+        function(key){
+            if(InputManager.keyDownFunction.checkInputOrNot())
+                InputManager.keyDownFunction['inputCharacter'](key,InputManager.keyDownFunction.getWhichInput());
+            else{
+                this.firework.clearBuffer=true;
+            }
+
         }
 };
 
@@ -376,7 +434,6 @@ export function WordManager(ctx){
     };
 
     this.draw=function(){
-        //console.log(this.ptr);
         this.color = 'rgba(255,255,255,' + this.opacity + ')';
                 this.ctx.font='200 '+this.size+'px Verdana';
                 this.ctx.fillStyle=this.color;
