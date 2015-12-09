@@ -15,30 +15,19 @@ export function FireworkManager(){
     this.ctx;
     this.virtualDOM;
     this.alphabetBuffer=[];
-    this.clearBuffer=false;
     this.init=function(){
         this.time+=25;
         this.ctx.fillStyle='rgba(0,0,0,0.3)';//會透明
         this.ctx.beginPath();
         this.ctx.fillRect(0,0,this.$canvas.width(),this.$canvas.height());
         this.ctx.fill();
-        if(!this.clearBuffer){
-            this.alphabetBuffer.map(function(obj){
-                this.ctx.font='200 40px Verdana';
-                this.ctx.fillStyle='rgba(255,255,255,0.8)';
-                this.ctx.textAlign='center';
-                this.ctx.beginPath();
-                this.ctx.fillText(String.fromCharCode(obj.type),obj.endPos.x,obj.endPos.y);
-            }.bind(this));
+
+        for(let i=0;i<this.alphabetBuffer.length;i++){
+            this.alphabetBuffer[i].startTime=this.time;
+            this.firework1s.push(this.alphabetBuffer[i]);
+            this.saveRecord1.push(this.alphabetBuffer[i]);
         }
-        else{
-            for(let i=0;i<this.alphabetBuffer.length;i++){
-                this.alphabetBuffer[i].startTime=this.time;
-                this.firework1s.push(this.alphabetBuffer[i]);
-            }
-            this.alphabetBuffer=[];
-            this.clearBuffer=false;
-        }
+        this.alphabetBuffer=[];
         for(var i=0;i<this.firework1s.length;i++){
             var fire=this.firework1s[i];
             if(fire.update() && fire.rocketOrNot)//如果還要繼續畫的話
@@ -67,15 +56,20 @@ export function FireworkManager(){
         }
     };
 
-    this.shoot=function(type,bufferOrNot){//0 don't buffer
+    this.shoot=function(type){//0 don't buffer
         if(!this.virtualDOM.state.replay){
-            if(!bufferOrNot){
+            if(!this.virtualDOM.state.pauseRecord){
                 let newFire=new Firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx, this.time);
                 this.saveRecord1.push(newFire);
                 this.firework1s.push(newFire); 
             }
             else{
                 this.alphabetBuffer.push(new Firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx, this.time));
+                this.ctx.font='200 40px Verdana';
+                this.ctx.fillStyle='rgba(255,255,255,0.8)';
+                this.ctx.textAlign='center';
+                this.ctx.beginPath();
+                this.ctx.fillText(String.fromCharCode(type),this.curPos.x,this.curPos.y);
             }
         }
     };
@@ -292,6 +286,8 @@ export function InputManager(){
             self.execFunc('switchRocket',event.which);
         if(!modifiers && event.which==191)// /
             self.execFunc('flushWord',event.which);
+        if(!modifiers && event.which==113)//F3
+            self.execFunc('pauseRecord',event.which);
         if(!modifiers && event.which==115)//F4
             self.execFunc('stopRecord',event.which);
         if(!modifiers && event.which==32)//space
@@ -344,11 +340,11 @@ InputManager.keyDownFunction={
             if(this.firework!==undefined){
                 if(InputManager.keyDownFunction.checkInputOrNot())
                     InputManager.keyDownFunction['inputCharacter'](key,InputManager.keyDownFunction.getWhichInput());
-                else if(!this.virtualDOM.state.modal){
+                else if(this.virtualDOM.state.pauseRecord || !this.virtualDOM.state.modal){
                     if(!this.virtualDOM.state.alphabet && this.fireworkMap[key]!==undefined)
-                        this.firework.shoot(this.fireworkMap[key],0);
+                        this.firework.shoot(this.fireworkMap[key]);
                     else if(this.virtualDOM.state.alphabet && this.alphabetMap[key]!==undefined)
-                        this.firework.shoot(this.alphabetMap[key],1);
+                        this.firework.shoot(this.alphabetMap[key]);
                 }
             }
         },
@@ -357,7 +353,7 @@ InputManager.keyDownFunction={
             if(this.firework!==undefined){
                 if(InputManager.keyDownFunction.checkInputOrNot())
                     InputManager.keyDownFunction['inputCharacter'](key,InputManager.keyDownFunction.getWhichInput());
-                else if(!this.virtualDOM.state.modal){
+                else if(this.virtualDOM.state.pauseRecord || !this.virtualDOM.state.modal){
                     this.firework.switchRocket();
                     this.virtualDOM.state.rocket=this.virtualDOM.state.rocket;
                     this.virtualDOM.refs.settingWord.toggleRocket();
@@ -365,10 +361,8 @@ InputManager.keyDownFunction={
             }
         },
     stopRecord:
-        function(key){
-            if(InputManager.keyDownFunction.checkInputOrNot())
-                InputManager.keyDownFunction['inputCharacter'](key,InputManager.keyDownFunction.getWhichInput());
-            else if(!this.virtualDOM.state.modal && !this.virtualDOM.state.replay){
+        function(){
+            if(!this.virtualDOM.state.modal && !this.virtualDOM.state.replay){
                 if(this.virtualDOM.state.pressRecord){
                     this.virtualDOM.state.modal=true;
                     $('.modal').addClass('active');
@@ -391,22 +385,31 @@ InputManager.keyDownFunction={
                 }
             }
         },
+    pauseRecord:
+        function(){
+            if(this.virtualDOM.state.startAction){
+                if(!this.virtualDOM.state.pauseRecord){
+                    this.firework.endTime+=getTime(this.firework.realStartTime);
+                    this.virtualDOM.state.fireworkRecord.endTime=this.firework.endTime;
+                    this.virtualDOM.state.pauseRecord=true;
+                    this.virtualDOM.state.modal=true;
+                    this.virtualDOM.refs.settingWord.togglePause();
+                }
+                else{
+                    this.firework.realStartTime=new Date().getTime();
+                    this.virtualDOM.state.pauseRecord=false;
+                    this.virtualDOM.state.modal=false;
+                    this.virtualDOM.refs.settingWord.togglePause();
+                }
+            }
+        },
     switchInsert:
         function(key){
             if(InputManager.keyDownFunction.checkInputOrNot())
                 InputManager.keyDownFunction['inputCharacter'](key,InputManager.keyDownFunction.getWhichInput());
-            else{
+            else if(this.virtualDOM.state.pauseRecord || !this.virtualDOM.state.modal){
                 this.virtualDOM.state.alphabet=!this.virtualDOM.state.alphabet;
                 this.virtualDOM.refs.settingWord.toggleAlphabet();
-            }
-
-        },
-    flushWord:
-        function(key){
-            if(InputManager.keyDownFunction.checkInputOrNot())
-                InputManager.keyDownFunction['inputCharacter'](key,InputManager.keyDownFunction.getWhichInput());
-            else{
-                this.firework.clearBuffer=true;
             }
 
         }

@@ -14,6 +14,7 @@ class Main extends React.Component{
             recordId2:null,
             startAction:false, //after Go disappear
             pressRecord:false, //press make，開始做這個動作,true代表整個工作階段
+            pauseRecord:false, //暫停，可以編排煙火
             goOver:false,   //Go 結束播映，到startAction這一段時間是開始的延遲
             flashRecId:null,
             modal:false,
@@ -414,6 +415,9 @@ class SettingWord extends Component{
         $('.settingWord:nth-child(7)').toggleClass('active');
         $('.settingWord:nth-child(9)').toggleClass('active');
     }
+    togglePause(){
+        $('.settingWord:nth-child(11)').toggleClass('active');
+    }
     render(){
         return(
                 <div className={'settingWordDiv'}>
@@ -426,10 +430,10 @@ class SettingWord extends Component{
                 <h3 className={'settingWord active'}>開</h3>
                 <h3 className={'settingWord'}>/</h3>
                 <h3 className={'settingWord'}>關</h3>
-                <h3 className={'settingWord settingWordKey'}>/</h3>
-                <h3 className={'settingWord active'}>發射煙火字</h3>
+                <h3 className={'settingWord settingWordKey'}>F2</h3>
+                <h3 className={'settingWord'}>暫停</h3>
                 <h3 className={'settingWord settingWordKey'}>F4</h3>
-                <h3 className={'settingWord active'}>停止/選單</h3>
+                <h3 className={'settingWord active'}>選單</h3>
                 </div>
               );
     }
