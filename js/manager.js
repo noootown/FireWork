@@ -56,7 +56,7 @@ export function FireworkManager(){
         }
     };
 
-    this.shoot=function(type){//0 don't buffer
+    this.shoot=function(type,ascii,fireworktype){//0 don't buffer
         if(!this.virtualDOM.state.replay){
             if(!this.virtualDOM.state.pauseRecord){
                 let newFire=new Firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx, this.time);
@@ -66,10 +66,13 @@ export function FireworkManager(){
             else{
                 this.alphabetBuffer.push(new Firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx, this.time));
                 this.ctx.font='200 40px Verdana';
-                this.ctx.fillStyle='rgba(255,255,255,0.8)';
+                if(fireworktype===0)
+                    this.ctx.fillStyle='rgba(255,255,255,0.8)';
+                else
+                    this.ctx.fillStyle='rgba(255,0,0,0.8)';
                 this.ctx.textAlign='center';
                 this.ctx.beginPath();
-                this.ctx.fillText(String.fromCharCode(type),this.curPos.x,this.curPos.y);
+                this.ctx.fillText(String.fromCharCode(ascii),this.curPos.x,this.curPos.y);
             }
         }
     };
@@ -226,51 +229,53 @@ export function InputManager(){
     this.virtualDOM;
     this.fireworkMap={//keycode to ascii code
         //1~8
-        49:1, 
-        50:2,
-        51:3,
-        52:4,
-        53:5,
-        54:6,
-        55:7,
-        56:8,
-
-        97:1,
-        98:2,
-        99:3,
-        100:4,
-        101:5,
-        102:6,
-        103:7,
-        104:8
+        49:[1,49], //keycode:[type,ascii code]
+        50:[2,50],
+        51:[3,51],
+        52:[4,52],
+        53:[5,53],
+        54:[6,54],
+        55:[7,55],
+        56:[8,56],
+        57:[9,57],
+        
+        97:[1,49],
+        98:[2,50],
+        99:[3,51],
+        100:[4,52],
+        101:[5,53],
+        102:[6,54],
+        103:[7,55],
+        104:[8,56],
+        105:[9,57]
     };
     this.alphabetMap={
-        65:97,
-        66:98,
-        67:99,
-        68:100,
-        69:101,
-        70:102,
-        71:103,
-        72:104,
-        73:105,
-        74:106,
-        75:107,
-        76:108,
-        77:109,
-        78:110,
-        79:111,
-        80:112,
-        81:113,
-        82:114,
-        83:115,
-        84:116,
-        85:117,
-        86:118,
-        87:119,
-        88:120,
-        89:121,
-        90:122
+        65:[97,97],
+        66:[98,98],
+        67:[99,99],
+        68:[100,100],
+        69:[101,101],
+        70:[102,102],
+        71:[103,103],
+        72:[104,104],
+        73:[105,105],
+        74:[106,106],
+        75:[107,107],
+        76:[108,108],
+        77:[109,109],
+        78:[110,110],
+        79:[111,111],
+        80:[112,112],
+        81:[113,113],
+        82:[114,114],
+        83:[115,115],
+        84:[116,116],
+        85:[117,117],
+        86:[118,118],
+        87:[119,119],
+        88:[120,120],
+        89:[121,121],
+        90:[122,122]
     };
     document.addEventListener('keydown', function (event) {
         if(event.which==32 || event.which==115)
@@ -286,7 +291,7 @@ export function InputManager(){
             self.execFunc('switchRocket',event.which);
         if(!modifiers && event.which==191)// /
             self.execFunc('flushWord',event.which);
-        if(!modifiers && event.which==113)//F3
+        if(!modifiers && event.which==113)//F2
             self.execFunc('pauseRecord',event.which);
         if(!modifiers && event.which==115)//F4
             self.execFunc('stopRecord',event.which);
@@ -342,9 +347,9 @@ InputManager.keyDownFunction={
                     InputManager.keyDownFunction['inputCharacter'](key,InputManager.keyDownFunction.getWhichInput());
                 else if(this.virtualDOM.state.pauseRecord || !this.virtualDOM.state.modal){
                     if(!this.virtualDOM.state.alphabet && this.fireworkMap[key]!==undefined)
-                        this.firework.shoot(this.fireworkMap[key]);
+                        this.firework.shoot(this.fireworkMap[key][0],this.fireworkMap[key][1],0);
                     else if(this.virtualDOM.state.alphabet && this.alphabetMap[key]!==undefined)
-                        this.firework.shoot(this.alphabetMap[key]);
+                        this.firework.shoot(this.alphabetMap[key][0],this.alphabetMap[key][1],1);
                 }
             }
         },
@@ -394,12 +399,14 @@ InputManager.keyDownFunction={
                     this.virtualDOM.state.pauseRecord=true;
                     this.virtualDOM.state.modal=true;
                     this.virtualDOM.refs.settingWord.togglePause();
+                    this.virtualDOM.refs.startActionInstruction.pause();
                 }
                 else{
                     this.firework.realStartTime=new Date().getTime();
                     this.virtualDOM.state.pauseRecord=false;
                     this.virtualDOM.state.modal=false;
                     this.virtualDOM.refs.settingWord.togglePause();
+                    this.virtualDOM.refs.startActionInstruction.cancelPause();
                 }
             }
         },

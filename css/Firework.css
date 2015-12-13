@@ -283,7 +283,14 @@ display:inline;
 .img-rec{
 width:66px;
 height:21px;
-cursor:pointer;
+}
+.img-pause{
+width:100px;
+height:21px;
+display:inline
+}
+.startActionInstruction > *.pause{
+display:none;
 }
 .modal{
 position:absolute;

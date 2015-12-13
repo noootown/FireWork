@@ -84,7 +84,7 @@ class Main extends React.Component{
                 this.state.startAction=true;
                 this.state.flashRecId
                     =setInterval(function(){
-                        $('.startActionInstruction').children().toggleClass('active');
+                        $('.img-rec').toggleClass('active');
                     },800);
             }
         }.bind(this),9000);//delay time 延遲讓文字顯示的時間
@@ -440,10 +440,19 @@ class SettingWord extends Component{
 }
 
 class StartActionInstruction extends Component{
+    pause(){
+        $('.img-rec').addClass('pause');
+        $('.img-pause').removeClass('pause');
+    }
+    cancelPause(){
+        $('.img-rec').removeClass('pause');
+        $('.img-pause').addClass('pause');
+    }
     render(){
         return(
                 <div className={'startActionInstruction'}>
                 <img src="img/rec.png" className={'img-rec'}></img>
+                <img src="img/pause.png" className={'img-pause pause'}></img>
                 </div>
               );
     }
