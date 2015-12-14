@@ -16,7 +16,7 @@ export class SaveDialog extends React.Component{
                 <div className={'dialogBtnDiv'}>
                 <button id={'dialogSaveSaveBtn'} className={'optionBtn'} onClick={this.props.saveClick}>Save</button>
                 <button id={'dialogSaveReplayBtn'} className={'optionBtn'} onClick={this.props.replayClick}>Replay</button>
-                <button id={'dialogSaveAgainBtn'}className={'optionBtn'} onClick={this.props.againClick}>Again</button>
+                <button id={'dialogSaveAgainBtn'}className={'optionBtn'} onClick={this.props.againClick}>Restart</button>
                 <button id={'dialogSaveContinueBtn'} className={'optionBtn'} onClick={this.props.continueClick}>Continue</button>
                 <button id={'dialogSaveQuitBtn'}className={'optionBtn'} onClick={this.props.quitClick}>Quit</button>
                 </div>
