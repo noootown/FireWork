@@ -16,6 +16,7 @@ export function FireworkManager(){
     this.virtualDOM;
     this.alphabetBuffer=[];
     this.init=function(){
+        //console.log(this.time);
         this.time+=25;
         this.ctx.fillStyle='rgba(0,0,0,0.3)';//會透明
         this.ctx.beginPath();
@@ -43,11 +44,13 @@ export function FireworkManager(){
                 i--;
             }
         }
+        //console.log('length: '+this.firework2s.length+' '+this.time);
         for(i=0;i<this.firework2s.length;i++){
             fire=this.firework2s[i];
             if(fire.checkFinish()){
                 this.firework2s.splice(i,1);
                 i--;
+                //console.log('yee');
             }
             else{
                 fire.update();
@@ -59,6 +62,7 @@ export function FireworkManager(){
     this.shoot=function(type,ascii,fireworktype){//0 don't buffer
         if(!this.virtualDOM.state.replay){
             if(!this.virtualDOM.state.pauseRecord){
+                //console.log('1: '+this.time);
                 let newFire=new Firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx, this.time);
                 this.saveRecord1.push(newFire);
                 this.firework1s.push(newFire); 
@@ -144,27 +148,12 @@ function Firework2(x,y,type,ctx,time){
     this.startPos=new vector(x,y);
     this.fireworkPoints=[];
     this.startTime=time;
-    this.color=getRandomColor();
     this.init=function(){
-        this.fireworkPoints=getFireworkPoints(this.startPos.x,this.startPos.y,this.color,type,ctx);
-        return this;
+        this.fireworkPoints=getFireworkPoints(this.startPos.x,this.startPos.y,type,ctx);
     };
     this.checkFinish=function(){//檢查是否
-        if(this.fireworkPoints[0] && this.fireworkPoints[0].time>=1600){//1600是直接取一個大的值，比所有煙火的時間都還來的長
-            if(type==4){//如果是第4種煙火的話，那就要加上之後的螢火蟲效果
-                for(var i=0;i<500;i++){
-                    var self=this;
-                    setTimeout(function(){
-                        ctx.fillStyle='#FFFFFF';
-                        ctx.beginPath();
-                        ctx.arc(self.startPos.x-500+Math.random()*1000,self.startPos.y+Math.random()*600,Math.random()*2,0,Math.PI*2,true);
-                        ctx.fill();
-                        ctx.closePath();},Math.random()*700+500);
-                }
-
-            }
+        if(this.fireworkPoints[0] && this.fireworkPoints[0].time>=3000)//1600是直接取一個大的值，比所有煙火的時間都還來的長
             return true;
-        }
         else
             return false;
     };
@@ -181,43 +170,41 @@ function Firework2(x,y,type,ctx,time){
     this.reset=function(){
         _.each(this.fireworkPoints,function(fire){
             fire.time=0;
+            fire.delayPtr=fire.delay;
+            fire.invisibleTimePtr=fire.invisibleTime;
         });
     };
 }
-export function FireworkPoint(x,y,speed,angle,color,radius,timeMax,delay,acce,ctx){//每一個煙火點
+export function FireworkPoint(x,y,speed,angle,color,radius,timeMax,delay,acceler,ctx,invisibleTime){//每一個煙火點
     this.startPos=new vector(x,y);
     this.curPos=new vector(x,y);
-    this.speed=speed;
-    this.angle=angle;
-    this.color=color;
     this.time=0;
     this.delay=delay;
-    this.timeMax=timeMax;//顯示時間
-    this.radius=radius;
-    this.acceler=acce;
+    this.delayPtr=this.delay;
+    this.invisibleTime=invisibleTime;
+    this.invisibleTimePtr=this.invisibleTime;
     this.update=function(){
-        if(this.delay>0)
-            this.delay-=10;
+        if(this.delayPtr>0)
+            this.delayPtr-=10;
         else{
-            var speedx=this.speed*Math.cos(this.angle);
-            var speedy=this.speed*Math.sin(this.angle);
+            var speedx=speed*Math.cos(angle);
+            var speedy=speed*Math.sin(angle);
             this.curPos.x=this.startPos.x+speedx*this.time;
-            this.curPos.y=this.startPos.y+speedy*this.time+this.acceler*this.time*this.time;
+            this.curPos.y=this.startPos.y+speedy*this.time+acceler*this.time*this.time;
+            this.time+=10;
+            if(this.invisibleTimePtr>0)
+                this.invisibleTimePtr-=10;
         }
-        this.time+=10;
     };
     this.draw=function(){
-        if(this.time>=this.timeMax || this.delay>0)
+        if(this.time>=timeMax || this.delayPtr>0 || this.invisibleTimePtr>0)
             return;
-        ctx.fillStyle=this.color;
+        ctx.fillStyle=color;
         ctx.beginPath();
-        ctx.arc(this.curPos.x,this.curPos.y,this.radius,0,Math.PI*2,true);
+        ctx.arc(this.curPos.x,this.curPos.y,radius,0,Math.PI*2,true);
         ctx.fill();
         ctx.closePath();
     };
-}
-function getRandomColor(){
-    return 'hsl(' + Math.random()*360 + ',100%, 70%)';
 }
 function getTime(startTime){
     return new Date().getTime()-startTime;
@@ -239,7 +226,7 @@ export function InputManager(){
         55:[7,55],
         56:[8,56],
         57:[9,57],
-        
+
         96:[0,48],
         97:[1,49],
         98:[2,50],
@@ -249,7 +236,34 @@ export function InputManager(){
         102:[6,54],
         103:[7,55],
         104:[8,56],
-        105:[9,57]
+        105:[9,57],
+
+        65:[10,97],
+        66:[11,98],
+        67:[12,99],
+        68:[13,100],
+        69:[14,101],
+        70:[15,102],
+        71:[16,103],
+        72:[17,104],
+        73:[18,105],
+        74:[19,106],
+        75:[20,107],
+        76:[21,108],
+        77:[22,109],
+        78:[23,110],
+        79:[24,111],
+        80:[25,112],
+        81:[26,113],
+        82:[27,114],
+        83:[28,115],
+        84:[29,116],
+        85:[30,117],
+        86:[31,118],
+        87:[32,119],
+        88:[33,120],
+        89:[34,121],
+        90:[35,122]
     };
     this.alphabetMap={
         48:[48,48],
@@ -262,7 +276,7 @@ export function InputManager(){
         55:[55,55],
         56:[56,56],
         57:[57,57],
-        
+
         96:[48,48],
         97:[49,49],
         98:[50,50],
@@ -433,6 +447,19 @@ InputManager.keyDownFunction={
                     this.virtualDOM.refs.startActionInstruction.cancelPause();
                 }
             }
+            else if(!this.virtualDOM.state.pressRecord){
+                if(!this.virtualDOM.state.pauseRecord){
+                    this.virtualDOM.state.pauseRecord=true;
+                    this.virtualDOM.state.modal=true;
+                    this.virtualDOM.refs.settingWord.togglePause();
+                }
+                else{
+                    this.virtualDOM.state.pauseRecord=false;
+                    this.virtualDOM.state.modal=false;
+                    this.virtualDOM.refs.settingWord.togglePause();
+                }
+
+            }
         },
     switchInsert:
         function(key){
@@ -468,30 +495,30 @@ export function WordManager(ctx){
     };
 
     this.draw=function(){
-        this.color = 'rgba(255,255,255,' + this.opacity + ')';
-                this.ctx.font='200 '+this.size+'px Verdana';
-                this.ctx.fillStyle=this.color;
-                this.ctx.textAlign='center';
-                this.ctx.beginPath();
-                this.ctx.fillText(this.words[this.ptr],this.x,this.y);
-                };
+        this.color='rgba'+'(255,255,255,'+this.opacity+')';
+        this.ctx.font='200 '+this.size+'px Verdana';
+        this.ctx.fillStyle=this.color;
+        this.ctx.textAlign='center';
+        this.ctx.beginPath();
+        this.ctx.fillText(this.words[this.ptr],this.x,this.y);
+    };
 
-                this.update=function(){
-                    this.timeCounter+=25;
-                    if(this.timeCounter<=500)
-                        this.opacity+=0.05;
-                    else if(this.timeCounter>=FADEINTIME && this.timeCounter<FADEINTIME+500)
-                        this.opacity-=0.05;
-                    else if(this.timeCounter===FADEINTIME+FADEOUTTIME){
-                        //this.ptr=(this.ptr+1)%this.words.length;
-                        this.ptr=this.ptr+1;
-                        this.timeCounter=0;
-                    }
-                };
-                this.checkfinish=function(){
-                    if(this.ptr==this.words.length)
-                        return true;
-                    else 
-                        return false;
-                };
+    this.update=function(){
+        this.timeCounter+=25;
+        if(this.timeCounter<=500)
+            this.opacity+=0.05;
+        else if(this.timeCounter>=FADEINTIME && this.timeCounter<FADEINTIME+500)
+            this.opacity-=0.05;
+        else if(this.timeCounter===FADEINTIME+FADEOUTTIME){
+            //this.ptr=(this.ptr+1)%this.words.length;
+            this.ptr=this.ptr+1;
+            this.timeCounter=0;
+        }
+    };
+    this.checkfinish=function(){
+        if(this.ptr==this.words.length)
+            return true;
+        else 
+            return false;
+    };
 }

@@ -57,6 +57,11 @@ class Main extends React.Component{
         }.bind(this),25);
     }
     sidebarMakeClick(words){
+        if(this.state.pauseRecord===true){
+            this.state.pauseRecord=false;
+            this.state.modal=false;
+            this.refs.settingWord.togglePause();
+        }
         this.toggleSidebar();
         Main.defaultProps.wordAll.words=words;
         this.startRecord();
@@ -137,9 +142,12 @@ class Main extends React.Component{
         let time=0;
         setTimeout(function(){
             self.state.replayId=setInterval(function(){
-                time+=10;
+        //console.log(time);
+                time+=25;
+                //console.log(index1);
                 for(let i=index1;i<self.state.fireworkRecord.saveRecord1.length;i++){
                     if(self.state.fireworkRecord.saveRecord1[i].startTime<time){
+                        //console.log('2: '+i+' '+time);
                         index1++;
                         self.state.fireworkRecord.saveRecord1[i].reset();
                         Main.defaultProps.myInputManager.firework.firework1s.push(self.state.fireworkRecord.saveRecord1[i]);
@@ -154,13 +162,14 @@ class Main extends React.Component{
                         index2++;
                         self.state.fireworkRecord.saveRecord2[i].reset();
                         Main.defaultProps.myInputManager.firework.firework2s.push(self.state.fireworkRecord.saveRecord2[i]);
+                        //console.log('2: '+i+' '+time);
                     }
                     else if(isNaN(self.state.fireworkRecord.saveRecord2[i].startTime))
                         index2++;
                     else
                         break;
                 }
-            },10);
+            },25);
             setTimeout(function(){
                 clearInterval(self.state.replayId);
                 self.state.modal=true;
@@ -235,7 +244,6 @@ class Main extends React.Component{
                         index2++;
                         self.state.fireworkSaveRecord.saveRecord2[i].reset();
                         Main.defaultProps.myInputManager.firework.firework2s.push(self.state.fireworkSaveRecord.saveRecord2[i]);
-                        //console.log(i);
                     }
                     else if(isNaN(self.state.fireworkSaveRecord.saveRecord2[i].startTime))
                         index2++;
