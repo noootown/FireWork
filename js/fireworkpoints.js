@@ -212,7 +212,6 @@ export function getFireworkPoints(x,y,type,ctx){
         }
     }
     else if(type==17){//大太陽
-        hue=rand(360);//色相變化不要太小
         color='hsl(0,100%, 70%)';
         tmpNum=0;
         for(i=0;i<6;i++){
@@ -238,11 +237,25 @@ export function getFireworkPoints(x,y,type,ctx){
         tmpNum=0;
         for(i=0;i<6;i++){
             for(j=0;j<tmpNum;j++)
-                fire.push(new FireworkPoint(x,y,i/12-0.09+ran()*0.08,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+900,500,0.00005,ctx,600+rand(300)));
+                fire.push(new FireworkPoint(x,y,i/12-0.09+ran()*0.08,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*400+1000,500,0.00005,ctx,600+rand(300)));
             tmpNum+=60;
         }
     }
-    else if(type==18){//圓內均勻分布+環稍微強調
+    else if(type==18){//針狀
+        let hue=rand(360);
+        color='hsl(' + hue + ',100%, 70%)';
+        tmpNum=0;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++){
+                angle=deg2rad(j/tmpNum*360+rand(15));
+                for(let k=0;k<50;k++)
+                    fire.push(new FireworkPoint(x,y,i/16-0.03+ran()*0.06-k/40*0.04,angle,color,(-abs(k-25)+25)/25*1,Math.random()*200+800,0,0.0001,ctx,invisibleTime));
+
+            }
+            tmpNum+=8;
+        }
+    }
+    else if(type==19){//圓內均勻分布+環稍微強調,2層
         let hue=rand(360);
         color='hsl(' + hue + ',100%, 70%)';
         tmpNum=0;
@@ -251,12 +264,58 @@ export function getFireworkPoints(x,y,type,ctx){
                 fire.push(new FireworkPoint(x,y,i/32-0.015+ran()*0.03,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime));
             tmpNum+=24;
         }
+        tmpNum=720;
+        for(i=0;i<tmpNum;i++)
+            fire.push(new FireworkPoint(x,y,6/32-ran()*0.06,deg2rad(i/tmpNum*360+rand(5)),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime));
         hue=(hue+60+rand(60))%360;//色相不要差太大
         color='hsl(' + hue + ',100%, 70%)';
+        tmpNum=0;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++)
+                fire.push(new FireworkPoint(x,y,i/64-0.0075+ran()*0.015,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime));
+            tmpNum+=24;
+        }
+        tmpNum=720;
+        for(i=0;i<tmpNum;i++)
+            fire.push(new FireworkPoint(x,y,6/64-ran()*0.03,deg2rad(i/tmpNum*360+rand(5)),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime));
+    }
+    else if(type==20){//
+        let hue=rand(360);
+        color='hsl(' + hue + ',100%, 70%)';
+        tmpNum=0;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++){
+                angle=deg2rad(j/tmpNum*360+rand(15));
+                for(let k=0;k<50;k++)
+                    fire.push(new FireworkPoint(x,y,i/16-0.03+ran()*0.06-k/40*0.04,angle,color,(-abs(k-25)+25)/25*1,Math.random()*200+800,0,0.00005,ctx,invisibleTime));
+
+            }
+            tmpNum+=8;
+        }
+        hue=(hue+60+rand(60))%360;//色相不要差太大
+        color='hsl(' + hue + ',100%, 70%)';
+        tmpNum=0;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++)
+                fire.push(new FireworkPoint(x,y,i/32-0.015+ran()*0.03,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime));
+            tmpNum+=30;
+        }
+        hue=(hue+60+rand(60))%360;//色相不要差太大
+        color='hsl(' + hue + ',100%, 70%)';
+        tmpNum=0;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++){
+                fire.push(new FireworkPoint(x,y,i/16-0.03+ran()*0.06,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime));
+            }
+            tmpNum+=24;
+        }
         tmpNum=720;
         for(i=0;i<tmpNum;i++){
-            fire.push(new FireworkPoint(x,y,6/32-ran()*0.06,deg2rad(i/tmpNum*360+rand(5)),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime));
+            fire.push(new FireworkPoint(x,y,6/16-0.02-ran()*0.12,deg2rad(i/tmpNum*360+rand(5)),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime));
         }
+    }
+    else if(type==21){
+
     }
     else if(type==48){//0
         tmpNum=360;
