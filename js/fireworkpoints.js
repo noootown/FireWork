@@ -212,7 +212,7 @@ export function getFireworkPoints(x,y,type,ctx){
         }
     }
     else if(type==17){//大太陽
-        let hue=rand(360);//色相變化不要太小
+        hue=rand(360);//色相變化不要太小
         color='hsl(0,100%, 70%)';
         tmpNum=0;
         for(i=0;i<6;i++){
