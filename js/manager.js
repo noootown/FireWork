@@ -18,7 +18,7 @@ export function FireworkManager(){
     this.init=function(){
         //console.log(this.time);
         this.time+=25;
-        this.ctx.fillStyle='rgba(0,0,0,0.3)';//會透明
+        this.ctx.fillStyle='rgba(0,0,0,0.2)';//會透明
         this.ctx.beginPath();
         this.ctx.fillRect(0,0,this.$canvas.width(),this.$canvas.height());
         this.ctx.fill();
