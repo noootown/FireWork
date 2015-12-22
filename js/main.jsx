@@ -5,6 +5,18 @@ import SideBar from './sidebar';
 import {SaveDialog,LoadDialog,UploadDialog,ReplayDialog} from './dialog';
 import {FireworkManager,InputManager,WordManager} from './manager';
 
+window.requestAnimFrame = (function(){ 
+    return window.requestAnimationFrame || //Chromium
+        window.webkitRequestAnimationFrame || //Webkit
+        window.mozRequestAnimationFrame || //Mozilla
+        window.oRequestAnimationFrame || //Opera
+        window.msRequestAnimationFrame || //IE
+        function(callback){ 
+            window.setTimeout(callback, 1000 / 60); 
+        }; 
+})(); 
+window.fps=30;
+
 class Main extends React.Component{
     constructor(){
         super();
@@ -32,7 +44,8 @@ class Main extends React.Component{
             },
             replay:false,
             alphabet:false,
-            rocket:false
+            rocket:false,
+            flag:0
         };
     }
     setupInputManager(fireworkManager){
@@ -41,7 +54,10 @@ class Main extends React.Component{
         Main.defaultProps.myInputManager.virtualDOM=this;
         Main.defaultProps.wordAll.$canvas=$('#mainCanvas');
         Main.defaultProps.wordAll.ctx=fireworkManager.ctx;
-        setInterval(function(){
+        this.drawAnim();
+    }
+    drawAnim(){
+        if(this.state.flag==(60/window.fps-1)){
             if(!this.state.startAction){
                 Main.defaultProps.wordAll.ptr=0;
                 Main.defaultProps.wordAll.timeCounter=0;
@@ -53,8 +69,11 @@ class Main extends React.Component{
             if(this.state.startAction && !this.state.modal ){//for continue
                 Main.defaultProps.wordAll.init();
             }
-
-        }.bind(this),25);
+            this.state.flag=0;
+        }
+        else
+            this.state.flag++;
+        window.requestAnimFrame(this.drawAnim.bind(this));
     }
     sidebarMakeClick(words){
         if(this.state.pauseRecord===true){
@@ -142,7 +161,7 @@ class Main extends React.Component{
         let time=0;
         setTimeout(function(){
             self.state.replayId=setInterval(function(){
-        //console.log(time);
+                //console.log(time);
                 time+=25;
                 //console.log(index1);
                 for(let i=index1;i<self.state.fireworkRecord.saveRecord1.length;i++){

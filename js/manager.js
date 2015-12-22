@@ -17,7 +17,7 @@ export function FireworkManager(){
     this.alphabetBuffer=[];
     this.init=function(){
         //console.log(this.time);
-        this.time+=25;
+        this.time+=1000/window.fps;
         this.ctx.fillStyle='rgba(0,0,0,0.2)';//會透明
         this.ctx.beginPath();
         this.ctx.fillRect(0,0,this.$canvas.width(),this.$canvas.height());
@@ -98,7 +98,7 @@ function Firework1(x,y,type,rocketOrNot,ctx,startTime){
     this.startPos=new vector(x,$(window).height());
     this.endPos=new vector(x,y);
     this.curPos=new vector(this.startPos.x,this.startPos.y);
-    this.time=Math.random()*20+20;//在1空中發射的時間
+    this.time=Math.random()*480/window.fps+480/window.fps;//在1空中發射的時間
     this.velocity=new vector( (this.endPos.x-this.startPos.x)/this.time , (this.endPos.y-this.startPos.y)/this.time);
     this.color='#FFFFFF';
     this.rocketOrNot=rocketOrNot;//是否有火箭，如果沒有，就隱形
@@ -171,29 +171,40 @@ function Firework2(x,y,type,ctx,time){
         _.each(this.fireworkPoints,function(fire){
             fire.time=0;
             fire.delayPtr=fire.delay;
+            fire.curPos.x=fire.startPos.x;
+            fire.curPos.y=fire.startPos.y;
+            fire.speed.x=fire.startSpeed.x;
+            fire.speed.y=fire.startSpeed.y;
             fire.invisibleTimePtr=fire.invisibleTime;
         });
     };
 }
-export function FireworkPoint(x,y,speed,angle,color,radius,timeMax,delay,acceler,ctx,invisibleTime){//每一個煙火點
+export function FireworkPoint(x,y,speed,angle,color,radius,timeMax,delay,acceler,ctx,invisibleTime,friction){//每一個煙火點
     this.startPos=new vector(x,y);
     this.curPos=new vector(x,y);
+    this.startSpeed=new vector(speed*Math.cos(angle),speed*Math.sin(angle));
+    this.speed=new vector(speed*Math.cos(angle),speed*Math.sin(angle));
     this.time=0;
     this.delay=delay;
     this.delayPtr=this.delay;
     this.invisibleTime=invisibleTime;
     this.invisibleTimePtr=this.invisibleTime;
+    this.timeInterval=400/window.fps;
     this.update=function(){
         if(this.delayPtr>0)
-            this.delayPtr-=10;
+            this.delayPtr-=this.timeInterval;
         else{
-            var speedx=speed*Math.cos(angle);
-            var speedy=speed*Math.sin(angle);
-            this.curPos.x=this.startPos.x+speedx*this.time;
-            this.curPos.y=this.startPos.y+speedy*this.time+acceler*this.time*this.time;
-            this.time+=10;
+            this.curPos.x=this.curPos.x+this.speed.x*this.timeInterval;
+            this.curPos.y=this.curPos.y+this.speed.y*this.timeInterval;
+            this.time+=this.timeInterval;
+            if( (this.speed.x>0 && this.speed.x<friction*this.speed.x*this.timeInterval) || (this.speed.x<0 && this.speed.x>friction*this.speed.x*this.timeInterval) || this.speed.x==0 )
+                this.speed.x=0;
+            else
+                this.speed.x-=friction*this.speed.x*this.timeInterval;
+            if(friction*this.speed.y<acceler*2)
+                this.speed.y=this.speed.y-friction*this.speed.y*10+acceler*2*this.timeInterval;
             if(this.invisibleTimePtr>0)
-                this.invisibleTimePtr-=10;
+                this.invisibleTimePtr-=this.timeInterval;
         }
     };
     this.draw=function(){
