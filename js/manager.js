@@ -8,7 +8,6 @@ export function FireworkManager(){
     this.saveRecord1=[];//
     this.saveRecord2=[];
     this.curPos=new vector(-1000,0);//滑鼠位置
-    this.realStartTime;//開始的時間，會不斷的累積到endTime
     this.endTime;//統計總時間
     this.time;
     this.$canvas;
@@ -219,9 +218,6 @@ export function FireworkPoint(x,y,speed,angle,color,radius,timeMax,delay,acceler
         ctx.closePath();
     };
 }
-function getTime(startTime){
-    return new Date().getTime()-startTime;
-}
 
 export function InputManager(){
     var self=this;
@@ -423,8 +419,6 @@ InputManager.keyDownFunction={
                     this.virtualDOM.state.modal=true;
                     $('.modal').addClass('active');
                     $('.dialogSave').addClass('active');
-                    this.firework.endTime+=getTime(this.firework.realStartTime);
-                    this.virtualDOM.state.fireworkRecord.endTime=this.firework.endTime;
                     if(!this.virtualDOM.state.goOver){
                         $('#dialogSaveContinueBtn').addClass('hide');
                         $('#dialogSaveSaveBtn').addClass('hide');
@@ -445,15 +439,12 @@ InputManager.keyDownFunction={
         function(){
             if(this.virtualDOM.state.startAction){//action後的暫停
                 if(!this.virtualDOM.state.pauseRecord){//未暫停的狀態
-                    this.firework.endTime+=getTime(this.firework.realStartTime);
-                    this.virtualDOM.state.fireworkRecord.endTime=this.firework.endTime;
                     this.virtualDOM.state.pauseRecord=true;
                     this.virtualDOM.state.modal=true;
                     this.virtualDOM.refs.settingWord.togglePause();
                     this.virtualDOM.refs.startActionInstruction.pause();
                 }
                 else{//暫停的狀態
-                    this.firework.realStartTime=new Date().getTime();
                     this.virtualDOM.state.pauseRecord=false;
                     this.virtualDOM.state.modal=false;
                     this.virtualDOM.refs.settingWord.togglePause();

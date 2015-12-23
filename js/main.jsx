@@ -30,7 +30,6 @@ class Main extends React.Component{
             goOver:false,   //Go 結束播映，到startAction這一段時間是開始的延遲
             flashRecId:null,
             modal:false,
-            replayId:null,
             fireworkRecord:{//暫存的紀錄
                 saveRecord1:[],
                 saveRecord2:[],
@@ -155,54 +154,73 @@ class Main extends React.Component{
         this.resetRecordState();
         Main.defaultProps.myInputManager.firework.firework1s=[];//初始化
         Main.defaultProps.myInputManager.firework.firework2s=[];
-        let index1=0;//因為fireworkRecord儲存都是依照時間先後儲存的，所以只要設兩個index，從小跑到大就好了
-        let index2=0;
+        if(this.state.fireworkRecord.endTime==0){//代表replay第一次，之後也有可能replay好幾次，不過都不會再進到個if裡
+            this.state.fireworkRecord.endTime=Main.defaultProps.myInputManager.firework.time;
+            Main.defaultProps.myInputManager.firework.endTime=this.state.fireworkRecord.endTime;
+        }
+
         var self=this;
-        let time=0;
         setTimeout(function(){
-            self.state.replayId=setInterval(function(){
-                //console.log(time);
-                time+=25;
-                //console.log(index1);
-                for(let i=index1;i<self.state.fireworkRecord.saveRecord1.length;i++){
-                    if(self.state.fireworkRecord.saveRecord1[i].startTime<time){//如果時間超過了firework1的startTime，代表要發射了，就push到myInputManager的firework裡面，等待發射。
-                        //console.log('2: '+i+' '+time);
-                        index1++;
-                        self.state.fireworkRecord.saveRecord1[i].reset();
-                        Main.defaultProps.myInputManager.firework.firework1s.push(self.state.fireworkRecord.saveRecord1[i]);
-                    }
-                    else if(isNaN(self.state.fireworkRecord.saveRecord1[i].startTime))//如果出發的時間是NAN，就不要push，因為會出問題
-                        index1++;
-                    else
-                        break;
-                }
-                for(let i=index2;i<self.state.fireworkRecord.saveRecord2.length;i++){
-                    if(self.state.fireworkRecord.saveRecord2[i].startTime<time){
-                        index2++;
-                        self.state.fireworkRecord.saveRecord2[i].reset();
-                        Main.defaultProps.myInputManager.firework.firework2s.push(self.state.fireworkRecord.saveRecord2[i]);
-                        //console.log('2: '+i+' '+time);
-                    }
-                    else if(isNaN(self.state.fireworkRecord.saveRecord2[i].startTime))
-                        index2++;
-                    else
-                        break;
-                }
-            },25);
-            setTimeout(function(){//時間到的時候結束
-                clearInterval(self.state.replayId);
-                self.state.modal=true;
-                $('.modal').addClass('active');
-                $('.dialogSave').addClass('active');
-                $('#dialogSaveContinueBtn').addClass('hide');
-                self.state.replay=false;
-                self.state.startAction=false;
-                self.refs.settingWord.show();
-            },self.state.fireworkRecord.endTime);
+            self.pushRecordToReplay(self.state.fireworkRecord,0,0,0,0);
             setTimeout(function(){//700秒後，把計時器歸零，開始計時
                 self.state.startAction=true;
             },700);
+
         },500);//按下按鈕後過500ms才開始回放
+    }
+
+    pushRecordToReplay(record,in1,in2,time,type){//type 0: replay 1: load replay
+        let index1=in1,index2=in2;//因為fireworkRecord儲存都是依照時間先後儲存的，所以只要設兩個index，從小跑到大就好了
+        let record1=record.saveRecord1;
+        let record2=record.saveRecord2;
+        if(this.state.flag===(60/window.fps-1)){//因為前面在刷畫面的時候，己經更改flag值了，所以這邊只要判斷就好
+            for(let i=index1;i<record1.length;i++){
+                if(record1[i].startTime<time){//如果時間超過了firework1的startTime，代表要發射了，就push到myInputManager的firework裡面，等待發射。
+                    index1++;
+                    record1[i].reset();
+                    Main.defaultProps.myInputManager.firework.firework1s.push(record1[i]);
+                }
+                else if(isNaN(record1[i].startTime))//如果出發的時間是NAN，就不要push，因為會出問題
+                    index1++;
+                else
+                    break;
+            }
+            for(let i=index2;i<record2.length;i++){
+                if(record2[i].startTime<time){
+                    index2++;
+                    record2[i].reset();
+                    Main.defaultProps.myInputManager.firework.firework2s.push(record2[i]);
+                }
+                else if(isNaN(record2[i].startTime))
+                    index2++;
+                else
+                    break;
+            }
+        }
+        var self=this;
+        console.log(time);
+        console.log(record.endTime);
+        if(time<=record.endTime)
+            window.requestAnimFrame(function(){
+                self.pushRecordToReplay(record,index1,index2,time+1000/60,type);
+            });
+        else{
+            if(type===0){
+                this.state.modal=true;
+                $('.modal').addClass('active');
+                $('.dialogSave').addClass('active');
+                $('#dialogSaveContinueBtn').addClass('hide');
+                this.state.replay=false;
+                this.state.startAction=false;
+                this.refs.settingWord.show();
+            }
+            else if(type==1){
+                $('.modal').addClass('active');
+                $('.dialogReplay').addClass('active');
+                self.state.replay=false;
+                self.state.startAction=false;
+            }
+        }
     }
     saveDialogContinueClick(){
         Main.defaultProps.myInputManager.firework.realStartTime=new Date().getTime();
@@ -240,43 +258,9 @@ class Main extends React.Component{
         this.resetRecordState();
         Main.defaultProps.myInputManager.firework.firework1s=[];
         Main.defaultProps.myInputManager.firework.firework2s=[];
-        let index1=0;
-        let index2=0;
         var self=this;
-        let time=0;
         setTimeout(function(){
-            self.state.replayId=setInterval(function(){
-                time+=25;
-                for(let i=index1;i<self.state.fireworkSaveRecord.saveRecord1.length;i++){
-                    if(self.state.fireworkSaveRecord.saveRecord1[i].startTime<time){
-                        index1++;
-                        self.state.fireworkSaveRecord.saveRecord1[i].reset();
-                        Main.defaultProps.myInputManager.firework.firework1s.push(self.state.fireworkSaveRecord.saveRecord1[i]);
-                    }
-                    else if(isNaN(self.state.fireworkSaveRecord.saveRecord1[i].startTime))
-                        index1++;
-                    else
-                        break;
-                }
-                for(let i=index2;i<self.state.fireworkSaveRecord.saveRecord2.length;i++){
-                    if(self.state.fireworkSaveRecord.saveRecord2[i].startTime<time){
-                        index2++;
-                        self.state.fireworkSaveRecord.saveRecord2[i].reset();
-                        Main.defaultProps.myInputManager.firework.firework2s.push(self.state.fireworkSaveRecord.saveRecord2[i]);
-                    }
-                    else if(isNaN(self.state.fireworkSaveRecord.saveRecord2[i].startTime))
-                        index2++;
-                    else
-                        break;
-                }
-            },25);
-            setTimeout(function(){
-                clearInterval(self.state.replayId);
-                $('.modal').addClass('active');
-                $('.dialogReplay').addClass('active');
-                self.state.replay=false;
-                self.state.startAction=false;
-            },self.state.fireworkSaveRecord.endTime);
+            self.pushRecordToReplay(self.state.fireworkSaveRecord,0,0,0,1);
             setTimeout(function(){
                 self.state.startAction=true;
             },700);
@@ -296,13 +280,22 @@ class Main extends React.Component{
     uploadDialogQuitClick(){//不上傳只儲存在local
         this.state.fireworkSaveRecord.saveRecord1=Main.defaultProps.myInputManager.firework.saveRecord1;
         this.state.fireworkSaveRecord.saveRecord2=Main.defaultProps.myInputManager.firework.saveRecord2;
-        this.state.fireworkSaveRecord.endTime=this.state.fireworkRecord.endTime;
+        if(this.state.fireworkRecord.endTime==0)//代表沒有進replay mode，直接save
+            this.state.fireworkSaveRecord.endTime=Main.defaultProps.myInputManager.firework.time;
+        else    
+            this.state.fireworkSaveRecord.endTime=this.state.fireworkRecord.endTime;
         this.state.fireworkSaveRecord.saveTime=new Date();
         this.refs.upLoadDialog.closeDialog();
         this.resetRecordState();
         this.toggleSidebar();
         this.state.pressRecord=false;
         this.refs.centerShowWords.showRecordSave();
+
+        //reset暫存
+        this.state.fireworkRecord.saveRecord1=[];
+        this.state.fireworkRecord.saveRecord2=[];
+        this.state.fireworkRecord.endTime=0;
+        Main.defaultProps.myInputManager.firework.endTime=0;
     }
     replayDialogReplayClick(){
         this.refs.replayDialog.closeDialog();
