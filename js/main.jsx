@@ -31,19 +31,19 @@ class Main extends React.Component{
             flashRecId:null,
             modal:false,
             replayId:null,
-            fireworkRecord:{
+            fireworkRecord:{//暫存的紀錄
                 saveRecord1:[],
                 saveRecord2:[],
                 endTime:0
             },
-            fireworkSaveRecord:{
+            fireworkSaveRecord:{//已儲存的紀錄
                 saveRecord1:[],
                 saveRecord2:[],
                 endTime:0,
                 saveTime:null
             },
             replay:false,
-            alphabet:false,
+            alphabet:false,//true 英數模式 false 一般模式
             rocket:false,
             flag:0
         };
@@ -56,8 +56,8 @@ class Main extends React.Component{
         Main.defaultProps.wordAll.ctx=fireworkManager.ctx;
         this.drawAnim();
     }
-    drawAnim(){
-        if(this.state.flag==(60/window.fps-1)){
+    drawAnim(){//畫動畫
+        if(this.state.flag===(60/window.fps-1)){//因為requestAnimFrame預設的fps是60，所以設一個flag來控制他的fps
             if(!this.state.startAction){
                 Main.defaultProps.wordAll.ptr=0;
                 Main.defaultProps.wordAll.timeCounter=0;
@@ -89,7 +89,7 @@ class Main extends React.Component{
         this.toggleSidebar();
         this.refs.settingWord.hide();
         $('.dialogLoad').addClass('active');
-        if(this.state.fireworkSaveRecord.saveTime!==null){
+        if(this.state.fireworkSaveRecord.saveTime!==null){//有save資料的話
             $('.dialogLoadNoFile').removeClass('dialogLoadNoFile');
             $('.dialogLoadLocalWord').html(this.state.fireworkSaveRecord.saveTime.toString().substr(0,24));
         }
@@ -100,8 +100,8 @@ class Main extends React.Component{
     startRecord(){
         this.state.pressRecord=true;
         this.state.goOver=false;
-        this.refs.timer.timerCountDown();
-        clearTimeout(this.state.recordId);
+        this.refs.timer.timerCountDown();//開始倒數計時
+        clearTimeout(this.state.recordId);//有可能之前有未完的setTimeout，把它clear掉。
         clearTimeout(this.state.recordId2);
         this.state.recordId=setTimeout(function(){
             if(this.state.pressRecord){
@@ -113,7 +113,7 @@ class Main extends React.Component{
             }
         }.bind(this),9000);//delay time 延遲讓文字顯示的時間
 
-        this.state.recordId2=setTimeout(function(){//start record timer  GO結束
+        this.state.recordId2=setTimeout(function(){//start record timer  GO結束 //初始化各個狀態
             Main.defaultProps.myInputManager.firework.time=0;
             Main.defaultProps.myInputManager.firework.endTime=0;
             Main.defaultProps.myInputManager.firework.realStartTime=new Date().getTime();
@@ -123,7 +123,7 @@ class Main extends React.Component{
             this.state.goOver=true;
         }.bind(this),8300);
     }
-    toggleSidebar(){
+    toggleSidebar(){//sidebar和footer的開啟或關閉
         if(this.state.startAction){
             this.state.startAction=false;
             this.refs.startActionInstruction.stopFlashRec();
@@ -133,12 +133,12 @@ class Main extends React.Component{
         $('.sidePanel').toggleClass('active');
         $('.navbar').toggleClass('active');
     }
-    saveDialogSaveClick(){
+    saveDialogSaveClick(){//當startAction後，按下F4所跳出來的dialog save
         this.refs.saveDialog.closeDialog();
         $('.dialogUpload').addClass('active');
         this.refs.saveDialog.getBtnBack();
     }
-    saveDialogAgainClick(){
+    saveDialogAgainClick(){//restart
         this.refs.saveDialog.closeDialog();
         this.resetRecordState();
         this.refs.saveDialog.getBtnBack();
@@ -146,16 +146,16 @@ class Main extends React.Component{
             this.startRecord();
         }.bind(this),800);
     }
-    saveDialogReplayClick(){
+    saveDialogReplayClick(){//回放
         this.refs.settingWord.hide();
         this.state.replay=true;
         this.state.fireworkRecord.saveRecord1=Main.defaultProps.myInputManager.firework.saveRecord1;
         this.state.fireworkRecord.saveRecord2=Main.defaultProps.myInputManager.firework.saveRecord2;
         this.refs.saveDialog.closeDialog();
         this.resetRecordState();
-        Main.defaultProps.myInputManager.firework.firework1s=[];
+        Main.defaultProps.myInputManager.firework.firework1s=[];//初始化
         Main.defaultProps.myInputManager.firework.firework2s=[];
-        let index1=0;
+        let index1=0;//因為fireworkRecord儲存都是依照時間先後儲存的，所以只要設兩個index，從小跑到大就好了
         let index2=0;
         var self=this;
         let time=0;
@@ -165,13 +165,13 @@ class Main extends React.Component{
                 time+=25;
                 //console.log(index1);
                 for(let i=index1;i<self.state.fireworkRecord.saveRecord1.length;i++){
-                    if(self.state.fireworkRecord.saveRecord1[i].startTime<time){
+                    if(self.state.fireworkRecord.saveRecord1[i].startTime<time){//如果時間超過了firework1的startTime，代表要發射了，就push到myInputManager的firework裡面，等待發射。
                         //console.log('2: '+i+' '+time);
                         index1++;
                         self.state.fireworkRecord.saveRecord1[i].reset();
                         Main.defaultProps.myInputManager.firework.firework1s.push(self.state.fireworkRecord.saveRecord1[i]);
                     }
-                    else if(isNaN(self.state.fireworkRecord.saveRecord1[i].startTime))
+                    else if(isNaN(self.state.fireworkRecord.saveRecord1[i].startTime))//如果出發的時間是NAN，就不要push，因為會出問題
                         index1++;
                     else
                         break;
@@ -189,7 +189,7 @@ class Main extends React.Component{
                         break;
                 }
             },25);
-            setTimeout(function(){
+            setTimeout(function(){//時間到的時候結束
                 clearInterval(self.state.replayId);
                 self.state.modal=true;
                 $('.modal').addClass('active');
@@ -199,10 +199,10 @@ class Main extends React.Component{
                 self.state.startAction=false;
                 self.refs.settingWord.show();
             },self.state.fireworkRecord.endTime);
-            setTimeout(function(){
+            setTimeout(function(){//700秒後，把計時器歸零，開始計時
                 self.state.startAction=true;
             },700);
-        },500);
+        },500);//按下按鈕後過500ms才開始回放
     }
     saveDialogContinueClick(){
         Main.defaultProps.myInputManager.firework.realStartTime=new Date().getTime();
@@ -217,7 +217,7 @@ class Main extends React.Component{
         this.toggleSidebar();
         this.state.pressRecord=false;
     }
-    resetRecordState(){
+    resetRecordState(){//重設record的狀態，只要有會開始record或停上record，都會呼叫這個function
         this.state.startAction=false;
         clearInterval(this.state.flashRecId);
         $('.startActionInstruction').children().removeClass('active');
@@ -293,7 +293,7 @@ class Main extends React.Component{
         //TODO
         //ajax
     }
-    uploadDialogQuitClick(){
+    uploadDialogQuitClick(){//不上傳只儲存在local
         this.state.fireworkSaveRecord.saveRecord1=Main.defaultProps.myInputManager.firework.saveRecord1;
         this.state.fireworkSaveRecord.saveRecord2=Main.defaultProps.myInputManager.firework.saveRecord2;
         this.state.fireworkSaveRecord.endTime=this.state.fireworkRecord.endTime;
@@ -361,7 +361,7 @@ Main.defaultProps={
     wordAll:new WordManager()
 };
 
-class MainCanvas extends Component{
+class MainCanvas extends Component{//主要的canvas
     componentDidMount(){
         $(window).on('mousemove',function(e){
             this.props.fireworkAll.curPos.setVector(e.pageX,e.pageY);
@@ -379,7 +379,7 @@ class MainCanvas extends Component{
 MainCanvas.defaultProps={
     fireworkAll:new FireworkManager()
 };
-class Modal extends Component{
+class Modal extends Component{//擋著所有畫面的大黑幕
     render(){
         return(
                 <div className={'modal'}>
@@ -387,14 +387,14 @@ class Modal extends Component{
               );
     }
 }
-class Timer extends Component{
+class Timer extends Component{//倒數計時器
     constructor(){
         super();
         this.state={
             timerId:[]
         };
     }
-    clearTimer(){
+    clearTimer(){//清除計時器
         $('.time-second').removeClass('active');
         $('.time-second').addClass('hide');
         this.state.timerId.map(function(timer){
@@ -427,7 +427,7 @@ class Timer extends Component{
     }
 }
 
-class SettingWord extends Component{
+class SettingWord extends Component{//下面那一排提示說明
     show(){
         $('.settingWord').removeClass('hide');
     }
@@ -466,7 +466,7 @@ class SettingWord extends Component{
     }
 }
 
-class StartActionInstruction extends Component{
+class StartActionInstruction extends Component{//rec pause的圖片切換
     pause(){
         $('.img-rec').addClass('pause');
         $('.img-pause').removeClass('pause');
@@ -486,7 +486,7 @@ class StartActionInstruction extends Component{
 }
 
 
-class Navbar extends Component{
+class Navbar extends Component{//底部footer bar
     render(){
         return(
                 <div className={'navbar'}>
@@ -502,7 +502,7 @@ class Navbar extends Component{
     }
 }
 
-class CenterShowWords extends Component{
+class CenterShowWords extends Component{//顯示在中間的字，這是顯示已儲存
     showRecordSave(){
         $('.recordSave').addClass('active');
         setTimeout(function(){$('.recordSave').removeClass('active');},1000);
