@@ -2,32 +2,37 @@
 import {getFireworkPoints} from './fireworkpoints';
 
 export function FireworkManager(){
-    this.firework1s=[];
-    this.firework2s=[];
-    this.rocketOrNot=true;
-    this.saveRecord1=[];
+    this.firework1s=[];//firework1陣列
+    this.firework2s=[];//firework2陣列
+    this.rocketOrNot=true;//是否有煙火炷
+    this.saveRecord1=[];//
     this.saveRecord2=[];
-    this.curPos=new vector(-1000,0);
-    this.realStartTime;//開始的時間︳會不斷的累積到endTime
+    this.curPos=new vector(-1000,0);//滑鼠位置
     this.endTime;//統計總時間
     this.time;
     this.$canvas;
     this.ctx;
-    this.virtualDOM;
-    this.alphabetBuffer=[];
+    this.virtualDOM;//綁定的virtualDOM
+    this.alphabetBuffer=[];//在暫停模式下，儲存的煙火
     this.init=function(){
         //console.log(this.time);
+<<<<<<< HEAD
         this.time+=25;
+=======
+        this.time+=1000/window.fps;
+        //直接用黑幕蓋掉原本的畫面，因為有透明，所以會留有之前煙火的視覺暫留
+>>>>>>> master
         this.ctx.fillStyle='rgba(0,0,0,0.2)';//會透明
         this.ctx.beginPath();
         this.ctx.fillRect(0,0,this.$canvas.width(),this.$canvas.height());
         this.ctx.fill();
 
-        for(let i=0;i<this.alphabetBuffer.length;i++){
+        for(let i=0;i<this.alphabetBuffer.length;i++){//如果alphabet buffer有東西的話，代表剛從暫停模式回來
             this.alphabetBuffer[i].startTime=this.time;
             this.firework1s.push(this.alphabetBuffer[i]);
             this.saveRecord1.push(this.alphabetBuffer[i]);
         }
+
         this.alphabetBuffer=[];
         for(var i=0;i<this.firework1s.length;i++){
             var fire=this.firework1s[i];
@@ -40,14 +45,14 @@ export function FireworkManager(){
                     this.firework2s.push(newFire);
                     this.saveRecord2.push(newFire);
                 }
-                this.firework1s.splice(i,1);
+                this.firework1s.splice(i,1);//移除已經畫完的
                 i--;
             }
         }
         //console.log('length: '+this.firework2s.length+' '+this.time);
         for(i=0;i<this.firework2s.length;i++){
             fire=this.firework2s[i];
-            if(fire.checkFinish()){
+            if(fire.checkFinish()){//移除畫完的
                 this.firework2s.splice(i,1);
                 i--;
                 //console.log('yee');
@@ -61,7 +66,7 @@ export function FireworkManager(){
 
     this.shoot=function(type,ascii,fireworktype){//0 don't buffer
         if(!this.virtualDOM.state.replay){
-            if(!this.virtualDOM.state.pauseRecord){
+            if(!this.virtualDOM.state.pauseRecord){//如果不是暫停模式的話
                 //console.log('1: '+this.time);
                 let newFire=new Firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx, this.time);
                 this.saveRecord1.push(newFire);
@@ -95,14 +100,14 @@ function vector(x,y){
 
 function Firework1(x,y,type,rocketOrNot,ctx,startTime){
     this.type=type;//哪一種煙火
-    this.startPos=new vector(x,$(window).height());
+    this.startPos=new vector(x,$(window).height());//開始的位置
     this.endPos=new vector(x,y);
-    this.curPos=new vector(this.startPos.x,this.startPos.y);
-    this.time=Math.random()*20+20;//在1空中發射的時間
+    this.curPos=new vector(this.startPos.x,this.startPos.y);//目前位置
+    this.time=Math.random()*480/window.fps+480/window.fps;//在空中發射的時間
     this.velocity=new vector( (this.endPos.x-this.startPos.x)/this.time , (this.endPos.y-this.startPos.y)/this.time);
     this.color='#FFFFFF';
     this.rocketOrNot=rocketOrNot;//是否有火箭，如果沒有，就隱形
-    this.startTime=startTime;
+    this.startTime=startTime;//開始的時間
     this.update=function(){
         if(this.curPos.y>this.endPos.y){
             this.curPos.x+=this.velocity.x;
@@ -167,33 +172,44 @@ function Firework2(x,y,type,ctx,time){
             fire.draw();
         });
     };
-    this.reset=function(){
+    this.reset=function(){//reset fireworkpoint會隨時間而改變的值
         _.each(this.fireworkPoints,function(fire){
             fire.time=0;
             fire.delayPtr=fire.delay;
+            fire.curPos.x=fire.startPos.x;
+            fire.curPos.y=fire.startPos.y;
+            fire.speed.x=fire.startSpeed.x;
+            fire.speed.y=fire.startSpeed.y;
             fire.invisibleTimePtr=fire.invisibleTime;
         });
     };
 }
-export function FireworkPoint(x,y,speed,angle,color,radius,timeMax,delay,acceler,ctx,invisibleTime){//每一個煙火點
+export function FireworkPoint(x,y,speed,angle,color,radius,timeMax,delay,acceler,ctx,invisibleTime,friction){//每一個煙火點
     this.startPos=new vector(x,y);
-    this.curPos=new vector(x,y);
+    this.curPos=new vector(x,y);//目前點的位置
+    this.startSpeed=new vector(speed*Math.cos(angle),speed*Math.sin(angle));
+    this.speed=new vector(speed*Math.cos(angle),speed*Math.sin(angle));//目前速度
     this.time=0;
-    this.delay=delay;
-    this.delayPtr=this.delay;
-    this.invisibleTime=invisibleTime;
-    this.invisibleTimePtr=this.invisibleTime;
+    this.delay=delay;//延遲
+    this.delayPtr=this.delay;//延遲的指標，會隨時間而減少
+    this.invisibleTime=invisibleTime;//隱形的時間
+    this.invisibleTimePtr=this.invisibleTime;//隱形時間的指標
+    this.timeInterval=400/window.fps;//間隔
     this.update=function(){
         if(this.delayPtr>0)
-            this.delayPtr-=10;
+            this.delayPtr-=this.timeInterval;
         else{
-            var speedx=speed*Math.cos(angle);
-            var speedy=speed*Math.sin(angle);
-            this.curPos.x=this.startPos.x+speedx*this.time;
-            this.curPos.y=this.startPos.y+speedy*this.time+acceler*this.time*this.time;
-            this.time+=10;
+            this.curPos.x=this.curPos.x+this.speed.x*this.timeInterval;//改變位置
+            this.curPos.y=this.curPos.y+this.speed.y*this.timeInterval;
+            this.time+=this.timeInterval;
+            if( (this.speed.x>0 && this.speed.x<friction*this.speed.x*this.timeInterval) || (this.speed.x<0 && this.speed.x>friction*this.speed.x*this.timeInterval) || this.speed.x==0 )
+                this.speed.x=0;//速度變0
+            else
+                this.speed.x-=friction*this.speed.x*this.timeInterval;//改變速度
+            if(friction*this.speed.y<acceler*2)//尚未達到終端速度
+                this.speed.y=this.speed.y-friction*this.speed.y*10+acceler*2*this.timeInterval;
             if(this.invisibleTimePtr>0)
-                this.invisibleTimePtr-=10;
+                this.invisibleTimePtr-=this.timeInterval;
         }
     };
     this.draw=function(){
@@ -205,9 +221,6 @@ export function FireworkPoint(x,y,speed,angle,color,radius,timeMax,delay,acceler
         ctx.fill();
         ctx.closePath();
     };
-}
-function getTime(startTime){
-    return new Date().getTime()-startTime;
 }
 
 export function InputManager(){
@@ -316,7 +329,7 @@ export function InputManager(){
         90:[122,122]
     };
     document.addEventListener('keydown', function (event) {
-        if(event.which==32 || event.which==115)
+        if(event.which==32 || event.which==115)//避免按下enter時，又trigger button event，或者trigger F4原本的功能
             event.preventDefault();
         let modifiers = event.altKey||event.ctrlKey||event.metaKey||event.shiftKey;//加了這些key就不行
         if (!modifiers) {
@@ -343,7 +356,7 @@ export function InputManager(){
 }
 
 InputManager.keyDownFunction={
-    checkInputOrNot:
+    checkInputOrNot://查看是否有任何input是focus的
         function(){
             let returnValue=false;
             $('.word-input').each(function(){
@@ -355,7 +368,7 @@ InputManager.keyDownFunction={
             return returnValue;
         },
     getWhichInput:
-        function(){
+        function(){//得到是哪一個input為focus的
             let returnInput;
             $('.word-input').each(function(){
                 if($(this).is(':focus')){
@@ -365,7 +378,7 @@ InputManager.keyDownFunction={
             });
             return returnInput;
         },
-    inputCharacter:
+    inputCharacter://輸入文字
         function(key,input){
             var nowValue = $(input).val();
             if(key==188 || key==191)
@@ -378,15 +391,15 @@ InputManager.keyDownFunction={
             var event = new Event('input', { bubbles: true });//trigger onChange event
             input.dispatchEvent(event);
         },
-    shoot:
+    shoot://射煙火
         function(key){
             if(this.firework!==undefined){
                 if(InputManager.keyDownFunction.checkInputOrNot())
                     InputManager.keyDownFunction['inputCharacter'](key,InputManager.keyDownFunction.getWhichInput());
-                else if(this.virtualDOM.state.pauseRecord || !this.virtualDOM.state.modal){
-                    if(!this.virtualDOM.state.alphabet && this.fireworkMap[key]!==undefined)
+                else if(this.virtualDOM.state.pauseRecord || !this.virtualDOM.state.modal){//如果是可以發射的狀況
+                    if(!this.virtualDOM.state.alphabet && this.fireworkMap[key]!==undefined)//如果是煙火模式
                         this.firework.shoot(this.fireworkMap[key][0],this.fireworkMap[key][1],0);
-                    else if(this.virtualDOM.state.alphabet && this.alphabetMap[key]!==undefined)
+                    else if(this.virtualDOM.state.alphabet && this.alphabetMap[key]!==undefined)//如果是英數模式
                         this.firework.shoot(this.alphabetMap[key][0],this.alphabetMap[key][1],1);
                 }
             }
@@ -403,15 +416,13 @@ InputManager.keyDownFunction={
                 }
             }
         },
-    stopRecord:
+    stopRecord://按F4的反應，選單或側選單的開關
         function(){
             if(!this.virtualDOM.state.modal && !this.virtualDOM.state.replay){
                 if(this.virtualDOM.state.pressRecord){
                     this.virtualDOM.state.modal=true;
                     $('.modal').addClass('active');
                     $('.dialogSave').addClass('active');
-                    this.firework.endTime+=getTime(this.firework.realStartTime);
-                    this.virtualDOM.state.fireworkRecord.endTime=this.firework.endTime;
                     if(!this.virtualDOM.state.goOver){
                         $('#dialogSaveContinueBtn').addClass('hide');
                         $('#dialogSaveSaveBtn').addClass('hide');
@@ -428,26 +439,23 @@ InputManager.keyDownFunction={
                 }
             }
         },
-    pauseRecord:
+    pauseRecord://暫停
         function(){
-            if(this.virtualDOM.state.startAction){
-                if(!this.virtualDOM.state.pauseRecord){
-                    this.firework.endTime+=getTime(this.firework.realStartTime);
-                    this.virtualDOM.state.fireworkRecord.endTime=this.firework.endTime;
+            if(this.virtualDOM.state.startAction){//action後的暫停
+                if(!this.virtualDOM.state.pauseRecord){//未暫停的狀態
                     this.virtualDOM.state.pauseRecord=true;
                     this.virtualDOM.state.modal=true;
                     this.virtualDOM.refs.settingWord.togglePause();
                     this.virtualDOM.refs.startActionInstruction.pause();
                 }
-                else{
-                    this.firework.realStartTime=new Date().getTime();
+                else{//暫停的狀態
                     this.virtualDOM.state.pauseRecord=false;
                     this.virtualDOM.state.modal=false;
                     this.virtualDOM.refs.settingWord.togglePause();
                     this.virtualDOM.refs.startActionInstruction.cancelPause();
                 }
             }
-            else if(!this.virtualDOM.state.pressRecord){
+            else if(!this.virtualDOM.state.pressRecord){//在外面尚未make時，進入暫停模式
                 if(!this.virtualDOM.state.pauseRecord){
                     this.virtualDOM.state.pauseRecord=true;
                     this.virtualDOM.state.modal=true;
@@ -461,7 +469,7 @@ InputManager.keyDownFunction={
 
             }
         },
-    switchInsert:
+    switchInsert://切換煙火模式和一般模式
         function(key){
             if(InputManager.keyDownFunction.checkInputOrNot())
                 InputManager.keyDownFunction['inputCharacter'](key,InputManager.keyDownFunction.getWhichInput());
@@ -474,8 +482,8 @@ InputManager.keyDownFunction={
 };
 
 export function WordManager(ctx){
-    var FADEOUTTIME=2000;
-    var FADEINTIME=2000;
+    var FADEOUTTIME=2000;//淡入的時間
+    var FADEINTIME=2000;//淡出的時間
 
     this.ctx=ctx;
     this.words=[];
@@ -488,7 +496,7 @@ export function WordManager(ctx){
     this.color;
     this.$canvas;
     this.init=function(){
-        if(!this.checkfinish() ){
+        if(!this.checkfinish()){
             this.update();
             this.draw();
         }
@@ -510,7 +518,6 @@ export function WordManager(ctx){
         else if(this.timeCounter>=FADEINTIME && this.timeCounter<FADEINTIME+500)
             this.opacity-=0.05;
         else if(this.timeCounter===FADEINTIME+FADEOUTTIME){
-            //this.ptr=(this.ptr+1)%this.words.length;
             this.ptr=this.ptr+1;
             this.timeCounter=0;
         }
