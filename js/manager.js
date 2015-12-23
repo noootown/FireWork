@@ -16,12 +16,8 @@ export function FireworkManager(){
     this.alphabetBuffer=[];//在暫停模式下，儲存的煙火
     this.init=function(){
         //console.log(this.time);
-<<<<<<< HEAD
-        this.time+=25;
-=======
         this.time+=1000/window.fps;
         //直接用黑幕蓋掉原本的畫面，因為有透明，所以會留有之前煙火的視覺暫留
->>>>>>> master
         this.ctx.fillStyle='rgba(0,0,0,0.2)';//會透明
         this.ctx.beginPath();
         this.ctx.fillRect(0,0,this.$canvas.width(),this.$canvas.height());
