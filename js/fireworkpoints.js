@@ -393,9 +393,6 @@ export function getFireworkPoints(x,y,type,ctx){
             tmpNum+=8;
         }
     }
-    //else if(type==27){
-        //;
-    //}
     else if(type==48){//0
         tmpNum=360;
         angle=-20*ran()+10;
