@@ -115,7 +115,6 @@ class Main extends React.Component{
         this.state.recordId2=setTimeout(function(){//start record timer  GO結束 //初始化各個狀態
             Main.defaultProps.myInputManager.firework.time=0;
             Main.defaultProps.myInputManager.firework.endTime=0;
-            Main.defaultProps.myInputManager.firework.realStartTime=new Date().getTime();
             Main.defaultProps.myInputManager.firework.saveRecord1=[];
             Main.defaultProps.myInputManager.firework.saveRecord2=[];
             Main.defaultProps.myInputManager.firework.alphabetBuffer=[];
@@ -198,8 +197,6 @@ class Main extends React.Component{
             }
         }
         var self=this;
-        console.log(time);
-        console.log(record.endTime);
         if(time<=record.endTime)
             window.requestAnimFrame(function(){
                 self.pushRecordToReplay(record,index1,index2,time+1000/60,type);
@@ -223,7 +220,6 @@ class Main extends React.Component{
         }
     }
     saveDialogContinueClick(){
-        Main.defaultProps.myInputManager.firework.realStartTime=new Date().getTime();
         this.refs.saveDialog.closeDialog();
         this.state.modal=false;
         $('.modal').removeClass('active');
