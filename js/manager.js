@@ -15,9 +15,7 @@ export function FireworkManager(){
     this.virtualDOM;//綁定的virtualDOM
     this.alphabetBuffer=[];//在暫停模式下，儲存的煙火
     this.init=function(){
-        //console.log(this.time);
-        this.time+=1000/window.fps;
-        //直接用黑幕蓋掉原本的畫面，因為有透明，所以會留有之前煙火的視覺暫留
+        this.time+=1000/window.fps; //直接用黑幕蓋掉原本的畫面，因為有透明，所以會留有之前煙火的視覺暫留
         this.ctx.fillStyle='rgba(0,0,0,0.2)';//會透明
         this.ctx.beginPath();
         this.ctx.fillRect(0,0,this.$canvas.width(),this.$canvas.height());
@@ -45,13 +43,11 @@ export function FireworkManager(){
                 i--;
             }
         }
-        //console.log('length: '+this.firework2s.length+' '+this.time);
         for(i=0;i<this.firework2s.length;i++){
             fire=this.firework2s[i];
             if(fire.checkFinish()){//移除畫完的
                 this.firework2s.splice(i,1);
                 i--;
-                //console.log('yee');
             }
             else{
                 fire.update();
@@ -63,7 +59,6 @@ export function FireworkManager(){
     this.shoot=function(type,ascii,fireworktype){//0 don't buffer
         if(!this.virtualDOM.state.replay){
             if(!this.virtualDOM.state.pauseRecord){//如果不是暫停模式的話
-                //console.log('1: '+this.time);
                 let newFire=new Firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx, this.time);
                 this.saveRecord1.push(newFire);
                 this.firework1s.push(newFire); 

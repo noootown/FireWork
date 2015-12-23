@@ -344,7 +344,7 @@ export function getFireworkPoints(x,y,type,ctx){
                     radius=rand(1.5);
                     fire.push(new FireworkPoint(x,y,speed,deg2rad(j/tmpNum*360),color,radius,time,0,0.00005,ctx,invisibleTime, friction));
                     fire.push(new FireworkPoint(x,y,speed,deg2rad(j/tmpNum*360),color2,radius,time+500,0,0.00005,ctx,time, friction));
-                
+
                 }
                 tmpNum+=30;
             }
