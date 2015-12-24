@@ -24,7 +24,7 @@ bottom:0;
 width:100%;
 color:#FFFFFF;
 background-color:#000000;
-opacity:0.75;
+/*opacity:0.75;*/
 font-weight:400;
 font-size:25px;
 padding:10px 0;
@@ -50,7 +50,24 @@ padding:0 10px;
 text-decoration:none;
 color:#FFFFFF;
 }
+.navbarBtn{
+cursor:pointer;
+padding:8px 16px;
+border:solid;
+border-radius:30px;
+border-width:2px;
+border-style:solid;
+border-color:#00FF00;
+background-color:transparent;
+font-size:15px;
+color:#FFFFFF;
+margin: 0 15px 0 0;
 
+}
+.navbarImg{
+width:120px;
+margin:0 15px -10px 20px;
+}
 /*sidebar*/
 
 .sideBarBtn{
@@ -535,6 +552,95 @@ top:40%;
 margin-top:-120px;
 left:50%;
 margin-left:-250px;
+}
+.dialogAbout{
+position:absolute;
+background-color:transparent;
+z-index:-100;
+display:inline;
+top:40%;
+margin-top:-120px;
+left:50%;
+margin-left:-275px;
+width:550px;
+height:180px;
+}
+.dialogAboutBtn{
+border-radius:30px;
+border-width:2px;
+border-style:solid;
+border-color:#00FF00;
+background-color:transparent;
+font-size:20px;
+color:#FFFFFF;
+cursor:pointer;
+padding: 7px 14px;
+width:100px;
+height:40px;
+display:inline;
+}
+.dialogAboutQuitBtn{
+position:relative;
+left:50%;
+margin:30px 0 0 -50px;
+}
+.dialogAboutTitle{
+width:30%;
+text-align:left;
+color:#FFFFFF;
+font-size:28px;
+font-weight:200;
+margin:10px 0 0 0;
+}
+.dialogAboutBigTitle{
+width:100%;
+text-align:center;
+}
+.dialogAboutContent{
+width:30%;
+padding:0 10px;
+text-align:left;
+color:#FFFFFF;
+font-size:20px;
+font-weight:200;
+margin:13px 0 0 0;
+}
+.dialogAboutLink{
+color:#5A90BF;
+font-size:20px;
+margin-top:13px;
+}
+.dialogAboutSpan{
+width:350px;
+position:relative;
+left:50%;
+margin-left:-175px;
+white-space:nowrap;
+display:flex;
+margin-top:5px;
+}
+.dialogHelp{
+position:absolute;
+background-color:transparent;
+z-index:-100;
+display:inline;
+top:40%;
+margin-top:-120px;
+left:50%;
+margin-left:-275px;
+width:550px;
+height:180px;
+}
+.dialogHelpWords{
+color:#FFFFFF;
+font-size:20px;
+font-weight:200;
+
+}
+.dialogHelpQuitBtn{
+position:relative;
+left:50%;
+margin:50px 0 0 -50px;
 }
 /*----------dialog-----------*/
 .settingWordDiv{

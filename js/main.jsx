@@ -2,7 +2,7 @@
 import React, {Component}  from 'react';
 //import ReactDOM from 'react-dom';
 import SideBar from './sidebar';
-import {SaveDialog,LoadDialog,UploadDialog,ReplayDialog} from './dialog';
+import {SaveDialog,LoadDialog,UploadDialog,ReplayDialog,AboutDialog,HelpDialog} from './dialog';
 import {FireworkManager,InputManager,WordManager} from './manager';
 
 window.requestAnimFrame = (function(){ 
@@ -304,11 +304,34 @@ class Main extends React.Component{
         this.refs.settingWord.show();
         this.state.pressRecord=false;
     }
+    navbarAboutClick(){
+        this.toggleSidebar();
+        this.refs.settingWord.hide();
+        $('.dialogAbout').addClass('active');
+    }
+    navbarHelpClick(){
+        this.toggleSidebar();
+        this.refs.settingWord.hide();
+        $('.dialogHelp').addClass('active');
+    }
+    aboutDialogQuitClick(){
+        this.toggleSidebar();
+        this.refs.settingWord.show();
+        $('.dialogAbout').removeClass('active');
+    }
+    helpDialogQuitClick(){
+        this.toggleSidebar();
+        this.refs.settingWord.show();
+        $('.dialogHelp').removeClass('active');
+    }
     render(){
         return(
                 <div className={'main'}>
                 <MainCanvas setupInputManager={this.setupInputManager.bind(this)}/>
-                <Navbar/>
+                <Navbar
+                aboutClick={this.navbarAboutClick.bind(this)}
+                helpClick={this.navbarHelpClick.bind(this)}
+                />
                 <Timer ref='timer'/>
                 <SideBar
                 toggleSidebar={this.toggleSidebar.bind(this)}
@@ -338,6 +361,12 @@ class Main extends React.Component{
                     ref='replayDialog'
                     replayClick={this.replayDialogReplayClick.bind(this)}
                 quitClick={this.replayDialogQuitClick.bind(this)}
+                />
+                    <AboutDialog
+                quitClick={this.aboutDialogQuitClick.bind(this)}
+                />
+                    <HelpDialog
+                quitClick={this.helpDialogQuitClick.bind(this)}
                 />
                     <Modal/>
                     <CenterShowWords ref='centerShowWords'/>
@@ -442,7 +471,7 @@ class SettingWord extends Component{//下面那一排提示說明
                 <h3 className={'settingWord'}>/</h3>
                 <h3 className={'settingWord'}>英數</h3>
                 <h3 className={'settingWord settingWordKey'}>,</h3>
-                <h3 className={'settingWord active'}>沖天炮</h3>
+                <h3 className={'settingWord active'}>煙火柱</h3>
                 <h3 className={'settingWord active'}>開</h3>
                 <h3 className={'settingWord'}>/</h3>
                 <h3 className={'settingWord'}>關</h3>
@@ -479,18 +508,13 @@ class Navbar extends Component{//底部footer bar
     render(){
         return(
                 <div className={'navbar'}>
-                <div className={'title'}>
-                <a href="https://github.com/i314i/RippleDot">Firework</a>
-                </div>
-                <div className={'link'}>
-                <a href="https://noootown.wordpress.com/">Blog</a>
-                <a href="https://github.com/i314i">Github</a>
-                </div>
+                <img className={'navbarImg'} src="img/Firework.png"></img>
+                <button id={'navbarAboutBtn'} className={'navbarBtn'} onClick={this.props.aboutClick}>About</button>
+                <button id={'navbarHelpBtn'} className={'navbarBtn'} onClick={this.props.helpClick}>Help</button>
                 </div>
               );
     }
 }
-
 class CenterShowWords extends Component{//顯示在中間的字，這是顯示已儲存
     showRecordSave(){
         $('.recordSave').addClass('active');
