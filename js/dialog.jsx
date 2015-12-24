@@ -101,11 +101,11 @@ export class AboutDialog extends React.Component{
                 </span>
                 <span className={'dialogAboutSpan'}>
                 <h3 className={'dialogAboutTitle'}>Github:</h3>
-                <a className={'dialogAboutLink'} href="https://github.com/noootown/FireWork">noootown</a>
+                <a className={'dialogAboutLink'} href="https://github.com/noootown/FireWork" target="_blank">noootown</a>
                 </span>
                 <span className={'dialogAboutSpan'}>
                 <h3 className={'dialogAboutTitle'}>Blog:</h3>
-                <a className={'dialogAboutLink'} href="https://noootown.wordpress.com/">沒一村生活點滴</a>
+                <a className={'dialogAboutLink'} href="https://noootown.wordpress.com/" target="_blank">沒一村生活點滴</a>
                 </span>
                 <button className={'dialogAboutBtn dialogAboutQuitBtn'} onClick={this.props.quitClick}>Quit</button>
                 </div>
@@ -117,17 +117,32 @@ export class HelpDialog extends React.Component{
         return(
                 <div className={'dialogHelp dialog'}>
                 <h3 className={'dialogAboutTitle dialogAboutBigTitle'}>Help</h3>
-                <p className={'dialogHelpWords'}>
-                1. 按<span style={{color:'#FF0000'}}> 空白鍵 </span>可以切換一般煙火和英數字。
-                <br/>
-                2. 按<span style={{color:'#FF0000'}}> , </span>可以開關煙火柱。
-                <br/>
-                3. 按<span style={{color:'#FF0000'}}> F2 </span>可以暫停動畫，這時輸入任何鍵都可以將煙火存入暫存。再按一次<span style={{color:'#FF0000'}}> F2 </span>可以同時發射所有暫存的煙火。
-                <br/>
-                4. Firework提供兩種儲存方式，儲存在<span style={{color:'#FF0000'}}> local</span>，則下次再登入網站，依然可以播放最近的存檔。儲存在<span style={{color:'#FF0000'}}> remote</span>，輸入卡片名稱和密碼，即可觀看卡片。
-                <br/>
+                <ol className={'dialogHelpWords'}>
+                <li>按<span style={{color:'#FF0000'}}> 空白鍵 </span>可以切換一般煙火和英數字。</li>
+                <li>按<span style={{color:'#FF0000'}}> , </span>可以開關煙火柱。</li>
+                <li>按<span style={{color:'#FF0000'}}> F2 </span>可以暫停動畫，這時輸入任何鍵都可以將煙火存入暫存。再按一次<span style={{color:'#FF0000'}}> F2 </span>可以同時發射所有暫存的煙火。</li>
+                <li>按<span style={{color:'#FF0000'}}> F4 </span>可以叫出選單。</li>
+                <li>選單可輸入<span style={{color:'#FF0000'}}>想說的話</span>，即可顯示字幕。此外，可以用滑鼠拖曳調整順序。</li>
+                <li>Firework提供兩種儲存方式，如儲存在<span style={{color:'#FF0000'}}> Local</span>，則下次再登入網站，依然可以播放最近的存檔。如儲存在<span style={{color:'#FF0000'}}> Remote</span>，輸入 <span style={{color:'#FF0000'}}> Card Name </span>和<span style={{color:'#FF0000'}}> Password</span>，即可欣賞 Firework 動畫。</li>
                 <span style={{color:'#FF0000',width:'150px',position:'absolute',left:'50%',margin:'20px 0 0 -60px',fontSize:'25px'}}>Have fun!!!</span>
-                </p>
+                </ol>
+                <button className={'dialogAboutBtn dialogHelpQuitBtn'} onClick={this.props.quitClick}>Quit</button>
+                </div>
+              );
+    }
+}
+export class HintDialog extends React.Component{
+    render(){
+        return(
+                <div className={'dialogHint dialog'}>
+                <h3 className={'dialogAboutTitle dialogAboutBigTitle'}>Hint</h3>
+                <ol className={'dialogHelpWords'}>
+                <li>Firework 支援<span style={{color:'#FF0000'}}> Chrome </span>和<span style={{color:'#FF0000'}}> Firefox </span>。</li>
+                <li>善用 <span style={{color:'#FF0000'}}> F2 </span>和<span style={{color:'#FF0000'}}> , </span>鍵可以製作同時引爆的煙火，如果切換到<span style={{color:'#FF0000'}}> 英數字</span>，還可以製作想要的單字。</li>
+                <li><span style={{color:'#FF0000'}}> 請勿同時點擊太多煙火</span>，可能會造成動畫 lag 。此外，由於Firework 繪圖需要大量CPU資源，過多的分頁也可能導致動畫 lag 。</li>
+                <li>欲觀看範例，可點選 <span style={{color:'#FF0000'}}> load</span>，並在<span style={{color:'#FF0000'}}> Card Name </span>和<span style={{color:'#FF0000'}}> Password </span>中皆輸入<span style={{color:'#FF0000'}}> template </span>即可。</li>
+                <span style={{color:'#FF0000',width:'150px',position:'absolute',left:'50%',margin:'20px 0 0 -60px',fontSize:'25px'}}>Have fun!!!</span>
+                </ol>
                 <button className={'dialogAboutBtn dialogHelpQuitBtn'} onClick={this.props.quitClick}>Quit</button>
                 </div>
               );

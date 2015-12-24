@@ -2,7 +2,7 @@
 import React, {Component}  from 'react';
 //import ReactDOM from 'react-dom';
 import SideBar from './sidebar';
-import {SaveDialog,LoadDialog,UploadDialog,ReplayDialog,AboutDialog,HelpDialog} from './dialog';
+import {SaveDialog,LoadDialog,UploadDialog,ReplayDialog,AboutDialog,HelpDialog,HintDialog} from './dialog';
 import {FireworkManager,InputManager,WordManager} from './manager';
 
 window.requestAnimFrame = (function(){ 
@@ -314,6 +314,11 @@ class Main extends React.Component{
         this.refs.settingWord.hide();
         $('.dialogHelp').addClass('active');
     }
+    navbarHintClick(){
+        this.toggleSidebar();
+        this.refs.settingWord.hide();
+        $('.dialogHint').addClass('active');
+    }
     aboutDialogQuitClick(){
         this.toggleSidebar();
         this.refs.settingWord.show();
@@ -324,6 +329,11 @@ class Main extends React.Component{
         this.refs.settingWord.show();
         $('.dialogHelp').removeClass('active');
     }
+    hintDialogQuitClick(){
+        this.toggleSidebar();
+        this.refs.settingWord.show();
+        $('.dialogHint').removeClass('active');
+    }
     render(){
         return(
                 <div className={'main'}>
@@ -331,6 +341,7 @@ class Main extends React.Component{
                 <Navbar
                 aboutClick={this.navbarAboutClick.bind(this)}
                 helpClick={this.navbarHelpClick.bind(this)}
+                hintClick={this.navbarHintClick.bind(this)}
                 />
                 <Timer ref='timer'/>
                 <SideBar
@@ -367,6 +378,9 @@ class Main extends React.Component{
                 />
                     <HelpDialog
                 quitClick={this.helpDialogQuitClick.bind(this)}
+                />
+                    <HintDialog
+                quitClick={this.hintDialogQuitClick.bind(this)}
                 />
                     <Modal/>
                     <CenterShowWords ref='centerShowWords'/>
@@ -511,6 +525,7 @@ class Navbar extends Component{//底部footer bar
                 <img className={'navbarImg'} src="img/Firework.png"></img>
                 <button id={'navbarAboutBtn'} className={'navbarBtn'} onClick={this.props.aboutClick}>About</button>
                 <button id={'navbarHelpBtn'} className={'navbarBtn'} onClick={this.props.helpClick}>Help</button>
+                <button id={'navbarHintBtn'} className={'navbarBtn'} onClick={this.props.hintClick}>Hint</button>
                 </div>
               );
     }
