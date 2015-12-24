@@ -93,9 +93,6 @@ class Main extends React.Component{
             $('.dialogLoadLocalWord').html(this.state.fireworkSaveRecord.saveTime.toString().substr(0,24));
         }
     }
-    sidebarHelpClick(){
-        //TODO
-    }
     startRecord(){
         this.state.pressRecord=true;
         this.state.goOver=false;
@@ -347,8 +344,7 @@ class Main extends React.Component{
                 <SideBar
                 toggleSidebar={this.toggleSidebar.bind(this)}
                 sidebarMakeClick={this.sidebarMakeClick.bind(this)}
-                sidebarLoadClick={this.sidebarLoadClick.bind(this)}
-                sidebarHelpClick={this.sidebarHelpClick.bind(this)}/>
+                sidebarLoadClick={this.sidebarLoadClick.bind(this)}/>
                 <StartActionInstruction ref='startActionInstruction'/>
                 <SettingWord ref='settingWord'/>
                 <SaveDialog

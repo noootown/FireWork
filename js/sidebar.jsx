@@ -5,15 +5,11 @@ import ReactReorderable from './react-reorderable.min.js';
 class SideBar extends React.Component{
     constructor(){
         super();
-        this.state={items: [], text: '', colors:[]};
+        this.state={items: [], text: ''};
     }
 
     handleUpdateItems(wordItems){
         this.setState({items:wordItems});
-    }
-
-    handleColorUpdate(updateColors){
-        this.setState({colors:updateColors});
     }
 
     onChange(e){
@@ -55,13 +51,11 @@ class SideBar extends React.Component{
                 <WordListAll 
                 items={this.state.items} 
                 text={this.state.text}
-                colors={this.state.colors}
                 updateItems={this.handleUpdateItems.bind(this)} 
                 onSubmit={this.handleSubmit.bind(this)} 
                 onChange={this.onChange.bind(this)}/>
                 <a className={'sidePanelBtn'} onClick={this.handleMakeClick.bind(this)}>{'Make'}</a>
                 <a className={'sidePanelBtn'} onClick={this.handleLoadClick.bind(this)}>{'Load'}</a>
-                <a className={'sidePanelBtn'} onClick={this.handleHelpClick.bind(this)}>{'Help'}</a>
                 </div>
                 </div>
                );
@@ -71,8 +65,6 @@ class WordListContainer extends Component{
     handleRemoveBtnClick(which){
         this.props.items.splice(which-1,1);//把選中的字串移除
         this.props.updateItems(this.props.items);
-        this.props.colors.splice(which-1,1);//把選中的顏色移除
-        //this.props.updateItems(this.colors.items);
     }
 
     render(){
@@ -99,7 +91,6 @@ class WordListContainer extends Component{
 }
 class Word extends Component{
     handleRemoveBtnClick(){
-        //var which=$(this.getDOMNode()).parent().data('reorderableKey').substr(5);//get which node
         var which=$(ReactDOM.findDOMNode(this)).parent().data('reorderableKey').substr(5);//get which node
         this.props.btnClick(which);
     }
@@ -113,22 +104,6 @@ class Word extends Component{
                );
     }
 }
-//class ColorBox extends Component{
-//constructor(){
-//super();
-//this.state={color:0};
-//}
-
-//handleBtnClick(){
-//this.setState({color:(this.state.color+1)%6});
-//}
-
-//render(){
-//return (
-//<span className={'colorBox'} onClick={this.handleBtnClick.bind(this)}></span>
-//);
-//}
-//}
 class CrossBtn extends Component{
     render(){
         return (
@@ -144,7 +119,7 @@ class WordListAll extends Component{
         return (
                 <div className={'wordListAll'}>
                 <h3 className={'sidePanelTitle'}>寫下想說的話</h3>
-                <WordListContainer items={this.props.items} text={this.props.text} updateItems={this.props.updateItems.bind(this)} colors={this.props.colors}/>
+                <WordListContainer items={this.props.items} text={this.props.text} updateItems={this.props.updateItems.bind(this)}/>
                 <form id={'word-inputform'} onSubmit={this.props.onSubmit.bind(this)}>
                 <input id={'showword-input'} className={'word-input'}  onChange={this.props.onChange.bind(this)} value={this.props.text} />
                 <button className={'sidePanelBtn enterBtn'}>{'輸入'}</button>
