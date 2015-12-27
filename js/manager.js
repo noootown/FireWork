@@ -127,14 +127,14 @@ function Firework1(x,y,type,rocketOrNot,ctx,startTime){
         ctx.closePath();
 
         ctx.lineWidth = 1;
+        ctx.beginPath();
         for(var i=0;i<5;i++){
-            ctx.beginPath();
             ctx.strokeStyle = '#CE7A38';
             ctx.moveTo(this.curPos.x-(2+0.4*i)*this.velocity.x,this.curPos.y-(2+0.4*i)*this.velocity.y);
             ctx.lineTo(this.curPos.x-(2.2+0.4*i)*this.velocity.x,this.curPos.y-(2.2+0.4*i)*this.velocity.y);
-            ctx.stroke();
-            ctx.closePath();
         }
+        ctx.stroke();
+        ctx.closePath();
     };
     this.reset=function(){
         this.curPos=new vector(this.startPos.x,this.startPos.y);
@@ -145,7 +145,25 @@ function Firework2(x,y,type,ctx,time){
     this.fireworkPoints=[];
     this.startTime=time;
     this.init=function(){
-        this.fireworkPoints=getFireworkPoints(this.startPos.x,this.startPos.y,type,ctx);
+        var tmp=getFireworkPoints(this.startPos.x,this.startPos.y,type,ctx);
+        let color=tmp[0].color;
+        let index=0;
+        let trueState=true;
+        while(trueState===true){
+            for(let i=index;i<tmp.length;i++)
+                if(tmp[i].color===color)
+                    this.fireworkPoints.push(tmp[i]);
+            if(this.fireworkPoints.length===tmp.length)
+                break;
+            else{
+                for(let i=index;i<tmp.length;i++)
+                    if(tmp[i].color!==color){
+                        index=i;
+                        color=tmp[i].color;
+                        break;
+                    }
+            }
+        }
     };
     this.checkFinish=function(){//檢查是否
         if(this.fireworkPoints[0] && this.fireworkPoints[0].time>=3000)//1600是直接取一個大的值，比所有煙火的時間都還來的長
@@ -154,17 +172,36 @@ function Firework2(x,y,type,ctx,time){
             return false;
     };
     this.update=function(){
-        _.each(this.fireworkPoints,function(fire){
-            fire.update();
-        });
+        for(let i=0;i<this.fireworkPoints.length;i++){
+            this.fireworkPoints[i].update();
+        }
     };
     this.draw=function(){
-        _.each(this.fireworkPoints,function(fire){
-            fire.draw();
-        });
+        ctx.beginPath();
+        ctx.fillStyle='#000000';
+        let ptr=0;
+        for(let i=0;i<this.fireworkPoints.length;i++){
+            if(this.fireworkPoints[i].drawable()){
+                if(ctx.fillStyle=='#000000'){
+                    ctx.fillStyle=this.fireworkPoints[i].color;
+                    ptr=i;
+                }
+                else if(this.fireworkPoints[i].color!==this.fireworkPoints[ptr].color){
+                    ctx.fill();
+                    ctx.closePath();
+                    ctx.beginPath();
+                    ctx.fillStyle=this.fireworkPoints[i].color;
+                    ptr=i;
+                }
+                this.fireworkPoints[i].draw();
+            }
+        }
+        ctx.fill();
+        ctx.closePath();
     };
     this.reset=function(){//reset fireworkpoint會隨時間而改變的值
-        _.each(this.fireworkPoints,function(fire){
+        for(let i=0;i<this.fireworkPoints.length;i++){
+            let fire=this.fireworkPoints[i];
             fire.time=0;
             fire.delayPtr=fire.delay;
             fire.curPos.x=fire.startPos.x;
@@ -172,7 +209,7 @@ function Firework2(x,y,type,ctx,time){
             fire.speed.x=fire.startSpeed.x;
             fire.speed.y=fire.startSpeed.y;
             fire.invisibleTimePtr=fire.invisibleTime;
-        });
+        }
     };
 }
 export function FireworkPoint(x,y,speed,angle,color,radius,timeMax,delay,acceler,ctx,invisibleTime,friction){//每一個煙火點
@@ -186,6 +223,8 @@ export function FireworkPoint(x,y,speed,angle,color,radius,timeMax,delay,acceler
     this.invisibleTime=invisibleTime;//隱形的時間
     this.invisibleTimePtr=this.invisibleTime;//隱形時間的指標
     this.timeInterval=400/window.fps;//間隔
+    this.color=color;
+    //this.timeMax=timeMax;
     this.update=function(){
         if(this.delayPtr>0)
             this.delayPtr-=this.timeInterval;
@@ -204,13 +243,11 @@ export function FireworkPoint(x,y,speed,angle,color,radius,timeMax,delay,acceler
         }
     };
     this.draw=function(){
-        if(this.time>=timeMax || this.delayPtr>0 || this.invisibleTimePtr>0)
-            return;
-        ctx.fillStyle=color;
-        ctx.beginPath();
+        ctx.moveTo(this.curPos.x,this.curPos.y);
         ctx.arc(this.curPos.x,this.curPos.y,radius,0,Math.PI*2,true);
-        ctx.fill();
-        ctx.closePath();
+    };
+    this.drawable=function(){
+        return !(this.time>=timeMax || this.delayPtr>0 || this.invisibleTimePtr>0);
     };
 }
 

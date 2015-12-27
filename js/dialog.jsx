@@ -118,12 +118,13 @@ export class HelpDialog extends React.Component{
                 <div className={'dialogHelp dialog'}>
                 <h3 className={'dialogAboutTitle dialogAboutBigTitle'}>Help</h3>
                 <ol className={'dialogHelpWords'}>
+                <li>按<span style={{color:'#FF0000'}}> 英文字鍵 </span>和<span style={{color:'#FF0000'}}> 數字鍵 </span>可以發射煙火。</li>
                 <li>按<span style={{color:'#FF0000'}}> 空白鍵 </span>可以切換一般煙火和英數字。</li>
                 <li>按<span style={{color:'#FF0000'}}> , </span>可以開關煙火柱。</li>
                 <li>按<span style={{color:'#FF0000'}}> F2 </span>可以暫停動畫，這時輸入任何鍵都可以將煙火存入暫存。再按一次<span style={{color:'#FF0000'}}> F2 </span>可以同時發射所有暫存的煙火。</li>
                 <li>按<span style={{color:'#FF0000'}}> F4 </span>可以叫出選單。</li>
-                <li>選單可輸入<span style={{color:'#FF0000'}}>想說的話</span>，即可顯示字幕。此外，可以用滑鼠拖曳調整順序。</li>
-                <li>Firework提供兩種儲存方式，如儲存在<span style={{color:'#FF0000'}}> Local</span>，則下次再登入網站，依然可以播放最近的存檔。如儲存在<span style={{color:'#FF0000'}}> Remote</span>，輸入 <span style={{color:'#FF0000'}}> Card Name </span>和<span style={{color:'#FF0000'}}> Password</span>，即可欣賞 Firework 動畫。</li>
+                <li>選單可輸入<span style={{color:'#FF0000'}}>想說的話</span>，即可顯示字幕。此外，可以用滑鼠拖曳調整字幕順序。</li>
+                <li>Firework提供兩種儲存方式，如儲存在<span style={{color:'#FF0000'}}> Local</span>，則下次以同台電腦再登入網站，依然可以播放最近的存檔。如儲存在<span style={{color:'#FF0000'}}> Remote</span>，輸入 <span style={{color:'#FF0000'}}> Card Name </span>和<span style={{color:'#FF0000'}}> Password</span>，即可欣賞 Firework 動畫。</li>
                 <span style={{color:'#FF0000',width:'150px',position:'absolute',left:'50%',margin:'20px 0 0 -60px',fontSize:'25px'}}>Have fun!!!</span>
                 </ol>
                 <button className={'dialogAboutBtn dialogHelpQuitBtn'} onClick={this.props.quitClick}>Quit</button>

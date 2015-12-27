@@ -513,7 +513,6 @@ class StartActionInstruction extends Component{//rec pause的圖片切換
     }
 }
 
-
 class Navbar extends Component{//底部footer bar
     render(){
         return(
@@ -526,6 +525,7 @@ class Navbar extends Component{//底部footer bar
               );
     }
 }
+
 class CenterShowWords extends Component{//顯示在中間的字，這是顯示已儲存
     showRecordSave(){
         $('.recordSave').addClass('active');
