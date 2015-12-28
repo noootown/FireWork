@@ -19,7 +19,7 @@ export function FireworkManager(){
         this.ctx.fillStyle='rgba(0,0,0,0.2)';//會透明
         this.ctx.beginPath();
         this.ctx.fillRect(0,0,this.$canvas.width(),this.$canvas.height());
-        this.ctx.fill();
+        this.ctx.closePath();
 
         for(let i=0;i<this.alphabetBuffer.length;i++){//如果alphabet buffer有東西的話，代表剛從暫停模式回來
             this.alphabetBuffer[i].startTime=this.time;
@@ -147,21 +147,17 @@ function Firework2(x,y,type,ctx,time){
     this.init=function(){
         var tmp=getFireworkPoints(this.startPos.x,this.startPos.y,type,ctx);
         let color=tmp[0].color;
-        let index=0;
         let trueState=true;
-        while(trueState===true){
-            for(let i=index;i<tmp.length;i++)
-                if(tmp[i].color===color)
+        while(trueState==true){
+            color=tmp[0].color;
+            for(let i=0;i<tmp.length;i++)
+                if(tmp[i].color==color){
                     this.fireworkPoints.push(tmp[i]);
-            if(this.fireworkPoints.length===tmp.length)
+                    tmp.splice(i,1);
+                    i--;
+                }
+            if(tmp.length==0){
                 break;
-            else{
-                for(let i=index;i<tmp.length;i++)
-                    if(tmp[i].color!==color){
-                        index=i;
-                        color=tmp[i].color;
-                        break;
-                    }
             }
         }
     };

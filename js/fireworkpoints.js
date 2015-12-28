@@ -1,22 +1,20 @@
 'use strict';
 import {FireworkPoint} from './manager';
-function getRandomColor(){
-    return 'hsl(' + Math.random()*360 + ',100%, 70%)';
-}
+import {hsvRand,hsv,cos,sin,abs,deg2rad,ran,rand,sqrt,PI2} from './util';
 export function getFireworkPoints(x,y,type,ctx){
     let fire=[]; //要return 的fireworPoint陣列
     let tmpNum; 
-    let angle;
+    let angle=0;
     let i,j;
-    let color=getRandomColor();
+    let color=hsvRand(1);
     let time;
-    let radius;
+    let radius=1;
     let delayTime;
     let invisibleTime=0;
-    let speed;
+    let speed=0;
     let friction=0;
     if(type==1){//1 正常
-        tmpNum=Math.random()*200+200;
+        tmpNum=rand(200)+200;
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,color,Math.random()*2,Math.random()*400+800,0,0.0003,ctx,invisibleTime, friction));
     }
@@ -27,40 +25,73 @@ export function getFireworkPoints(x,y,type,ctx){
                 fire.push(new FireworkPoint(x,y,i/24+Math.random()*0.02,2*Math.PI*j/(tmpNum/6),color,Math.random()*2,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
     }
     else if(type==3){//3 圓
+        color=hsvRand(2);
         tmpNum=360;
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.5,2*Math.PI*i/tmpNum,color,Math.random()*2,Math.random()*200+800,0,0.0003,ctx,invisibleTime, friction));
     }
     else if(type==4){//4 大煙火
+        color=hsvRand(2);
         tmpNum=1500;
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,color,Math.random()*2,Math.random()*1000+600,0,0.0003,ctx,invisibleTime, friction));
         tmpNum=500;
-        color='#FFFFFF';
+        color='rgb(255, 255, 255)';
         for(i=0;i<tmpNum;i++){
             time=rand(300)+300;
-            fire.push(new FireworkPoint(x-500+rand(1000),y+rand(600),0,0,color,Math.random()*2,1610+time,0,0,ctx,1600+time));
+            fire.push(new FireworkPoint(x-500+rand(1000),y+100+rand(600),0,0,color,Math.random()*2,1610+time,0,0,ctx,1600+time));
         }
     }
     else if(type==5){//5 破碎圓
+        color=hsvRand(2);
         tmpNum=720;
         for(i=0;i<8;i++)
             for(j=0;j<tmpNum/8;j++)
                 fire.push(new FireworkPoint(x,y,0.5,2*Math.PI* (i/8+(Math.random()*15+15)/360) ,color,Math.random()*2,Math.random()*200+800,0,0.0003,ctx,invisibleTime, friction));
     }
-    else if(type==6){//6 太陽
-        tmpNum=720;
-        for(i=0;i<20;i++)
-            for(j=0;j<tmpNum/20;j++)
-                fire.push(new FireworkPoint(x,y,Math.random()*0.3,2*Math.PI*i/20 ,color,Math.random()*2,Math.random()*200+800,0,0.0003,ctx,invisibleTime, friction));
+    else if(type==6){//6
+        color=hsvRand(3,[142,234,342,298,204,116]);
+        speed=0.13;
+        tmpNum=5;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++){
+                angle=deg2rad(j/tmpNum*360+rand(15));
+                for(let k=0;k<20;k++)
+                    fire.push(new FireworkPoint(x,y,speed+i/32-0.015+ran()*0.03-k/20*0.02,angle,color,(-abs(k-15)+15)/15*1,Math.random()*200+800,0,0.0001,ctx,invisibleTime, friction));
+
+            }
+            tmpNum+=5;
+        }
+        color=hsv(60);
+        speed=0.04;
+        tmpNum=4;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++){
+                angle=deg2rad(j/tmpNum*360+rand(30));
+                for(let k=0;k<20;k++)
+                    fire.push(new FireworkPoint(x,y,speed+i/32-0.015+ran()*0.03-k/20*0.02,angle,color,(-abs(k-15)+15)/15*1,Math.random()*200+800,0,0.0001,ctx,invisibleTime, friction));
+
+            }
+            tmpNum+=3;
+        }
     }
-    else if(type==7){//7 放射狀
-        tmpNum=750;
-        for(i=0;i<150;i++){
-            angle=2*Math.PI*Math.random();
-            var speedMax=Math.random()*0.15+0.15;
-            for(j=0;j<tmpNum/150;j++)
-                fire.push(new FireworkPoint(x,y,Math.random()*speedMax,angle ,color,Math.random()*2,Math.random()*400+600,0,0.00005,ctx,invisibleTime, friction));
+    else if(type==7){//7
+        let arr=[60,62,64,90,128,146,240,300];
+        let col=arr[Math.floor(rand(arr.length))];
+        color=hsv(col);
+        let white=false;
+        if(col==60 || col==62 || col==64 || col==90 || col==128 ||col==146)
+            white=true;
+        let random=24+Math.floor(rand(16));
+        let gravity=0.0001;
+        angle=deg2rad(rand(360));
+        for(i=0;i<random;i++){
+            angle=angle+deg2rad(360/random+rand(5));
+            speed=0.3+rand(0.2);
+            friction=0.00045+rand(0.0001);
+            for(let k=0;k<50;k++){
+                fire.push(new FireworkPoint(x,y,k/50*speed,angle+deg2rad(rand(2)),(k/100*speed<0.05 && rand(1)>0.6 && white) || ((col==60 || col==62 || col==64) && rand(1)>0.65)?'rgb(255,255,255)':color,(-abs(k-25)+25)/25*2,Math.random()*200+400,0,gravity+0.0002*k/100,ctx,invisibleTime, friction));
+            }
         }
     }
     else if(type==8){//8 小炮
@@ -70,30 +101,61 @@ export function getFireworkPoints(x,y,type,ctx){
     }
     else if(type==9){//9 delay炮
         angle=ran()*60;
-        delayTime=350+ran()*350;
+        delayTime=250+ran()*250;
         tmpNum=100;
         for(j=0;j<6;j++){
-            color=getRandomColor();
+            color=hsvRand(2);
             delayTime=350+ran()*350;
             for(i=0;i<tmpNum;i++)
                 fire.push(new FireworkPoint(x+100*cos(angle+60*j),y+100*sin(angle+60*j),Math.random()*0.3,2*Math.PI*Math.random(),color,Math.random()*2,Math.random()*100+200,delayTime ,0.0003,ctx,invisibleTime, friction));
         }
     }
     else if(type==0){//0 圓內均勻分布
+        let colAngle=rand(360);
+        color=hsv(colAngle);
         tmpNum=0;
         for(i=0;i<6;i++){
             for(j=0;j<tmpNum;j++)
-                fire.push(new FireworkPoint(x,y,i/32-0.015+ran()*0.03,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
+                fire.push(new FireworkPoint(x,y,i/20-0.024+ran()*0.048,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,300+rand(300), friction));
             tmpNum+=30;
+        }
+        color=hsv(colAngle+60+rand(30));
+        tmpNum=0;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++)
+                fire.push(new FireworkPoint(x,y,i/32-0.015+ran()*0.03,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+400,0,0.00005,ctx,invisibleTime, friction));
+            tmpNum+=15;
+        }
+        tmpNum=300;
+        color='rgb(255, 255, 255)';
+        for(i=0;i<tmpNum;i++){
+            let len=rand(100);
+            let theta=rand(360);
+            time=550+rand(300);
+            fire.push(new FireworkPoint(x+len*cos(theta),y+20+len*sin(theta),0,0,color,Math.random()*2,time+10,0,0,ctx,time,0));
+        }
+        tmpNum=800;
+        for(i=0;i<tmpNum;i++){
+            let len=rand(150)+115;
+            let theta=rand(360);
+            time=rand(300)+900;
+            fire.push(new FireworkPoint(x+len*cos(theta),y+40+len*sin(theta),0,0,color,Math.random()*2,time+10,0,0,ctx,time,0));
+        }
+        tmpNum=200;
+        for(i=0;i<tmpNum;i++){
+            let len=rand(115);
+            let theta=rand(360);
+            time=rand(300)+900;
+            fire.push(new FireworkPoint(x+len*cos(theta),y+40+len*sin(theta),0,0,color,Math.random()*2,time+10,0,0,ctx,time,0));
         }
     }
     else if(type==10){//a 圓內均勻分布延遲變色
-        let hue=rand(360);//色相變化不要太小
-        color='hsl(' + hue + ',100%, 70%)';
-        hue=(hue+90+rand(60))%360;
-        let tmpColor1='hsl(' + hue + ',100%, 70%)';
-        hue=(hue+90+rand(60))%360;
-        let tmpColor2='hsl(' + hue + ',100%, 70%)';
+        let colAngle=rand(360);
+        color=hsv(colAngle);
+        colAngle=colAngle+90+rand(60);
+        let tmpColor1=hsv(colAngle);
+        colAngle=colAngle+90+rand(60);
+        let tmpColor2=hsv(colAngle);
         tmpNum=0;
         for(i=0;i<6;i++){
             for(j=0;j<tmpNum;j++){
@@ -107,88 +169,85 @@ export function getFireworkPoints(x,y,type,ctx){
             tmpNum+=30;
         }
     }
-    else if(type==11){//b 大太陽
-        let hue=rand(360);//色相變化不要太小
-        color='hsl(' + hue + ',100%, 70%)';
-        tmpNum=0;
-        for(i=0;i<6;i++){
-            for(j=0;j<tmpNum;j++)
-                fire.push(new FireworkPoint(x,y,i/64-0.075+ran()*0.015,deg2rad(j/tmpNum*360),color,Math.random()*2,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
-            tmpNum+=30;
-        }
-        hue=(hue+90+rand(60))%360;
-        color='hsl(' + hue + ',100%, 70%)';
-        tmpNum=0;
-        for(i=0;i<6;i++){
-            for(j=0;j<tmpNum;j++)
-                fire.push(new FireworkPoint(x,y,i/64+rand(0.04),deg2rad(j/tmpNum*360),color,Math.random()*2,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
-            tmpNum+=30;
-        }
-        hue=(hue+90+rand(60))%360;
-        color='hsl(' + hue + ',100%, 70%)';
-        tmpNum=1800;
-        for(i=0;i<60;i++){
-            speed=rand(0.06)+0.12;
-            for(j=0;j<tmpNum/60;j++)
-                fire.push(new FireworkPoint(x,y,speed*j/tmpNum*60+2/64+rand(0.01),2*Math.PI*i/60 ,color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
+    else if(type==11){//b
+        let arr=[60,62,64,90,128,146,240,300];
+        let col=arr[Math.floor(rand(arr.length))];
+        color=hsv(col);
+        let random=6+Math.floor(rand(4));
+        let gravity=0.0001;
+        angle=deg2rad(rand(360));
+        for(i=0;i<random;i++){
+            angle=angle+deg2rad(360/random-5+rand(10));
+            speed=0.5+rand(0.2);
+            friction=0.0006+rand(0.0001);
+            for(let k=0;k<100;k++){
+                fire.push(new FireworkPoint(x,y,k/100*speed,angle-deg2rad(rand(5)),((col==60 || col==62 || col==64) && rand(1)>0.65)?'rgb(255,255,255)':color,(-abs(k-50)+50)/50*2,Math.random()*200+k/100*700,0,gravity+0.0006*k/100,ctx,invisibleTime, friction));
+            }
         }
     }
-    else if(type==12){//c 圓內均勻分布,2層
-        let hue=rand(360);
-        color='hsl(' + hue + ',100%, 70%)';
-        let layer=2;
-        for(let k=1;k<=layer;k++){
+    else if(type==12){//c
+        let colAngle=rand(360);
+        color=hsv(colAngle);
+        colAngle=colAngle+90+rand(60);
+        let tmpColor1=hsv(colAngle);
+        colAngle=colAngle+90+rand(60);
+        let tmpColor2=hsv(colAngle);
+        tmpNum=rand(200)+200;
+        for(i=0;i<tmpNum;i++)
+            fire.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,color,Math.random()*2,Math.random()*400+800,0,0.0003,ctx,invisibleTime, friction));
+        for(i=0;i<tmpNum;i++)
+            fire.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,tmpColor1,Math.random()*2,Math.random()*400+800,0,0.0003,ctx,invisibleTime, friction));
+        for(i=0;i<tmpNum;i++)
+            fire.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,tmpColor2,Math.random()*2,Math.random()*400+800,0,0.0003,ctx,invisibleTime, friction));
+    }
+    else if(type==13){//d
+        angle=ran()*60;
+        for(let k=0;k<6;k++){
+            color=hsvRand(2);
+            delayTime=200+ran()*200;
             tmpNum=0;
+            let len=100+rand(100);
             for(i=0;i<6;i++){
-                for(j=0;j<tmpNum;j++)
-                    fire.push(new FireworkPoint(x,y,i/32/layer*k-0.015/layer*k+ran()*0.03/layer*k,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
-                tmpNum+=30;
+                for(j=0;j<tmpNum;j++){
+                    speed=i/16-0.03+ran()*0.06;
+                    radius=rand(2);
+                    time=rand(100)+300;
+                    fire.push(new FireworkPoint(x+len*cos(angle+60*k),y+len*sin(angle+60*k),speed,deg2rad(j/tmpNum*360),color,radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
+                }
+                tmpNum+=8;
             }
-            hue=(hue+90+rand(60))%360;
-            color='hsl(' + hue + ',100%, 70%)';
         }
     }
-    else if(type==13){//d 圓內均勻分布,3層
-        let hue=rand(360);
-        color='hsl(' + hue + ',100%, 70%)';
-        let layer=3;
-        for(let k=1;k<=layer;k++){
-            tmpNum=0;
-            for(i=0;i<6;i++){
-                for(j=0;j<tmpNum;j++)
-                    fire.push(new FireworkPoint(x,y,i/32/layer*k-0.015/layer*k+ran()*0.03/layer*k,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
-                tmpNum+=30;
+    else if(type==14){//e 繁星點點
+        let arealen=0;
+        color=hsvRand(0);
+        for(let k=0;k<60;k++){
+            angle=rand(360);
+            delayTime=100+ran()*300;
+            k>=10?arealen+=1.5:arealen+=8;
+            let areax=x+arealen*cos(angle);
+            let areay=y+arealen*sin(angle);
+            radius=2;
+            let len=3;
+            let theta;
+            for(i=0;i<20;i++){
+                theta=rand(360);
+                fire.push(new FireworkPoint(areax+len*cos(theta),areay+len*sin(theta),0,0,color,radius,10,delayTime,0.00005,ctx,invisibleTime, friction));
             }
-            hue=(hue+90+rand(60))%360;
-            color='hsl(' + hue + ',100%, 70%)';
-        }
-    }
-    else if(type==14){//e 圓內均勻分布,4層
-        let hue=rand(360);
-        color='hsl(' + hue + ',100%, 70%)';
-        let layer=4;
-        for(let k=1;k<=layer;k++){
-            tmpNum=0;
-            for(i=0;i<6;i++){
-                for(j=0;j<tmpNum;j++)
-                    fire.push(new FireworkPoint(x,y,i/32/layer*k-0.015/layer*k+ran()*0.03/layer*k,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
-                tmpNum+=30;
-            }
-            hue=(hue+90+rand(60))%360;
-            color='hsl(' + hue + ',100%, 70%)';
+            radius=2;
+            fire.push(new FireworkPoint(areax,areay,0,0,'rgb(255,255,255)',radius,70,delayTime,0.00005,ctx,invisibleTime, friction));
         }
     }
     else if(type==15){//f 圓內均勻分布+灑
-        let hue=rand(360);
-        color='hsl(' + hue + ',100%, 70%)';
+        let colAngle=rand(360);
+        color=hsv(colAngle);
         tmpNum=0;
         for(i=0;i<6;i++){
             for(j=0;j<tmpNum;j++)
                 fire.push(new FireworkPoint(x,y,i/32-0.015+ran()*0.03,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
             tmpNum+=30;
         }
-        hue=(hue+90+rand(60))%360;
-        color='hsl(' + hue + ',100%, 70%)';
+        color=hsv(colAngle+90+rand(60));
         tmpNum=0;
         for(i=0;i<6;i++){
             for(j=0;j<tmpNum;j++){
@@ -199,50 +258,39 @@ export function getFireworkPoints(x,y,type,ctx){
         }
     }
     else if(type==16){//g 圓內均勻分布+環稍微強調
-        let hue=rand(360);
-        color='hsl(' + hue + ',100%, 70%)';
+        color=hsvRand(2);
         tmpNum=0;
         for(i=0;i<6;i++){
             for(j=0;j<tmpNum;j++)
                 fire.push(new FireworkPoint(x,y,i/32-0.015+ran()*0.03,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
-            tmpNum+=24;
+            tmpNum+=16;
         }
         tmpNum=360;
         for(i=0;i<tmpNum;i++){
             fire.push(new FireworkPoint(x,y,6/32+0.015-ran()*0.06,deg2rad(i/tmpNum*360+rand(5)),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
         }
     }
-    else if(type==17){//h 大太陽
-        color='hsl(0,100%, 70%)';
-        tmpNum=0;
-        for(i=0;i<6;i++){
-            for(j=0;j<tmpNum;j++)
-                fire.push(new FireworkPoint(x,y,i/32-0.15+ran()*0.03,deg2rad(j/tmpNum*360),color,Math.random()*2,Math.random()*200+800,500,0.00005,ctx,invisibleTime, friction));
-            tmpNum+=30;
-        }
-        color='hsl(120,100%, 70%)';
-        tmpNum=0;
-        for(i=0;i<6;i++){
-            for(j=0;j<tmpNum;j++)
-                fire.push(new FireworkPoint(x,y,i/32+rand(0.08),deg2rad(j/tmpNum*360),color,Math.random()*2,Math.random()*200+800,500,0.00005,ctx,invisibleTime, friction));
-            tmpNum+=30;
-        }
-        color='hsl(60,100%, 70%)';
-        tmpNum=1800;
-        for(i=0;i<60;i++){
-            speed=rand(0.06)+0.3;
-            for(j=0;j<tmpNum/60;j++)
-                fire.push(new FireworkPoint(x,y,speed*j/tmpNum*60+2/64+rand(0.01),2*Math.PI*i/60 ,color,Math.random()*1.5,Math.random()*200+800,500,0.00005,ctx,invisibleTime, friction));
-        }
-        color='hsl(210,100%, 70%)';
-        tmpNum=0;
-        for(i=0;i<6;i++){
-            for(j=0;j<tmpNum;j++)
-                fire.push(new FireworkPoint(x,y,i/12-0.09+ran()*0.08,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*400+1000,500,0.00005,ctx,600+rand(300),friction));
-            tmpNum+=60;
+    else if(type==17){//h
+        angle=ran()*60;
+        for(let k=0;k<6;k++){
+            color=hsvRand(2);
+            delayTime=200+ran()*200;
+            tmpNum=0;
+            let len=50+rand(100);
+            for(i=0;i<6;i++){
+                for(j=0;j<tmpNum;j++){
+                    invisibleTime=rand(100)+200;
+                    speed=i/16-0.03+ran()*0.06;
+                    radius=rand(2);
+                    time=rand(100)+300;
+                    fire.push(new FireworkPoint(x+len*cos(angle+60*k),y+len*sin(angle+60*k),speed,deg2rad(j/tmpNum*360),color,radius,invisibleTime+20+rand(70),delayTime,0.00005,ctx,invisibleTime,friction));
+                }
+                tmpNum+=8;
+            }
         }
     }
     else if(type==18){//i 針狀
+        color=hsvRand(2);
         tmpNum=0;
         for(i=0;i<6;i++){
             for(j=0;j<tmpNum;j++){
@@ -255,9 +303,8 @@ export function getFireworkPoints(x,y,type,ctx){
         }
     }
     else if(type==19){//j 圓內均勻分布+環稍微強調,2層
-        let hue=rand(360);
-        color='hsl(' + hue + ',100%, 70%)';
-        tmpNum=0;
+        let colAngle=rand(360);
+        color=hsv(colAngle);
         for(i=0;i<6;i++){
             for(j=0;j<tmpNum;j++)
                 fire.push(new FireworkPoint(x,y,i/32-0.015+ran()*0.03,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
@@ -266,8 +313,9 @@ export function getFireworkPoints(x,y,type,ctx){
         tmpNum=720;
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,6/32-ran()*0.06,deg2rad(i/tmpNum*360+rand(5)),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
-        hue=(hue+60+rand(60))%360;//色相不要差太大
-        color='hsl(' + hue + ',100%, 70%)';
+        colAngle=colAngle+30+rand(30);
+        color=hsv(colAngle);
+        //color=hsvRand(1);
         tmpNum=0;
         for(i=0;i<6;i++){
             for(j=0;j<tmpNum;j++)
@@ -314,6 +362,7 @@ export function getFireworkPoints(x,y,type,ctx){
         }
     }
     else if(type==21){//l 細雨
+        color=hsvRand(2);
         tmpNum=0;
         for(i=0;i<6;i++){
             for(j=0;j<tmpNum;j++)
@@ -322,18 +371,22 @@ export function getFireworkPoints(x,y,type,ctx){
         }
     }
     else if(type==22){//m 流星
+        color=hsvRand(2);
         tmpNum=0;
         for(i=0;i<6;i++){
-            for(j=0;j<tmpNum;j++)
-                fire.push(new FireworkPoint(x,y,i/8-0.06+ran()*0.12,deg2rad(j/tmpNum*360),color,Math.random()*2,Math.random()*400+2000,0,0.0003,ctx,invisibleTime, 0.001));
+            for(j=0;j<tmpNum;j++){
+                time=rand(400)+2000;
+                fire.push(new FireworkPoint(x,y,i/8-0.06+ran()*0.12,deg2rad(j/tmpNum*360),color,Math.random()*2,time,0,0.0003,ctx,invisibleTime, 0.001));
+                fire.push(new FireworkPoint(x-500+rand(1000),y+100+rand(600),0,0,'rgb(255,255,255)',Math.random()*2,time+30,0,0,ctx,time+20));
+            }
             tmpNum+=60;
         }
     }
     else if(type==23){//n 均勻分布+變色
-        let hue=rand(360);
-        color='hsl(' + hue + ',100%, 70%)';
-        let hue2=(hue+90+rand(60))%360;
-        let color2='hsl(' + hue2 + ',100%, 70%)';
+        let colorAngle=rand(360);
+        color=hsv(colorAngle);
+        let colorAngle2=colorAngle+90+rand(60);
+        let color2=hsv(colorAngle2);
         let layer=2;
         for(let k=1;k<=layer;k++){
             tmpNum=0;
@@ -348,13 +401,52 @@ export function getFireworkPoints(x,y,type,ctx){
                 }
                 tmpNum+=30;
             }
-            hue=(hue+90+rand(60))%360;
-            color='hsl(' + hue + ',100%, 70%)';
-            hue2=(hue2+90+rand(60))%360;
-            color2='hsl(' + hue2 + ',100%, 70%)';
+            if(k==layer)
+                break;
+            colorAngle=colorAngle+rand(60)+90;
+            color=hsv(colorAngle);
+            colorAngle2=colorAngle2+rand(60)+90;
+            color2=hsv(colorAngle2);
+        }
+        let arealen=0;
+        color=hsv(colorAngle);
+        for(let k=0;k<30;k++){
+            angle=rand(360);
+            delayTime=1400+rand(200);
+            k>=10?arealen+=1.5:arealen+=8;
+            let areax=x+arealen*cos(angle);
+            let areay=y+100+arealen*sin(angle);
+            radius=2;
+            let len=3;
+            let theta;
+            for(i=0;i<20;i++){
+                theta=rand(360);
+                fire.push(new FireworkPoint(areax+len*cos(theta),areay+len*sin(theta),0,0,color,radius,10,delayTime,0.00005,ctx,invisibleTime, friction));
+            }
+            radius=2;
+            fire.push(new FireworkPoint(areax,areay,0,0,'rgb(255,255,255)',radius,70,delayTime,0.00005,ctx,invisibleTime, friction));
+        }
+        arealen=100;
+        color=hsv(colorAngle2);
+        for(let k=0;k<30;k++){
+            angle=rand(360);
+            delayTime=1400+rand(200);
+            k>=10?arealen+=1.5:arealen+=8;
+            let areax=x+arealen*cos(angle);
+            let areay=y+100+arealen*sin(angle);
+            radius=2;
+            let len=3;
+            let theta;
+            for(i=0;i<20;i++){
+                theta=rand(360);
+                fire.push(new FireworkPoint(areax+len*cos(theta),areay+len*sin(theta),0,0,color,radius,10,delayTime,0.00005,ctx,invisibleTime, friction));
+            }
+            radius=2;
+            fire.push(new FireworkPoint(areax,areay,0,0,'rgb(255,255,255)',radius,70,delayTime,0.00005,ctx,invisibleTime, friction));
         }
     }
     else if(type==24){//o 毛毛蟲
+        color=hsvRand(2);
         tmpNum=0;
         for(i=0;i<6;i++){
             for(j=0;j<tmpNum;j++){
@@ -369,6 +461,7 @@ export function getFireworkPoints(x,y,type,ctx){
         }
     }
     else if(type==25){//p 大塊毛毛蟲
+        color=hsvRand(2);
         tmpNum=0;
         for(i=0;i<6;i++){
             for(j=0;j<tmpNum;j++){
@@ -663,7 +756,7 @@ export function getFireworkPoints(x,y,type,ctx){
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.045*i/tmpNum+ran()*0.005,Math.acos(i/tmpNum)+PI2*(1/2+angle/360),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
         tmpNum=45;
-        for(i=0;i<tmpNum;i++)
+        for(i=-10;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.045/cos(i),deg2rad(i+angle)+ran()*0.01,color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,0.045*i/tmpNum,deg2rad(90+angle)+ran()*0.01,color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
@@ -820,33 +913,3 @@ export function getFireworkPoints(x,y,type,ctx){
     }
     return fire;
 }
-
-function cos(x){
-    return Math.cos(2*Math.PI*x/360);
-}
-
-function sin(x){
-    return Math.sin(2*Math.PI*x/360);
-}
-
-function abs(x){
-    return Math.abs(x);
-}
-
-function deg2rad(x){
-    return Math.PI*2*x/360;
-}
-
-function ran(){
-    return Math.random();
-}
-
-function rand(x){
-    return Math.random()*x;
-}
-
-function sqrt(x){
-    return Math.sqrt(x);
-}
-
-var PI2=Math.PI*2;
