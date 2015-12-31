@@ -2,9 +2,8 @@
 export function hsvRand(type,array){
     let angle;
     let trueState=true;
-    if(type==0){
+    if(type==0)
         angle=rand(360);
-    }
     else if(type==1){
         while(trueState){//probability densitiy function
             angle=rand(360);
