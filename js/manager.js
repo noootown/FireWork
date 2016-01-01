@@ -160,6 +160,8 @@ function Firework2(x,y,type,ctx,time){
                 break;
             }
         }
+        //for(var i=0;i<this.fireworkPoints.length;i++)
+            //console.log(this.fireworkPoints[i].color);
     };
     this.checkFinish=function(){//檢查是否
         if(this.fireworkPoints[0] && this.fireworkPoints[0].time>=3000)//1600是直接取一個大的值，比所有煙火的時間都還來的長
@@ -220,7 +222,6 @@ export function FireworkPoint(x,y,speed,angle,color,radius,timeMax,delay,acceler
     this.invisibleTimePtr=this.invisibleTime;//隱形時間的指標
     this.timeInterval=400/window.fps;//間隔
     this.color=color;
-    //this.timeMax=timeMax;
     this.update=function(){
         if(this.delayPtr>0)
             this.delayPtr-=this.timeInterval;
