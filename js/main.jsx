@@ -47,6 +47,12 @@ class Main extends React.Component{
             flag:0
         };
     }
+    componentDidMount(){
+        $('body').attr('unselectable', 'on').on('selectstart', false);
+        //$(window).resize(function(){
+            
+        //});
+    }
     setupInputManager(fireworkManager){
         Main.defaultProps.myInputManager.firework=fireworkManager;
         Main.defaultProps.myInputManager.firework.virtualDOM=this;
@@ -354,8 +360,8 @@ class Main extends React.Component{
                 againClick={this.saveDialogAgainClick.bind(this)} 
                 continueClick={this.saveDialogContinueClick.bind(this)} 
                 quitClick={this.saveDialogQuitClick.bind(this)}/>
-                <LoadDialog
-                quitClick={this.loadDialogQuitClick.bind(this)}
+                    <LoadDialog
+                    quitClick={this.loadDialogQuitClick.bind(this)}
                 remoteLoadClick={this.loadDialogRemoteLoadClick.bind(this)}
                 localLoadClick={this.loadDialogLocalLoadClick.bind(this)}
                 />
@@ -370,13 +376,13 @@ class Main extends React.Component{
                 quitClick={this.replayDialogQuitClick.bind(this)}
                 />
                     <AboutDialog
-                quitClick={this.aboutDialogQuitClick.bind(this)}
+                    quitClick={this.aboutDialogQuitClick.bind(this)}
                 />
                     <HelpDialog
-                quitClick={this.helpDialogQuitClick.bind(this)}
+                    quitClick={this.helpDialogQuitClick.bind(this)}
                 />
                     <HintDialog
-                quitClick={this.hintDialogQuitClick.bind(this)}
+                    quitClick={this.hintDialogQuitClick.bind(this)}
                 />
                     <Modal/>
                     <CenterShowWords ref='centerShowWords'/>
