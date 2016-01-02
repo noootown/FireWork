@@ -507,8 +507,8 @@ InputManager.keyDownFunction={
 };
 
 export function WordManager(ctx){
-    var FADEOUTTIME=2000;//淡入的時間
-    var FADEINTIME=2000;//淡出的時間
+    var FADEOUTTIME=2500;//淡出的時間
+    var FADEINTIME=5500;//淡入的時間
 
     this.ctx=ctx;
     this.words=[];

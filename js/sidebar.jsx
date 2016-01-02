@@ -23,7 +23,6 @@ class SideBar extends React.Component{
             return;
         else
             nextItems = this.state.items.concat([this.state.text]);
-
         this.setState({items: nextItems, text:''});
     }
 
@@ -37,6 +36,10 @@ class SideBar extends React.Component{
 
     handleHelpClick(){
         this.props.sidebarHelpClick();
+    }
+
+    handleVideoClick(){
+        this.props.sidebarVideoClick(this.state.items.length*8000+1500);
     }
 
     render(){
@@ -56,6 +59,7 @@ class SideBar extends React.Component{
                 onChange={this.onChange.bind(this)}/>
                 <a className={'sidePanelBtn'} onClick={this.handleMakeClick.bind(this)}>{'Make'}</a>
                 <a className={'sidePanelBtn'} onClick={this.handleLoadClick.bind(this)}>{'Load'}</a>
+                <a className={'sidePanelBtn'} onClick={this.handleVideoClick.bind(this)}>{'Music'}</a>
                 </div>
                 </div>
                );
@@ -112,16 +116,13 @@ class CrossBtn extends Component{
     }
 }
 class WordListAll extends Component{
-    componentDidMount(){
-        $('#showword-input').attr('placeholder','寫下想說的話');
-    }
     render() {
         return (
                 <div className={'wordListAll'}>
                 <h3 className={'sidePanelTitle'}>寫下想說的話</h3>
                 <WordListContainer items={this.props.items} text={this.props.text} updateItems={this.props.updateItems.bind(this)}/>
                 <form id={'word-inputform'} onSubmit={this.props.onSubmit.bind(this)}>
-                <input id={'showword-input'} className={'word-input'}  onChange={this.props.onChange.bind(this)} value={this.props.text} />
+                <input id={'showword-input'} className={'word-input'}  onChange={this.props.onChange.bind(this)} value={this.props.text} placeholder='寫下想說的話'/>
                 <button className={'sidePanelBtn enterBtn'}>{'輸入'}</button>
                 </form>
                 </div>

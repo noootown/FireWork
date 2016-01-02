@@ -657,6 +657,57 @@ margin-left:-300px;
 width:600px;
 height:180px;
 }
+.dialogPlayer{
+position:absolute;
+background-color:transparent;
+z-index:-100;
+display:inline;
+top:40%;
+margin-top:-250px;
+left:50%;
+margin-left:-250px;
+width:500px;
+height:180px;
+}
+.dialogPlayerWord{
+width:150px;
+text-align:left;
+color:#FFFFFF;
+font-size:25px;
+font-weight:200;
+margin:15px 0 0 0;
+}
+.dialogPlayer-inputform{
+padding:0 0 0 60px;
+display:flex;
+}
+.dialogPlayerQuitBtn{
+position:relative;
+left:50%;
+margin:10px 0 0 -40px;
+}
+#player{
+margin:0 0 -10px 10px;
+}
+.time-input{
+width:20px;
+}
+.dialogPlayWord2{
+text-align:center;
+width:40px;
+}
+.dialogPlayerWord3{
+text-align:center;
+width:100%;
+color:#FF0000;
+font-size:20px;
+font-weight:200;
+margin:5px 0 0 0;
+}
+.dialogPlayerWord3.hide{
+visibility:hidden;
+}
+
 /*----------dialog-----------*/
 .settingWordDiv{
 margin:20px;

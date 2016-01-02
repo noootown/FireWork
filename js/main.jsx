@@ -2,6 +2,7 @@
 import React, {Component}  from 'react';
 //import ReactDOM from 'react-dom';
 import SideBar from './sidebar';
+import PlayerDialog from './playerdialog';
 import {SaveDialog,LoadDialog,UploadDialog,ReplayDialog,AboutDialog,HelpDialog,HintDialog} from './dialog';
 import {FireworkManager,InputManager,WordManager} from './manager';
 
@@ -44,13 +45,17 @@ class Main extends React.Component{
             replay:false,
             alphabet:false,//true 英數模式 false 一般模式
             rocket:false,
-            flag:0
+            flag:0,
+            videoId:'qBDuVQGqNJU',
+            wordTime:1.5,
+            videoStartTime:0,
+            videoEndTime:0
         };
     }
     componentDidMount(){
         $('body').attr('unselectable', 'on').on('selectstart', false);
         //$(window).resize(function(){
-            
+
         //});
     }
     setupInputManager(fireworkManager){
@@ -99,6 +104,12 @@ class Main extends React.Component{
             $('.dialogLoadLocalWord').html(this.state.fireworkSaveRecord.saveTime.toString().substr(0,24));
         }
     }
+    sidebarVideoClick(wordtime){
+        this.setState({wordTime:wordtime});
+        this.toggleSidebar();
+        this.refs.settingWord.hide();
+        $('.dialogPlayer').addClass('active');
+    }
     startRecord(){
         this.state.pressRecord=true;
         this.state.goOver=false;
@@ -113,7 +124,7 @@ class Main extends React.Component{
                         $('.img-rec').toggleClass('active');
                     },800);
             }
-        }.bind(this),9000);//delay time 延遲讓文字顯示的時間
+        }.bind(this),9800);//delay time 延遲讓文字顯示的時間
 
         this.state.recordId2=setTimeout(function(){//start record timer  GO結束 //初始化各個狀態
             Main.defaultProps.myInputManager.firework.time=0;
@@ -164,9 +175,9 @@ class Main extends React.Component{
         var self=this;
         setTimeout(function(){
             self.pushRecordToReplay(self.state.fireworkRecord,0,0,0,0);
-            setTimeout(function(){//700秒後，把計時器歸零，開始計時
+            setTimeout(function(){//1500秒後，把計時器歸零，開始計時
                 self.state.startAction=true;
-            },700);
+            },1500);
 
         },500);//按下按鈕後過500ms才開始回放
     }
@@ -262,7 +273,7 @@ class Main extends React.Component{
             self.pushRecordToReplay(self.state.fireworkSaveRecord,0,0,0,1);
             setTimeout(function(){
                 self.state.startAction=true;
-            },700);
+            },1500);
         },500);
 
     }
@@ -337,6 +348,17 @@ class Main extends React.Component{
         this.refs.settingWord.show();
         $('.dialogHint').removeClass('active');
     }
+    changeVideoId(video){
+        this.setState({videoId:video});
+    }
+    playerDialogQuitClick(){
+        this.toggleSidebar();
+        this.refs.settingWord.show();
+        $('.dialogPlayer').removeClass('active');
+    }
+    changeVideoTime(starttime,endtime){
+        this.setState({videoStartTime:starttime,videoEndTime:endtime});
+    }
     render(){
         return(
                 <div className={'main'}>
@@ -350,7 +372,8 @@ class Main extends React.Component{
                 <SideBar
                 toggleSidebar={this.toggleSidebar.bind(this)}
                 sidebarMakeClick={this.sidebarMakeClick.bind(this)}
-                sidebarLoadClick={this.sidebarLoadClick.bind(this)}/>
+                sidebarLoadClick={this.sidebarLoadClick.bind(this)}
+                sidebarVideoClick={this.sidebarVideoClick.bind(this)}/>
                 <StartActionInstruction ref='startActionInstruction'/>
                 <SettingWord ref='settingWord'/>
                 <SaveDialog
@@ -383,6 +406,15 @@ class Main extends React.Component{
                 />
                     <HintDialog
                     quitClick={this.hintDialogQuitClick.bind(this)}
+                />
+                    <PlayerDialog
+                    videoId={this.state.videoId}
+                changeVideoId={this.changeVideoId.bind(this)}
+                changeVideoTime={this.changeVideoTime.bind(this)}
+                quitClick={this.playerDialogQuitClick.bind(this)}
+                wordTime={this.state.wordTime}
+                videoStartTime={this.state.videoStartTime}
+                videoEndTime={this.state.videoEndTime}
                 />
                     <Modal/>
                     <CenterShowWords ref='centerShowWords'/>
