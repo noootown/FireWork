@@ -49,6 +49,27 @@ class PlayerDialog extends React.Component{
             $('.dialogPlayerWord3').removeClass('hide');
         }
     }
+    loadVideo(){
+        if(this.state.startMin*60+this.state.startSec<this.state.endMin*60+this.state.endSec)
+            this.state.player.loadVideoById({
+                'videoId':this.props.videoId,
+                'startSeconds':this.state.startMin*60+this.state.startSec,
+                'endSeconds':this.state.endMin*60+this.state.endSec,
+                'suggestedQuality':'small'
+            });
+    }
+    seekTo(time){
+        this.state.player.seekTo(time,false);
+    }
+    play(){
+        this.state.player.playVideo();
+    }
+    pause(){
+        this.state.player.pauseVideo();
+    }
+    stop(){
+        this.state.player.stopVideo();
+    }
     render(){
         const feature = {
             height: '293',
@@ -80,30 +101,30 @@ class PlayerDialog extends React.Component{
                 <span className={'dialogPlayer-inputform'}>
                 <h3 className={'dialogPlayerWord'}>音樂開始:</h3>
                 <input id={'video-input-startmin'} className={'word-input time-input'} 
-                onChange={this.onChangeStartMin.bind(this)}
-                value={this.state.startMin}/>
-                <h3 className={'dialogPlayerWord dialogPlayWord2'}>分</h3>
-                <input id={'video-input-startsec'} className={'word-input time-input'}
-                onChange={this.onChangeStartSec.bind(this)}
-                value={this.state.startSec}/>
-                <h3 className={'dialogPlayerWord dialogPlayWord2'}>秒</h3>
-                </span>
+        onChange={this.onChangeStartMin.bind(this)}
+        value={this.state.startMin}/>
+            <h3 className={'dialogPlayerWord dialogPlayWord2'}>分</h3>
+            <input id={'video-input-startsec'} className={'word-input time-input'}
+        onChange={this.onChangeStartSec.bind(this)}
+        value={this.state.startSec}/>
+            <h3 className={'dialogPlayerWord dialogPlayWord2'}>秒</h3>
+            </span>
 
-                <span className={'dialogPlayer-inputform'}>
-                <h3 className={'dialogPlayerWord'}>音樂結束:</h3>
-                <input id={'video-input-endmin'} className={'word-input time-input'} 
-                onChange={this.onChangeEndMin.bind(this)}
-                value={this.state.endMin}/>
-                <h3 className={'dialogPlayerWord dialogPlayWord2'}>分</h3>
-                <input id={'video-input-endsec'} className={'word-input time-input'}
-                onChange={this.onChangeEndSec.bind(this)}
-                value={this.state.endSec}/>
-                <h3 className={'dialogPlayerWord dialogPlayWord2'}>秒</h3>
-                </span>
-                <h3 className={'dialogPlayerWord3 hide'}>開始時間需小於等於結束時間</h3>
-                <button className={'dialogLoadBtn dialogPlayerQuitBtn'} onClick={this.quitClick.bind(this)}>Quit</button>
-                </div>
-                );
+            <span className={'dialogPlayer-inputform'}>
+            <h3 className={'dialogPlayerWord'}>音樂結束:</h3>
+            <input id={'video-input-endmin'} className={'word-input time-input'} 
+        onChange={this.onChangeEndMin.bind(this)}
+        value={this.state.endMin}/>
+            <h3 className={'dialogPlayerWord dialogPlayWord2'}>分</h3>
+            <input id={'video-input-endsec'} className={'word-input time-input'}
+        onChange={this.onChangeEndSec.bind(this)}
+        value={this.state.endSec}/>
+            <h3 className={'dialogPlayerWord dialogPlayWord2'}>秒</h3>
+            </span>
+            <h3 className={'dialogPlayerWord3 hide'}>開始時間需小於等於結束時間</h3>
+            <button className={'dialogLoadBtn dialogPlayerQuitBtn'} onClick={this.quitClick.bind(this)}>Quit</button>
+            </div>
+            );
     }
 }
 

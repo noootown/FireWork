@@ -46,7 +46,7 @@ class Main extends React.Component{
             alphabet:false,//true 英數模式 false 一般模式
             rocket:false,
             flag:0,
-            videoId:'qBDuVQGqNJU',
+            videoId:'_Bq89eF-Pfs',
             wordTime:1.5,
             videoStartTime:0,
             videoEndTime:0
@@ -54,9 +54,6 @@ class Main extends React.Component{
     }
     componentDidMount(){
         $('body').attr('unselectable', 'on').on('selectstart', false);
-        //$(window).resize(function(){
-
-        //});
     }
     setupInputManager(fireworkManager){
         Main.defaultProps.myInputManager.firework=fireworkManager;
@@ -133,6 +130,7 @@ class Main extends React.Component{
             Main.defaultProps.myInputManager.firework.saveRecord2=[];
             Main.defaultProps.myInputManager.firework.alphabetBuffer=[];
             this.state.goOver=true;
+            this.refs.player.loadVideo();
         }.bind(this),8300);
     }
     toggleSidebar(){//sidebar和footer的開啟或關閉
@@ -149,6 +147,7 @@ class Main extends React.Component{
         this.refs.saveDialog.closeDialog();
         $('.dialogUpload').addClass('active');
         this.refs.saveDialog.getBtnBack();
+        this.refs.player.stop();
     }
     saveDialogAgainClick(){//restart
         this.refs.saveDialog.closeDialog();
@@ -178,7 +177,7 @@ class Main extends React.Component{
             setTimeout(function(){//1500秒後，把計時器歸零，開始計時
                 self.state.startAction=true;
             },1500);
-
+            self.refs.player.loadVideo();
         },500);//按下按鈕後過500ms才開始回放
     }
 
@@ -216,7 +215,8 @@ class Main extends React.Component{
                 self.pushRecordToReplay(record,index1,index2,time+1000/60,type);
             });
         else{
-            if(type===0){
+            this.refs.player.stop();
+            if(type==0){//錄製完的replay
                 this.state.modal=true;
                 $('.modal').addClass('active');
                 $('.dialogSave').addClass('active');
@@ -225,7 +225,7 @@ class Main extends React.Component{
                 this.state.startAction=false;
                 this.refs.settingWord.show();
             }
-            else if(type==1){
+            else if(type==1){//由load處load的replay
                 $('.modal').addClass('active');
                 $('.dialogReplay').addClass('active');
                 self.state.replay=false;
@@ -237,6 +237,7 @@ class Main extends React.Component{
         this.refs.saveDialog.closeDialog();
         this.state.modal=false;
         $('.modal').removeClass('active');
+        this.refs.player.play();
     }
     saveDialogQuitClick(){
         this.refs.saveDialog.closeDialog();
@@ -244,6 +245,7 @@ class Main extends React.Component{
         this.resetRecordState();
         this.toggleSidebar();
         this.state.pressRecord=false;
+        this.refs.player.stop();
     }
     resetRecordState(){//重設record的狀態，只要有會開始record或停上record，都會呼叫這個function
         this.state.startAction=false;
@@ -274,6 +276,7 @@ class Main extends React.Component{
             setTimeout(function(){
                 self.state.startAction=true;
             },1500);
+            self.refs.player.loadVideo();
         },500);
 
     }
@@ -415,7 +418,8 @@ class Main extends React.Component{
                 wordTime={this.state.wordTime}
                 videoStartTime={this.state.videoStartTime}
                 videoEndTime={this.state.videoEndTime}
-                />
+                ref='player'
+                    />
                     <Modal/>
                     <CenterShowWords ref='centerShowWords'/>
                     </div>

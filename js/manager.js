@@ -448,6 +448,7 @@ InputManager.keyDownFunction={
                     this.virtualDOM.state.modal=true;
                     $('.modal').addClass('active');
                     $('.dialogSave').addClass('active');
+                    this.virtualDOM.refs.player.pause();
                     if(!this.virtualDOM.state.goOver){
                         $('#dialogSaveContinueBtn').addClass('hide');
                         $('#dialogSaveSaveBtn').addClass('hide');
@@ -472,12 +473,14 @@ InputManager.keyDownFunction={
                     this.virtualDOM.state.modal=true;
                     this.virtualDOM.refs.settingWord.togglePause();
                     this.virtualDOM.refs.startActionInstruction.pause();
+                    this.virtualDOM.refs.player.pause();
                 }
                 else{//暫停的狀態
                     this.virtualDOM.state.pauseRecord=false;
                     this.virtualDOM.state.modal=false;
                     this.virtualDOM.refs.settingWord.togglePause();
                     this.virtualDOM.refs.startActionInstruction.cancelPause();
+                    this.virtualDOM.refs.player.play();
                 }
             }
             else if(!this.virtualDOM.state.pressRecord){//在外面尚未make時，進入暫停模式
