@@ -161,7 +161,7 @@ function Firework2(x,y,type,ctx,time){
             }
         }
         //for(var i=0;i<this.fireworkPoints.length;i++)
-            //console.log(this.fireworkPoints[i].color);
+        //console.log(this.fireworkPoints[i].color);
     };
     this.checkFinish=function(){//檢查是否
         if(this.fireworkPoints[0] && this.fireworkPoints[0].time>=3000)//1600是直接取一個大的值，比所有煙火的時間都還來的長
@@ -410,6 +410,8 @@ InputManager.keyDownFunction={
                 $(input).val(nowValue);
             else if(key==32)
                 $(input).val(nowValue+' ');
+            else if(165<=key && key<=190)
+                $(input).val(nowValue+String.fromCharCode(key-100+32));
             else
                 $(input).val(nowValue+String.fromCharCode((96 <= key && key <= 105) ? key-48 : key));
 
@@ -420,7 +422,7 @@ InputManager.keyDownFunction={
         function(key){
             if(this.firework!==undefined){
                 if(InputManager.keyDownFunction.checkInputOrNot())
-                    InputManager.keyDownFunction['inputCharacter'](key,InputManager.keyDownFunction.getWhichInput());
+                    InputManager.keyDownFunction['inputCharacter']((65<=key && key<=90)?key+100:key,InputManager.keyDownFunction.getWhichInput());
                 else if(this.virtualDOM.state.pauseRecord || !this.virtualDOM.state.modal){//如果是可以發射的狀況
                     if(!this.virtualDOM.state.alphabet && this.fireworkMap[key]!==undefined)//如果是煙火模式
                         this.firework.shoot(this.fireworkMap[key][0],this.fireworkMap[key][1],0);
@@ -511,10 +513,10 @@ InputManager.keyDownFunction={
 
 export function WordManager(ctx){
     var FADEOUTTIME=2500;//淡出的時間
-    var FADEINTIME=5500;//淡入的時間
 
     this.ctx=ctx;
     this.words=[];
+    this.wordTime=[];
     this.ptr=0;
     this.opacity=0;
     this.timeCounter=0;
@@ -532,7 +534,7 @@ export function WordManager(ctx){
 
     this.draw=function(){
         this.color='rgba'+'(255,255,255,'+this.opacity+')';
-        this.ctx.font='200 '+this.size+'px Verdana';
+        this.ctx.font='300 '+this.size+'px Ubuntu';
         this.ctx.fillStyle=this.color;
         this.ctx.textAlign='center';
         this.ctx.beginPath();
@@ -543,17 +545,32 @@ export function WordManager(ctx){
         this.timeCounter+=25;
         if(this.timeCounter<=500)
             this.opacity+=0.05;
-        else if(this.timeCounter>=FADEINTIME && this.timeCounter<FADEINTIME+500)
+        else if(this.timeCounter>=this.wordTime[this.ptr] && this.timeCounter<this.wordTime[this.ptr]+500)
             this.opacity-=0.05;
-        else if(this.timeCounter===FADEINTIME+FADEOUTTIME){
+        else if(this.timeCounter===this.wordTime[this.ptr]+FADEOUTTIME){
             this.ptr=this.ptr+1;
             this.timeCounter=0;
         }
     };
+
     this.checkfinish=function(){
         if(this.ptr==this.words.length)
             return true;
         else 
             return false;
+    };
+
+    this.getEachTime=function(){
+        for(let i=0;i<this.words.length;i++){
+            this.wordTime[i]=2500;
+            for(let j=0;j<this.words[i].length;j++){
+                if(this.words[i][j].match(/[^\x00-\xff]/ig) != null)
+                    this.wordTime[i]+=250;
+                else if(this.words[i][j]==' ')
+                    this.wordTime[i]+=350;
+            }
+            if(this.wordTime[i]>=5000)
+                this.wordTime[i]=5000;
+        }
     };
 }

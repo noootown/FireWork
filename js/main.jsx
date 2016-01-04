@@ -90,6 +90,8 @@ class Main extends React.Component{
         }
         this.toggleSidebar();
         Main.defaultProps.wordAll.words=words;
+        Main.defaultProps.wordAll.getEachTime();
+        this.refs.player.pause();
         this.startRecord();
     }
     sidebarLoadClick(){

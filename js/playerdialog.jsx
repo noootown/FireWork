@@ -1,9 +1,32 @@
+//The MIT License (MIT)
+    
+    //Copyright (c) 2014 troy betz
+    
+    //Permission is hereby granted, free of charge, to any person obtaining a copy
+    //of this software and associated documentation files (the "Software"), to deal
+    //in the Software without restriction, including without limitation the rights
+    //to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    //copies of the Software, and to permit persons to whom the Software is
+    //furnished to do so, subject to the following conditions:
+    
+    //The above copyright notice and this permission notice shall be included in all
+    //copies or substantial portions of the Software.
+    
+    //THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    //IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    //FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    //AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    //LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    //SOFTWARE.
+'use strict';
 import React from 'react';
 import YouTube from 'react-youtube';
 class PlayerDialog extends React.Component{
     constructor(){
         super();
         this.state={
+            videoUrl:null,
             player:null,
             startMin:0,
             startSec:0,
@@ -15,7 +38,9 @@ class PlayerDialog extends React.Component{
         this.state.player = event.target;
     }
     onChange(event){
-        this.props.changeVideoId(event.target.value);
+        this.setState({videoUrl:event.target.value});
+        var index=event.target.value.indexOf('watch?v=');
+        this.props.changeVideoId(event.target.value.substr(index+8,11));
         this.state.player.loadVideoById(this.props.videoId);
     }
     submitTime(){
@@ -45,18 +70,26 @@ class PlayerDialog extends React.Component{
             this.submitTime();
             this.props.quitClick();
         }
-        else{
+        else
             $('.dialogPlayerWord3').removeClass('hide');
-        }
     }
     loadVideo(){
-        if(this.state.startMin*60+this.state.startSec<this.state.endMin*60+this.state.endSec)
-            this.state.player.loadVideoById({
-                'videoId':this.props.videoId,
-                'startSeconds':this.state.startMin*60+this.state.startSec,
-                'endSeconds':this.state.endMin*60+this.state.endSec,
-                'suggestedQuality':'small'
-            });
+        if(this.state.startMin*60+this.state.startSec<this.state.endMin*60+this.state.endSec){
+            if(this.state.startMin*60+this.state.startSec==0)//似乎startSeconds=0時，不能運作
+                this.state.player.loadVideoById({
+                    'videoId':this.props.videoId,
+                    'startSeconds':0.001,
+                    'endSeconds':this.state.endMin*60+this.state.endSec,
+                    'suggestedQuality':'small'
+                });
+            else
+                this.state.player.loadVideoById({
+                    'videoId':this.props.videoId,
+                    'startSeconds':this.state.startMin*60+this.state.startSec,
+                    'endSeconds':this.state.endMin*60+this.state.endSec,
+                    'suggestedQuality':'small'
+                });
+        }
     }
     seekTo(time){
         this.state.player.seekTo(time,false);
@@ -89,8 +122,8 @@ class PlayerDialog extends React.Component{
                 />
 
                 <span className={'dialogPlayer-inputform'}>
-                <h3 className={'dialogPlayerWord'}>Video ID:</h3>
-                <input id={'video-input'} className={'word-input'}  onChange={this.onChange.bind(this)} value={this.props.videoId} placeholder='請輸入影片ID'/>
+                <h3 className={'dialogPlayerWord'}>影片網址:</h3>
+                <input id={'video-input'} className={'word-input'} onChange={this.onChange.bind(this)} value={this.state.videoUrl} placeholder='請輸入影片網址'/>
                 </span>
 
                 <span className={'dialogPlayer-inputform'}>

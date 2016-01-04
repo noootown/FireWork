@@ -5,7 +5,7 @@ overflow:hidden;
 margin:0;
 padding:0;
 background-color:#000000;
-font-family:Ubuntu,Varela Round,Verdana ,Droid Sans,Helvetica ,sans-serif;
+font-family:Ubuntu;
 user-select:none;
 }
 h1,h2,h3,h4,h5,h6{
@@ -24,7 +24,7 @@ bottom:0;
 width:100%;
 color:#FFFFFF;
 background-color:#000000;
-/*opacity:0.75;*/
+opacity:0.75;
 font-weight:400;
 font-size:25px;
 padding:10px 0;
@@ -430,7 +430,7 @@ width:100%;
 text-align:left;
 color:#FFFFFF;
 font-size:28px;
-font-weight:200;
+font-weight:300;
 margin:10px 0 0 0;
 }
 .dialogLoadRemoteTitle{
@@ -445,7 +445,7 @@ width:150px;
 text-align:left;
 color:#FFFFFF;
 font-size:25px;
-font-weight:200;
+font-weight:300;
 margin:10px 0 5px 0;
 }
 .dialogLoadWord.dialogLoadNoFile{
@@ -535,7 +535,7 @@ width:150px;
 text-align:left;
 color:#FFFFFF;
 font-size:25px;
-font-weight:200;
+font-weight:300;
 margin:10px 30px 5px 0;
 }
 #uploadCardName-input, #uploadPassword-input{
@@ -589,7 +589,7 @@ width:30%;
 text-align:left;
 color:#FFFFFF;
 font-size:28px;
-font-weight:200;
+font-weight:300;
 margin:10px 0 0 0;
 }
 .dialogAboutBigTitle{
@@ -602,7 +602,7 @@ padding:0 10px;
 text-align:left;
 color:#FFFFFF;
 font-size:20px;
-font-weight:200;
+font-weight:300;
 margin:13px 0 0 0;
 }
 .dialogAboutLink{
@@ -637,7 +637,7 @@ height:180px;
 .dialogHelpWords{
 color:#FFFFFF;
 font-size:20px;
-font-weight:200;
+font-weight:300;
 
 }
 .dialogHelpQuitBtn{
@@ -674,7 +674,7 @@ width:150px;
 text-align:left;
 color:#FFFFFF;
 font-size:25px;
-font-weight:200;
+font-weight:300;
 margin:15px 0 0 0;
 }
 .dialogPlayer-inputform{
@@ -701,7 +701,7 @@ text-align:center;
 width:100%;
 color:#FF0000;
 font-size:20px;
-font-weight:200;
+font-weight:300;
 margin:5px 0 0 0;
 }
 .dialogPlayerWord3.hide{
