@@ -49,7 +49,18 @@ class Main extends React.Component{
             videoId:'_Bq89eF-Pfs',
             wordTime:1.5,
             videoStartTime:0,
-            videoEndTime:0
+            videoEndTime:0,
+            atmosphere:0,//0:blue 1:pink 2:purple
+            //dilaog state
+            dialogSaveShow:false,
+            dialogLoadShow:false,
+            dialogLoadTime:null,
+            dialogUploadShow:false,
+            dialogReplayShow:false,
+            dialogAboutShow:false,
+            dialogHelpShow:false,
+            dialogHintShow:false,
+            dialogPlayerShow:false
         };
     }
     componentDidMount(){
@@ -97,17 +108,25 @@ class Main extends React.Component{
     sidebarLoadClick(){
         this.toggleSidebar();
         this.refs.settingWord.hide();
-        $('.dialogLoad').addClass('active');
-        if(this.state.fireworkSaveRecord.saveTime!==null){//有save資料的話
-            $('.dialogLoadNoFile').removeClass('dialogLoadNoFile');
-            $('.dialogLoadLocalWord').html(this.state.fireworkSaveRecord.saveTime.toString().substr(0,24));
-        }
+        this.setState({
+            dialogLoadShow:true,
+            dialogLoadTime:this.state.fireworkSaveRecord.saveTime===null?null:this.state.fireworkSaveRecord.saveTime.toString().substr(0,24)
+        });
     }
     sidebarVideoClick(wordtime){
-        this.setState({wordTime:wordtime});
+        this.setState({
+            wordTime:wordtime,
+            dialogPlayerShow:true
+        });
         this.toggleSidebar();
         this.refs.settingWord.hide();
-        $('.dialogPlayer').addClass('active');
+    }
+    sidebarBackgroundClick(){
+        let color=this.state.atmosphere;
+        Main.defaultProps.myInputManager.firework.changeAtmosphere((color+1)%3);
+        this.setState({
+            atmosphere:(color+1)%3
+        });
     }
     startRecord(){
         this.state.pressRecord=true;
@@ -140,19 +159,19 @@ class Main extends React.Component{
             this.state.startAction=false;
             this.refs.startActionInstruction.stopFlashRec();
         }
-        this.state.sidebarOpen=!this.state.sidebarOpen;
-        $('.sideBarBtn').toggleClass('active');
-        $('.sidePanel').toggleClass('active');
-        $('.navbar').toggleClass('active');
+        let open=!this.state.sidebarOpen;
+        this.setState({sidebarOpen:open});
     }
     saveDialogSaveClick(){//當startAction後，按下F4所跳出來的dialog save
-        this.refs.saveDialog.closeDialog();
-        $('.dialogUpload').addClass('active');
+        this.setState({
+            dialogSaveShow:false,
+            dialogUploadShow:true
+        });
         this.refs.saveDialog.getBtnBack();
         this.refs.player.stop();
     }
     saveDialogAgainClick(){//restart
-        this.refs.saveDialog.closeDialog();
+        this.setState({dialogSaveShow:false});
         this.resetRecordState();
         this.refs.saveDialog.getBtnBack();
         setTimeout(function(){
@@ -164,11 +183,11 @@ class Main extends React.Component{
         this.state.replay=true;
         this.state.fireworkRecord.saveRecord1=Main.defaultProps.myInputManager.firework.saveRecord1;
         this.state.fireworkRecord.saveRecord2=Main.defaultProps.myInputManager.firework.saveRecord2;
-        this.refs.saveDialog.closeDialog();
+        this.setState({dialogSaveShow:false});
         this.resetRecordState();
         Main.defaultProps.myInputManager.firework.firework1s=[];//初始化
         Main.defaultProps.myInputManager.firework.firework2s=[];
-        if(this.state.fireworkRecord.endTime==0){//代表replay第一次，之後也有可能replay好幾次，不過都不會再進到個if裡
+        if(this.state.fireworkRecord.endTime===0){//代表replay第一次，之後也有可能replay好幾次，不過都不會再進到個if裡
             this.state.fireworkRecord.endTime=Main.defaultProps.myInputManager.firework.time;
             Main.defaultProps.myInputManager.firework.endTime=this.state.fireworkRecord.endTime;
         }
@@ -218,31 +237,31 @@ class Main extends React.Component{
             });
         else{
             this.refs.player.stop();
-            if(type==0){//錄製完的replay
+            if(type===0){//錄製完的replay
                 this.state.modal=true;
                 $('.modal').addClass('active');
-                $('.dialogSave').addClass('active');
+                this.setState({dialogSaveShow:true});
                 $('#dialogSaveContinueBtn').addClass('hide');
                 this.state.replay=false;
                 this.state.startAction=false;
                 this.refs.settingWord.show();
             }
-            else if(type==1){//由load處load的replay
+            else if(type===1){//由load處load的replay
                 $('.modal').addClass('active');
-                $('.dialogReplay').addClass('active');
+                this.setState({dialogReplayShow:true});
                 self.state.replay=false;
                 self.state.startAction=false;
             }
         }
     }
     saveDialogContinueClick(){
-        this.refs.saveDialog.closeDialog();
+        this.setState({dialogSaveShow:false});
         this.state.modal=false;
         $('.modal').removeClass('active');
         this.refs.player.play();
     }
     saveDialogQuitClick(){
-        this.refs.saveDialog.closeDialog();
+        this.setState({dialogSaveShow:false});
         this.refs.saveDialog.getBtnBack();
         this.resetRecordState();
         this.toggleSidebar();
@@ -258,15 +277,15 @@ class Main extends React.Component{
         $('.modal').removeClass('active');
     }
     loadDialogQuitClick(){
+        this.setState({dialogLoadShow:false});
         this.toggleSidebar();
         this.refs.settingWord.show();
-        $('.dialogLoad').removeClass('active');
     }
     loadDialogRemoteLoadClick(){
         //TODO
     }
     loadDialogLocalLoadClick(){
-        $('.dialogLoad').removeClass('active');
+        this.setState({dialogLoadShow:false});
         this.state.pressRecord=true;
         this.state.replay=true;
         this.resetRecordState();
@@ -280,7 +299,6 @@ class Main extends React.Component{
             },1500);
             self.refs.player.loadVideo();
         },500);
-
     }
     uploadDialogUploadClick(){
         //this.state.fireworkRecord.saveRecord1=Main.defaultProps.myInputManager.firework.saveRecord1;
@@ -295,12 +313,12 @@ class Main extends React.Component{
     uploadDialogQuitClick(){//不上傳只儲存在local
         this.state.fireworkSaveRecord.saveRecord1=Main.defaultProps.myInputManager.firework.saveRecord1;
         this.state.fireworkSaveRecord.saveRecord2=Main.defaultProps.myInputManager.firework.saveRecord2;
-        if(this.state.fireworkRecord.endTime==0)//代表沒有進replay mode，直接save
+        if(this.state.fireworkRecord.endTime===0)//代表沒有進replay mode，直接save
             this.state.fireworkSaveRecord.endTime=Main.defaultProps.myInputManager.firework.time;
         else    
             this.state.fireworkSaveRecord.endTime=this.state.fireworkRecord.endTime;
         this.state.fireworkSaveRecord.saveTime=new Date();
-        this.refs.upLoadDialog.closeDialog();
+        this.setState({dialogUploadShow:false});
         this.resetRecordState();
         this.toggleSidebar();
         this.state.pressRecord=false;
@@ -313,11 +331,11 @@ class Main extends React.Component{
         Main.defaultProps.myInputManager.firework.endTime=0;
     }
     replayDialogReplayClick(){
-        this.refs.replayDialog.closeDialog();
+        this.setState({dialogReplayShow:false});
         this.loadDialogLocalLoadClick();
     }
     replayDialogQuitClick(){
-        this.refs.replayDialog.closeDialog();
+        this.setState({dialogReplayShow:false});
         this.resetRecordState();
         this.toggleSidebar();
         this.refs.settingWord.show();
@@ -326,32 +344,32 @@ class Main extends React.Component{
     navbarAboutClick(){
         this.toggleSidebar();
         this.refs.settingWord.hide();
-        $('.dialogAbout').addClass('active');
+        this.setState({dialogAboutShow:true});
     }
     navbarHelpClick(){
         this.toggleSidebar();
         this.refs.settingWord.hide();
-        $('.dialogHelp').addClass('active');
+        this.setState({dialogHelpShow:true});
     }
     navbarHintClick(){
         this.toggleSidebar();
         this.refs.settingWord.hide();
-        $('.dialogHint').addClass('active');
+        this.setState({dialogHintShow:true});
     }
     aboutDialogQuitClick(){
         this.toggleSidebar();
         this.refs.settingWord.show();
-        $('.dialogAbout').removeClass('active');
+        this.setState({dialogAboutShow:false});
     }
     helpDialogQuitClick(){
         this.toggleSidebar();
         this.refs.settingWord.show();
-        $('.dialogHelp').removeClass('active');
+        this.setState({dialogHelpShow:false});
     }
     hintDialogQuitClick(){
         this.toggleSidebar();
         this.refs.settingWord.show();
-        $('.dialogHint').removeClass('active');
+        this.setState({dialogHintShow:false});
     }
     changeVideoId(video){
         this.setState({videoId:video});
@@ -359,7 +377,7 @@ class Main extends React.Component{
     playerDialogQuitClick(){
         this.toggleSidebar();
         this.refs.settingWord.show();
-        $('.dialogPlayer').removeClass('active');
+        this.setState({dialogPlayerShow:false});
     }
     changeVideoTime(starttime,endtime){
         this.setState({videoStartTime:starttime,videoEndTime:endtime});
@@ -367,61 +385,66 @@ class Main extends React.Component{
     render(){
         return(
                 <div className={'main'}>
-                <MainCanvas setupInputManager={this.setupInputManager.bind(this)}/>
-                <Navbar
-                aboutClick={this.navbarAboutClick.bind(this)}
-                helpClick={this.navbarHelpClick.bind(this)}
-                hintClick={this.navbarHintClick.bind(this)}
-                />
-                <Timer ref='timer'/>
-                <SideBar
-                toggleSidebar={this.toggleSidebar.bind(this)}
-                sidebarMakeClick={this.sidebarMakeClick.bind(this)}
-                sidebarLoadClick={this.sidebarLoadClick.bind(this)}
-                sidebarVideoClick={this.sidebarVideoClick.bind(this)}/>
-                <StartActionInstruction ref='startActionInstruction'/>
-                <SettingWord ref='settingWord'/>
-                <SaveDialog
-                ref='saveDialog'
-                saveClick={this.saveDialogSaveClick.bind(this)} 
-                replayClick={this.saveDialogReplayClick.bind(this)} 
-                againClick={this.saveDialogAgainClick.bind(this)} 
-                continueClick={this.saveDialogContinueClick.bind(this)} 
-                quitClick={this.saveDialogQuitClick.bind(this)}/>
+                     <MainCanvas setupInputManager={this.setupInputManager.bind(this)}/>
+                     <Navbar
+                        aboutClick={this.navbarAboutClick.bind(this)}
+                        helpClick={this.navbarHelpClick.bind(this)}
+                        hintClick={this.navbarHintClick.bind(this)}
+                        show={this.state.sidebarOpen}/>
+                     <Timer ref='timer'/>
+                     <SideBar
+                        toggleSidebar={this.toggleSidebar.bind(this)}
+                        sidebarMakeClick={this.sidebarMakeClick.bind(this)}
+                        sidebarLoadClick={this.sidebarLoadClick.bind(this)}
+                        sidebarVideoClick={this.sidebarVideoClick.bind(this)}
+                        sidebarBackgroundClick={this.sidebarBackgroundClick.bind(this)}
+                        show={this.state.sidebarOpen}
+                        atmosphere={this.state.atmosphere}/>
+                     <StartActionInstruction ref='startActionInstruction'/>
+                     <SettingWord ref='settingWord'/>
+                     <SaveDialog
+                        ref='saveDialog'
+                        saveClick={this.saveDialogSaveClick.bind(this)} 
+                        replayClick={this.saveDialogReplayClick.bind(this)} 
+                        againClick={this.saveDialogAgainClick.bind(this)} 
+                        continueClick={this.saveDialogContinueClick.bind(this)} 
+                        quitClick={this.saveDialogQuitClick.bind(this)}
+                        show={this.state.dialogSaveShow}/>
                     <LoadDialog
-                    quitClick={this.loadDialogQuitClick.bind(this)}
-                remoteLoadClick={this.loadDialogRemoteLoadClick.bind(this)}
-                localLoadClick={this.loadDialogLocalLoadClick.bind(this)}
-                />
+                        quitClick={this.loadDialogQuitClick.bind(this)}
+                        remoteLoadClick={this.loadDialogRemoteLoadClick.bind(this)}
+                        localLoadClick={this.loadDialogLocalLoadClick.bind(this)}
+                        show={this.state.dialogLoadShow}
+                        time={this.state.dialogLoadTime}/>
                     <UploadDialog
-                    ref='upLoadDialog'
-                    uploadClick={this.uploadDialogUploadClick.bind(this)}
-                quitClick={this.uploadDialogQuitClick.bind(this)}
-                />
+                        ref='upLoadDialog'
+                        uploadClick={this.uploadDialogUploadClick.bind(this)}
+                        quitClick={this.uploadDialogQuitClick.bind(this)}
+                        show={this.state.dialogUploadShow}/>
                     <ReplayDialog
-                    ref='replayDialog'
-                    replayClick={this.replayDialogReplayClick.bind(this)}
-                quitClick={this.replayDialogQuitClick.bind(this)}
-                />
+                        ref='replayDialog'
+                        replayClick={this.replayDialogReplayClick.bind(this)}
+                        quitClick={this.replayDialogQuitClick.bind(this)}
+                        show={this.state.dialogReplayShow}/>
                     <AboutDialog
-                    quitClick={this.aboutDialogQuitClick.bind(this)}
-                />
+                        quitClick={this.aboutDialogQuitClick.bind(this)}
+                        show={this.state.dialogAboutShow}/>
                     <HelpDialog
-                    quitClick={this.helpDialogQuitClick.bind(this)}
-                />
+                        quitClick={this.helpDialogQuitClick.bind(this)}
+                        show={this.state.dialogHelpShow}/>
                     <HintDialog
-                    quitClick={this.hintDialogQuitClick.bind(this)}
-                />
+                        quitClick={this.hintDialogQuitClick.bind(this)}
+                        show={this.state.dialogHintShow}/>
                     <PlayerDialog
-                    videoId={this.state.videoId}
-                changeVideoId={this.changeVideoId.bind(this)}
-                changeVideoTime={this.changeVideoTime.bind(this)}
-                quitClick={this.playerDialogQuitClick.bind(this)}
-                wordTime={this.state.wordTime}
-                videoStartTime={this.state.videoStartTime}
-                videoEndTime={this.state.videoEndTime}
-                ref='player'
-                    />
+                        ref='player'
+                        videoId={this.state.videoId}
+                        changeVideoId={this.changeVideoId.bind(this)}
+                        changeVideoTime={this.changeVideoTime.bind(this)}
+                        quitClick={this.playerDialogQuitClick.bind(this)}
+                        wordTime={this.state.wordTime}
+                        videoStartTime={this.state.videoStartTime}
+                        videoEndTime={this.state.videoEndTime}
+                        show={this.state.dialogPlayerShow}/>
                     <Modal/>
                     <CenterShowWords ref='centerShowWords'/>
                     </div>
@@ -490,10 +513,10 @@ class Timer extends Component{//倒數計時器
     render(){
         return(
                 <div className={'timer'}>
-                <h1 className={'time-second time-second0'}>GO</h1>
-                <h1 className={'time-second time-second1'}>1</h1>
-                <h1 className={'time-second time-second2'}>2</h1>
-                <h1 className={'time-second time-second3'}>3</h1>
+                    <h1 className={'time-second time-second0'}>GO</h1>
+                    <h1 className={'time-second time-second1'}>1</h1>
+                    <h1 className={'time-second time-second2'}>2</h1>
+                    <h1 className={'time-second time-second3'}>3</h1>
                 </div>
               );
     }
@@ -520,19 +543,19 @@ class SettingWord extends Component{//下面那一排提示說明
     render(){
         return(
                 <div className={'settingWordDiv'}>
-                <h3 className={'settingWord settingWordKey'}>空白鍵</h3>
-                <h3 className={'settingWord active'}>煙火</h3>
-                <h3 className={'settingWord'}>/</h3>
-                <h3 className={'settingWord'}>英數</h3>
-                <h3 className={'settingWord settingWordKey'}>,</h3>
-                <h3 className={'settingWord active'}>煙火柱</h3>
-                <h3 className={'settingWord active'}>開</h3>
-                <h3 className={'settingWord'}>/</h3>
-                <h3 className={'settingWord'}>關</h3>
-                <h3 className={'settingWord settingWordKey'}>F2</h3>
-                <h3 className={'settingWord'}>暫停</h3>
-                <h3 className={'settingWord settingWordKey'}>F4</h3>
-                <h3 className={'settingWord active'}>選單</h3>
+                    <h3 className={'settingWord settingWordKey'}>空白鍵</h3>
+                    <h3 className={'settingWord active'}>煙火</h3>
+                    <h3 className={'settingWord'}>/</h3>
+                    <h3 className={'settingWord'}>英數</h3>
+                    <h3 className={'settingWord settingWordKey'}>,</h3>
+                    <h3 className={'settingWord active'}>煙火柱</h3>
+                    <h3 className={'settingWord active'}>開</h3>
+                    <h3 className={'settingWord'}>/</h3>
+                    <h3 className={'settingWord'}>關</h3>
+                    <h3 className={'settingWord settingWordKey'}>F2</h3>
+                    <h3 className={'settingWord'}>暫停</h3>
+                    <h3 className={'settingWord settingWordKey'}>F4</h3>
+                    <h3 className={'settingWord active'}>選單</h3>
                 </div>
               );
     }
@@ -550,8 +573,8 @@ class StartActionInstruction extends Component{//rec pause的圖片切換
     render(){
         return(
                 <div className={'startActionInstruction'}>
-                <img src="img/rec.png" className={'img-rec'}></img>
-                <img src="img/pause.png" className={'img-pause pause'}></img>
+                    <img src="img/rec.png" className={'img-rec'}></img>
+                    <img src="img/pause.png" className={'img-pause pause'}></img>
                 </div>
               );
     }
@@ -560,11 +583,11 @@ class StartActionInstruction extends Component{//rec pause的圖片切換
 class Navbar extends Component{//底部footer bar
     render(){
         return(
-                <div className={'navbar'}>
-                <img className={'navbarImg'} src="img/Firework.png"></img>
-                <button id={'navbarAboutBtn'} className={'navbarBtn'} onClick={this.props.aboutClick}>About</button>
-                <button id={'navbarHelpBtn'} className={'navbarBtn'} onClick={this.props.helpClick}>Help</button>
-                <button id={'navbarHintBtn'} className={'navbarBtn'} onClick={this.props.hintClick}>Hint</button>
+                <div className={this.props.show?'navbar':'navbar active'}>
+                    <img className={'navbarImg'} src="img/Firework.png"></img>
+                    <button id={'navbarAboutBtn'} className={'navbarBtn'} onClick={this.props.aboutClick}>About</button>
+                    <button id={'navbarHelpBtn'} className={'navbarBtn'} onClick={this.props.helpClick}>Help</button>
+                    <button id={'navbarHintBtn'} className={'navbarBtn'} onClick={this.props.hintClick}>Hint</button>
                 </div>
               );
     }

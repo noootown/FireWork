@@ -34,7 +34,7 @@ export function getFireworkPoints(x,y,type,ctx){
         color=hsvRand(2);
         tmpNum=1500;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,color,Math.random()*2,Math.random()*1000+600,0,0.0003,ctx,invisibleTime, friction));
+            fire.push(new FireworkPoint(x,y,rand(1)>0.3?rand(0.5)+0.15:rand(0.5),Math.random()*2*Math.PI,color,Math.random()*2,Math.random()*1000+600,0,0.0003,ctx,invisibleTime, friction));
         tmpNum=500;
         color='rgb(255, 255, 255)';
         for(i=0;i<tmpNum;i++){

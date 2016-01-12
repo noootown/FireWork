@@ -24,7 +24,7 @@ bottom:0;
 width:100%;
 color:#FFFFFF;
 background-color:#000000;
-/*opacity:0.75;*/
+opacity:0.75;
 font-weight:400;
 font-size:25px;
 padding:10px 0;
@@ -167,7 +167,26 @@ border-color:#00FF00;
 background-color:transparent;
 font-size:15px;
 color:#FFFFFF;
-margin: 0 5px;
+margin:5px 5px;
+width:80px;
+}
+.atmosphereBtn0{
+border-color:#0000FF;
+}
+.atmosphereBtn0:hover{
+background-color:#004DFF;
+}
+.atmosphereBtn1{
+border-color:#FF00FF;
+}
+.atmosphereBtn1:hover{
+background-color:#FF0080;
+}
+.atmosphereBtn2{
+border-color:#8000FF;
+}
+.atmosphereBtn2:hover{
+background-color:#AB00FF;
 }
 .enterBtn{
     padding:6px 16px;

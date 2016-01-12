@@ -40,7 +40,7 @@ class SideBar extends React.Component{
     handleSubmit(e) {
         e.preventDefault();
         var nextItems;
-        if(this.state.text.match(/\s*/)[0]==this.state.text)//判斷是否為空白鍵字串或者是空字串
+        if(/^\s*$/.test(this.state.text))//判斷是否為空白鍵字串或者是空字串
             return;
         else
             nextItems = this.state.items.concat([this.state.text]);
@@ -63,25 +63,30 @@ class SideBar extends React.Component{
         this.props.sidebarVideoClick(this.state.items.length*8000+1500);
     }
 
+    handleBackgroundClick(){
+        this.props.sidebarBackgroundClick();
+    }
     render(){
+        let atmosphereBtnClass='sidePanelBtn atmosphereBtn atmosphereBtn'+this.props.atmosphere;
         return (
                 <div>
-                <div className={'sideBarBtn active'} onClick={this.props.toggleSidebar}>
-                <span className={'sideBarBar active'}></span>
-                <span className={'sideBarBar active'}></span>
-                <span className={'sideBarBar active'}></span>
-                </div>
-                <div id={'sidePanel'} className={'sidePanel active'}>
-                <WordListAll 
-                items={this.state.items} 
-                text={this.state.text}
-                updateItems={this.handleUpdateItems.bind(this)} 
-                onSubmit={this.handleSubmit.bind(this)} 
-                onChange={this.onChange.bind(this)}/>
-                <a className={'sidePanelBtn'} onClick={this.handleMakeClick.bind(this)}>{'Make'}</a>
-                <a className={'sidePanelBtn'} onClick={this.handleLoadClick.bind(this)}>{'Load'}</a>
-                <a className={'sidePanelBtn'} onClick={this.handleVideoClick.bind(this)}>{'Music'}</a>
-                </div>
+                    <div className={this.props.show?'sideBarBtn active':'sideBarBtn'} onClick={this.props.toggleSidebar}>
+                        <span className={'sideBarBar active'}></span>
+                        <span className={'sideBarBar active'}></span>
+                        <span className={'sideBarBar active'}></span>
+                    </div>
+                    <div id={'sidePanel'} className={this.props.show?'sidePanel active':'sidePanel'}>
+                    <WordListAll 
+                        items={this.state.items} 
+                        text={this.state.text}
+                        updateItems={this.handleUpdateItems.bind(this)} 
+                        onSubmit={this.handleSubmit.bind(this)} 
+                        onChange={this.onChange.bind(this)}/>
+                    <button className={'sidePanelBtn'} onClick={this.handleMakeClick.bind(this)}>{'Make'}</button>
+                    <button className={'sidePanelBtn'} onClick={this.handleLoadClick.bind(this)}>{'Load'}</button>
+                    <button className={'sidePanelBtn'} onClick={this.handleVideoClick.bind(this)}>{'Music'}</button>
+                    <button className={atmosphereBtnClass} onClick={this.handleBackgroundClick.bind(this)}>{'Air'}</button>
+                    </div>
                 </div>
                );
     }
@@ -116,7 +121,7 @@ class WordListContainer extends Component{
 }
 class Word extends Component{
     handleRemoveBtnClick(){
-        var which=$(ReactDOM.findDOMNode(this)).parent().data('reorderableKey').substr(5);//get which node
+        let which=Number($(ReactDOM.findDOMNode(this)).parent().data('reorderableKey').substr(5));//get which node
         this.props.btnClick(which);
     }
 

@@ -9,24 +9,42 @@ export function FireworkManager(){
     this.saveRecord2=[];
     this.curPos=new vector(-1000,0);//滑鼠位置
     this.endTime;//統計總時間
-    this.time;
+    this.time=0;
     this.$canvas;
     this.ctx;
     this.virtualDOM;//綁定的virtualDOM
     this.alphabetBuffer=[];//在暫停模式下，儲存的煙火
+    this.building=new Image();
+    this.building.src='../img/building1.png';
+    this.atmosphere=new Image();
+    this.atmosphere.src='../img/atmosphere-blue.png';
+    //this.atmosphere.src='../img/building4.png';
+    
+    this.changeAtmosphere=function(type){
+        switch(type){
+        case 0:
+            this.atmosphere.src='../img/atmosphere-blue.png';//0066FF
+            break;
+        case 1:
+            this.atmosphere.src='../img/atmosphere-pink.png';//#FF6464
+            break;
+        case 2:
+            this.atmosphere.src='../img/atmosphere-purple.png';//#9955FF
+            break;
+        }
+    };
+
     this.init=function(){
         this.time+=1000/window.fps; //直接用黑幕蓋掉原本的畫面，因為有透明，所以會留有之前煙火的視覺暫留
-        this.ctx.fillStyle='rgba(0,0,0,0.2)';//會透明
+        this.ctx.fillStyle='rgba(0,0,0,0.15)';//會透明
         this.ctx.beginPath();
         this.ctx.fillRect(0,0,this.$canvas.width(),this.$canvas.height());
         this.ctx.closePath();
-
         for(let i=0;i<this.alphabetBuffer.length;i++){//如果alphabet buffer有東西的話，代表剛從暫停模式回來
             this.alphabetBuffer[i].startTime=this.time;
             this.firework1s.push(this.alphabetBuffer[i]);
             this.saveRecord1.push(this.alphabetBuffer[i]);
         }
-
         this.alphabetBuffer=[];
         for(var i=0;i<this.firework1s.length;i++){
             var fire=this.firework1s[i];
@@ -38,11 +56,15 @@ export function FireworkManager(){
                     newFire.init();
                     this.firework2s.push(newFire);
                     this.saveRecord2.push(newFire);
+                    if(this.light<120)
+                        this.light+=60;
                 }
                 this.firework1s.splice(i,1);//移除已經畫完的
                 i--;
             }
         }
+        if(this.firework2s.length!==0)
+            this.ctx.drawImage(this.atmosphere,0,this.$canvas.height()-this.$canvas.width()*13/30,this.$canvas.width(),this.$canvas.width()*13/30);
         for(i=0;i<this.firework2s.length;i++){
             fire=this.firework2s[i];
             if(fire.checkFinish()){//移除畫完的
@@ -54,6 +76,7 @@ export function FireworkManager(){
                 fire.draw();
             }
         }
+        this.ctx.drawImage(this.building,0,this.$canvas.height()-this.$canvas.width()/3,this.$canvas.width(),this.$canvas.width()/3);
     };
 
     this.shoot=function(type,ascii,fireworktype){//0 don't buffer
@@ -160,11 +183,10 @@ function Firework2(x,y,type,ctx,time){
                 break;
             }
         }
-        //for(var i=0;i<this.fireworkPoints.length;i++)
-        //console.log(this.fireworkPoints[i].color);
     };
     this.checkFinish=function(){//檢查是否
-        if(this.fireworkPoints[0] && this.fireworkPoints[0].time>=3000)//1600是直接取一個大的值，比所有煙火的時間都還來的長
+        //TODO endtime
+        if(this.fireworkPoints[0] && this.fireworkPoints[0].time>=1600)//1600是直接取一個大的值，比所有煙火的時間都還來的長
             return true;
         else
             return false;
@@ -383,25 +405,11 @@ export function InputManager(){
 InputManager.keyDownFunction={
     checkInputOrNot://查看是否有任何input是focus的
         function(){
-            let returnValue=false;
-            $('.word-input').each(function(){
-                if($(this).is(':focus')){
-                    returnValue=true;
-                    return false;
-                }
-            });
-            return returnValue;
+            return !!$('.word-input:focus').length;
         },
     getWhichInput:
         function(){//得到是哪一個input為focus的
-            let returnInput;
-            $('.word-input').each(function(){
-                if($(this).is(':focus')){
-                    returnInput=this;
-                    return false;
-                }
-            });
-            return returnInput;
+            return $('.word-input:focus')[0];
         },
     inputCharacter://輸入文字
         function(key,input){
@@ -410,9 +418,9 @@ InputManager.keyDownFunction={
                 $(input).val(nowValue);
             else if(key==32)
                 $(input).val(nowValue+' ');
-            else if(165<=key && key<=190)
+            else if(165<=key && key<=190)//小寫
                 $(input).val(nowValue+String.fromCharCode(key-100+32));
-            else
+            else//大寫and其它
                 $(input).val(nowValue+String.fromCharCode((96 <= key && key <= 105) ? key-48 : key));
 
             var event = new Event('input', { bubbles: true });//trigger onChange event
@@ -449,7 +457,7 @@ InputManager.keyDownFunction={
                 if(this.virtualDOM.state.pressRecord){
                     this.virtualDOM.state.modal=true;
                     $('.modal').addClass('active');
-                    $('.dialogSave').addClass('active');
+                    this.virtualDOM.setState({dialogSaveShow:true});
                     this.virtualDOM.refs.player.pause();
                     if(!this.virtualDOM.state.goOver){
                         $('#dialogSaveContinueBtn').addClass('hide');
@@ -460,9 +468,8 @@ InputManager.keyDownFunction={
                 }
                 else{
                     if(!$('#word-input').is(':focus') && !this.modal){
-                        $('.sideBarBtn').toggleClass('active');
-                        $('.sidePanel').toggleClass('active');
-                        $('.navbar').toggleClass('active');
+                        let open=!this.virtualDOM.state.sidebarOpen;
+                        this.virtualDOM.setState({sidebarOpen:open});
                     }
                 }
             }
