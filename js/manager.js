@@ -15,10 +15,9 @@ export function FireworkManager(){
     this.virtualDOM;//綁定的virtualDOM
     this.alphabetBuffer=[];//在暫停模式下，儲存的煙火
     this.building=new Image();
-    this.building.src='../img/building1.png';
+    this.building.src='../img/building2.png';
     this.atmosphere=new Image();
     this.atmosphere.src='../img/atmosphere-blue.png';
-    //this.atmosphere.src='../img/building4.png';
     
     this.changeAtmosphere=function(type){
         switch(type){
@@ -446,8 +445,7 @@ InputManager.keyDownFunction={
                     InputManager.keyDownFunction['inputCharacter'](key,InputManager.keyDownFunction.getWhichInput());
                 else if(this.virtualDOM.state.pauseRecord || !this.virtualDOM.state.modal){
                     this.firework.switchRocket();
-                    this.virtualDOM.state.rocket=this.virtualDOM.state.rocket;
-                    this.virtualDOM.refs.settingWord.toggleRocket();
+                    this.virtualDOM.setState({rocket:!this.virtualDOM.state.rocket});
                 }
             }
         },
@@ -455,9 +453,11 @@ InputManager.keyDownFunction={
         function(){
             if(!this.virtualDOM.state.modal && !this.virtualDOM.state.replay){
                 if(this.virtualDOM.state.pressRecord){
-                    this.virtualDOM.state.modal=true;
-                    $('.modal').addClass('active');
-                    this.virtualDOM.setState({dialogSaveShow:true});
+                    this.virtualDOM.setState({
+                        pauseRecord:true,
+                        modal:true,
+                        dialogSaveShow:true
+                    });
                     this.virtualDOM.refs.player.pause();
                     if(!this.virtualDOM.state.goOver){
                         $('#dialogSaveContinueBtn').addClass('hide');
@@ -466,55 +466,39 @@ InputManager.keyDownFunction={
                     }
 
                 }
-                else{
-                    if(!$('#word-input').is(':focus') && !this.modal){
-                        let open=!this.virtualDOM.state.sidebarOpen;
-                        this.virtualDOM.setState({sidebarOpen:open});
-                    }
-                }
+                else if(!$('#word-input').is(':focus'))
+                    this.virtualDOM.setState({sidebarOpen:!this.virtualDOM.state.sidebarOpen});
             }
         },
     pauseRecord://暫停
         function(){
             if(this.virtualDOM.state.startAction){//action後的暫停
                 if(!this.virtualDOM.state.pauseRecord){//未暫停的狀態
-                    this.virtualDOM.state.pauseRecord=true;
-                    this.virtualDOM.state.modal=true;
-                    this.virtualDOM.refs.settingWord.togglePause();
-                    this.virtualDOM.refs.startActionInstruction.pause();
+                    this.virtualDOM.setState({
+                        pauseRecord:true
+                    });
                     this.virtualDOM.refs.player.pause();
                 }
                 else{//暫停的狀態
-                    this.virtualDOM.state.pauseRecord=false;
-                    this.virtualDOM.state.modal=false;
-                    this.virtualDOM.refs.settingWord.togglePause();
-                    this.virtualDOM.refs.startActionInstruction.cancelPause();
+                    this.virtualDOM.setState({
+                        pauseRecord:false
+                    });
                     this.virtualDOM.refs.player.play();
                 }
             }
             else if(!this.virtualDOM.state.pressRecord){//在外面尚未make時，進入暫停模式
-                if(!this.virtualDOM.state.pauseRecord){
-                    this.virtualDOM.state.pauseRecord=true;
-                    this.virtualDOM.state.modal=true;
-                    this.virtualDOM.refs.settingWord.togglePause();
-                }
-                else{
-                    this.virtualDOM.state.pauseRecord=false;
-                    this.virtualDOM.state.modal=false;
-                    this.virtualDOM.refs.settingWord.togglePause();
-                }
-
+                if(!this.virtualDOM.state.pauseRecord)
+                    this.virtualDOM.setState({pauseRecord:true});
+                else
+                    this.virtualDOM.setState({pauseRecord:false});
             }
         },
     switchInsert://切換煙火模式和一般模式
         function(key){
             if(InputManager.keyDownFunction.checkInputOrNot())
                 InputManager.keyDownFunction['inputCharacter'](key,InputManager.keyDownFunction.getWhichInput());
-            else if(this.virtualDOM.state.pauseRecord || !this.virtualDOM.state.modal){
-                this.virtualDOM.state.alphabet=!this.virtualDOM.state.alphabet;
-                this.virtualDOM.refs.settingWord.toggleAlphabet();
-            }
-
+            else if(this.virtualDOM.state.pauseRecord || !this.virtualDOM.state.modal)
+                this.virtualDOM.setState({alphabet:!this.virtualDOM.state.alphabet});
         }
 };
 

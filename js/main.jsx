@@ -31,6 +31,7 @@ class Main extends React.Component{
             goOver:false,   //Go 結束播映，到startAction這一段時間是開始的延遲
             flashRecId:null,
             modal:false,
+            settingWord:true,
             fireworkRecord:{//暫存的紀錄
                 saveRecord1:[],
                 saveRecord2:[],
@@ -81,10 +82,10 @@ class Main extends React.Component{
                 Main.defaultProps.wordAll.timeCounter=0;
                 Main.defaultProps.wordAll.opacity=0;
             }
-            if(!this.state.modal){//for continue
+            if(!this.state.pauseRecord){//for continue
                 Main.defaultProps.myInputManager.firework.init();
             }
-            if(this.state.startAction && !this.state.modal ){//for continue
+            if(this.state.startAction && !this.state.pauseRecord){//for continue
                 Main.defaultProps.wordAll.init();
             }
             this.state.flag=0;
@@ -94,11 +95,8 @@ class Main extends React.Component{
         window.requestAnimFrame(this.drawAnim.bind(this));
     }
     sidebarMakeClick(words){
-        if(this.state.pauseRecord===true){
-            this.state.pauseRecord=false;
-            this.state.modal=false;
-            this.refs.settingWord.togglePause();
-        }
+        if(this.state.pauseRecord===true)
+            this.setState({pauseRecord:false});
         this.toggleSidebar();
         Main.defaultProps.wordAll.words=words;
         Main.defaultProps.wordAll.getEachTime();
@@ -107,19 +105,21 @@ class Main extends React.Component{
     }
     sidebarLoadClick(){
         this.toggleSidebar();
-        this.refs.settingWord.hide();
         this.setState({
+            modal:true,
+            settingWord:false,
             dialogLoadShow:true,
             dialogLoadTime:this.state.fireworkSaveRecord.saveTime===null?null:this.state.fireworkSaveRecord.saveTime.toString().substr(0,24)
         });
     }
     sidebarVideoClick(wordtime){
         this.setState({
+            modal:true,
+            settingWord:false,
             wordTime:wordtime,
             dialogPlayerShow:true
         });
         this.toggleSidebar();
-        this.refs.settingWord.hide();
     }
     sidebarBackgroundClick(){
         let color=this.state.atmosphere;
@@ -136,7 +136,7 @@ class Main extends React.Component{
         clearTimeout(this.state.recordId2);
         this.state.recordId=setTimeout(function(){
             if(this.state.pressRecord){
-                this.state.startAction=true;
+                this.setState({startAction:true});
                 this.state.flashRecId
                     =setInterval(function(){
                         $('.img-rec').toggleClass('active');
@@ -155,15 +155,13 @@ class Main extends React.Component{
         }.bind(this),8300);
     }
     toggleSidebar(){//sidebar和footer的開啟或關閉
-        if(this.state.startAction){
-            this.state.startAction=false;
-            this.refs.startActionInstruction.stopFlashRec();
-        }
-        let open=!this.state.sidebarOpen;
-        this.setState({sidebarOpen:open});
+        if(this.state.startAction)
+            this.setState({startAction:false});
+        this.setState({sidebarOpen:!this.state.sidebarOpen});
     }
     saveDialogSaveClick(){//當startAction後，按下F4所跳出來的dialog save
         this.setState({
+            pauseRecord:false,
             dialogSaveShow:false,
             dialogUploadShow:true
         });
@@ -171,7 +169,10 @@ class Main extends React.Component{
         this.refs.player.stop();
     }
     saveDialogAgainClick(){//restart
-        this.setState({dialogSaveShow:false});
+        this.setState({
+            pauseRecord:false,
+            dialogSaveShow:false
+        });
         this.resetRecordState();
         this.refs.saveDialog.getBtnBack();
         setTimeout(function(){
@@ -179,11 +180,14 @@ class Main extends React.Component{
         }.bind(this),800);
     }
     saveDialogReplayClick(){//回放
-        this.refs.settingWord.hide();
         this.state.replay=true;
         this.state.fireworkRecord.saveRecord1=Main.defaultProps.myInputManager.firework.saveRecord1;
         this.state.fireworkRecord.saveRecord2=Main.defaultProps.myInputManager.firework.saveRecord2;
-        this.setState({dialogSaveShow:false});
+        this.setState({
+            pauseRecord:false,
+            settingWord:false,
+            dialogSaveShow:false
+        });
         this.resetRecordState();
         Main.defaultProps.myInputManager.firework.firework1s=[];//初始化
         Main.defaultProps.myInputManager.firework.firework2s=[];
@@ -191,12 +195,11 @@ class Main extends React.Component{
             this.state.fireworkRecord.endTime=Main.defaultProps.myInputManager.firework.time;
             Main.defaultProps.myInputManager.firework.endTime=this.state.fireworkRecord.endTime;
         }
-
         var self=this;
         setTimeout(function(){
             self.pushRecordToReplay(self.state.fireworkRecord,0,0,0,0);
             setTimeout(function(){//1500秒後，把計時器歸零，開始計時
-                self.state.startAction=true;
+                self.setState({startAction:true});
             },1500);
             self.refs.player.loadVideo();
         },500);//按下按鈕後過500ms才開始回放
@@ -238,30 +241,39 @@ class Main extends React.Component{
         else{
             this.refs.player.stop();
             if(type===0){//錄製完的replay
-                this.state.modal=true;
-                $('.modal').addClass('active');
-                this.setState({dialogSaveShow:true});
+                this.setState({
+                    settingWord:true,
+                    modal:true,
+                    dialogSaveShow:true,
+                    startAction:false
+                });
                 $('#dialogSaveContinueBtn').addClass('hide');
                 this.state.replay=false;
-                this.state.startAction=false;
-                this.refs.settingWord.show();
             }
             else if(type===1){//由load處load的replay
-                $('.modal').addClass('active');
-                this.setState({dialogReplayShow:true});
-                self.state.replay=false;
-                self.state.startAction=false;
+                this.setState({
+                    modal:true,
+                    dialogReplayShow:true,
+                    startAction:false
+                });
+                this.state.replay=false;
             }
         }
     }
     saveDialogContinueClick(){
-        this.setState({dialogSaveShow:false});
-        this.state.modal=false;
-        $('.modal').removeClass('active');
+        this.setState({
+            modal:false,
+            dialogSaveShow:false,
+            pauseRecord:false
+        });
         this.refs.player.play();
     }
     saveDialogQuitClick(){
-        this.setState({dialogSaveShow:false});
+        this.setState({
+            pauseRecord:false,
+            modal:false,
+            dialogSaveShow:false
+        });
         this.refs.saveDialog.getBtnBack();
         this.resetRecordState();
         this.toggleSidebar();
@@ -269,17 +281,21 @@ class Main extends React.Component{
         this.refs.player.stop();
     }
     resetRecordState(){//重設record的狀態，只要有會開始record或停上record，都會呼叫這個function
-        this.state.startAction=false;
         clearInterval(this.state.flashRecId);
         $('.startActionInstruction').children().removeClass('active');
-        this.state.modal=false;
+        this.setState({
+            modal:false,
+            startAction:false
+        });
         this.refs.timer.clearTimer();
-        $('.modal').removeClass('active');
     }
     loadDialogQuitClick(){
-        this.setState({dialogLoadShow:false});
+        this.setState({
+            settingWord:true,
+            modal:false,
+            dialogLoadShow:false
+        });
         this.toggleSidebar();
-        this.refs.settingWord.show();
     }
     loadDialogRemoteLoadClick(){
         //TODO
@@ -295,7 +311,9 @@ class Main extends React.Component{
         setTimeout(function(){
             self.pushRecordToReplay(self.state.fireworkSaveRecord,0,0,0,1);
             setTimeout(function(){
-                self.state.startAction=true;
+                self.setState({
+                    startAction:true
+                });
             },1500);
             self.refs.player.loadVideo();
         },500);
@@ -318,7 +336,9 @@ class Main extends React.Component{
         else    
             this.state.fireworkSaveRecord.endTime=this.state.fireworkRecord.endTime;
         this.state.fireworkSaveRecord.saveTime=new Date();
-        this.setState({dialogUploadShow:false});
+        this.setState({
+            dialogUploadShow:false
+        });
         this.resetRecordState();
         this.toggleSidebar();
         this.state.pressRecord=false;
@@ -335,49 +355,71 @@ class Main extends React.Component{
         this.loadDialogLocalLoadClick();
     }
     replayDialogQuitClick(){
-        this.setState({dialogReplayShow:false});
+        this.setState({
+            settingWord:true,
+            dialogReplayShow:false});
         this.resetRecordState();
         this.toggleSidebar();
-        this.refs.settingWord.show();
         this.state.pressRecord=false;
     }
     navbarAboutClick(){
         this.toggleSidebar();
-        this.refs.settingWord.hide();
-        this.setState({dialogAboutShow:true});
+        this.setState({
+            modal:true,
+            settingWord:false,
+            dialogAboutShow:true
+        });
     }
     navbarHelpClick(){
         this.toggleSidebar();
-        this.refs.settingWord.hide();
-        this.setState({dialogHelpShow:true});
+        this.setState({
+            modal:true,
+            settingWord:false,
+            dialogHelpShow:true
+        });
     }
     navbarHintClick(){
         this.toggleSidebar();
-        this.refs.settingWord.hide();
-        this.setState({dialogHintShow:true});
+        this.setState({
+            modal:true,
+            settingWord:false,
+            dialogHintShow:true
+        });
     }
     aboutDialogQuitClick(){
         this.toggleSidebar();
-        this.refs.settingWord.show();
-        this.setState({dialogAboutShow:false});
+        this.setState({
+            modal:false,
+            settingWord:true,
+            dialogAboutShow:false
+        });
     }
     helpDialogQuitClick(){
         this.toggleSidebar();
-        this.refs.settingWord.show();
-        this.setState({dialogHelpShow:false});
+        this.setState({
+            modal:false,
+            settingWord:true,
+            dialogHelpShow:false
+        });
     }
     hintDialogQuitClick(){
         this.toggleSidebar();
-        this.refs.settingWord.show();
-        this.setState({dialogHintShow:false});
+        this.setState({
+            modal:false,
+            settingWord:true,
+            dialogHintShow:false
+        });
     }
     changeVideoId(video){
         this.setState({videoId:video});
     }
     playerDialogQuitClick(){
         this.toggleSidebar();
-        this.refs.settingWord.show();
-        this.setState({dialogPlayerShow:false});
+        this.setState({
+            modal:false,
+            settingWord:true,
+            dialogPlayerShow:false
+        });
     }
     changeVideoTime(starttime,endtime){
         this.setState({videoStartTime:starttime,videoEndTime:endtime});
@@ -400,8 +442,14 @@ class Main extends React.Component{
                         sidebarBackgroundClick={this.sidebarBackgroundClick.bind(this)}
                         show={this.state.sidebarOpen}
                         atmosphere={this.state.atmosphere}/>
-                     <StartActionInstruction ref='startActionInstruction'/>
-                     <SettingWord ref='settingWord'/>
+                     <StartActionInstruction
+                        startAction={this.state.startAction}
+                        pauseRecord={this.state.pauseRecord}/>
+                     <SettingWord
+                        rocket={this.state.rocket}
+                        alphabet={this.state.alphabet}
+                        pause={this.state.pauseRecord}
+                        settingWord={this.state.settingWord}/>
                      <SaveDialog
                         ref='saveDialog'
                         saveClick={this.saveDialogSaveClick.bind(this)} 
@@ -417,12 +465,10 @@ class Main extends React.Component{
                         show={this.state.dialogLoadShow}
                         time={this.state.dialogLoadTime}/>
                     <UploadDialog
-                        ref='upLoadDialog'
                         uploadClick={this.uploadDialogUploadClick.bind(this)}
                         quitClick={this.uploadDialogQuitClick.bind(this)}
                         show={this.state.dialogUploadShow}/>
                     <ReplayDialog
-                        ref='replayDialog'
                         replayClick={this.replayDialogReplayClick.bind(this)}
                         quitClick={this.replayDialogQuitClick.bind(this)}
                         show={this.state.dialogReplayShow}/>
@@ -445,7 +491,7 @@ class Main extends React.Component{
                         videoStartTime={this.state.videoStartTime}
                         videoEndTime={this.state.videoEndTime}
                         show={this.state.dialogPlayerShow}/>
-                    <Modal/>
+                    <Modal show={this.state.modal}/>
                     <CenterShowWords ref='centerShowWords'/>
                     </div>
                     );
@@ -477,8 +523,7 @@ MainCanvas.defaultProps={
 class Modal extends Component{//擋著所有畫面的大黑幕
     render(){
         return(
-                <div className={'modal'}>
-                </div>
+                this.props.show===true?<div className={'modal active'}></div>:<div className={'modal'}></div>
               );
     }
 }
@@ -523,37 +568,20 @@ class Timer extends Component{//倒數計時器
 }
 
 class SettingWord extends Component{//下面那一排提示說明
-    show(){
-        $('.settingWord').removeClass('hide');
-    }
-    hide(){
-        $('.settingWord').addClass('hide');
-    }
-    toggleAlphabet(){
-        $('.settingWord:nth-child(2)').toggleClass('active');
-        $('.settingWord:nth-child(4)').toggleClass('active');
-    }
-    toggleRocket(){
-        $('.settingWord:nth-child(7)').toggleClass('active');
-        $('.settingWord:nth-child(9)').toggleClass('active');
-    }
-    togglePause(){
-        $('.settingWord:nth-child(11)').toggleClass('active');
-    }
     render(){
         return(
                 <div className={'settingWordDiv'}>
                     <h3 className={'settingWord settingWordKey'}>空白鍵</h3>
-                    <h3 className={'settingWord active'}>煙火</h3>
+                    {this.props.alphabet===true?<h3 className={'settingWord'}>煙火</h3>:<h3 className={'settingWord active'}>煙火</h3>}
                     <h3 className={'settingWord'}>/</h3>
-                    <h3 className={'settingWord'}>英數</h3>
+                    {this.props.alphabet===true?<h3 className={'settingWord active'}>英數</h3>:<h3 className={'settingWord'}>英數</h3>}
                     <h3 className={'settingWord settingWordKey'}>,</h3>
                     <h3 className={'settingWord active'}>煙火柱</h3>
-                    <h3 className={'settingWord active'}>開</h3>
+                    {this.props.rocket===true?<h3 className={'settingWord active'}>開</h3>:<h3 className={'settingWord'}>開</h3>}
                     <h3 className={'settingWord'}>/</h3>
-                    <h3 className={'settingWord'}>關</h3>
+                    {this.props.rocket===true?<h3 className={'settingWord'}>關</h3>:<h3 className={'settingWord active'}>關</h3>}
                     <h3 className={'settingWord settingWordKey'}>F2</h3>
-                    <h3 className={'settingWord'}>暫停</h3>
+                    {this.props.pause===true?<h3 className={'settingWord active'}>暫停</h3>:<h3 className={'settingWord'}>暫停</h3>}
                     <h3 className={'settingWord settingWordKey'}>F4</h3>
                     <h3 className={'settingWord active'}>選單</h3>
                 </div>
@@ -562,21 +590,26 @@ class SettingWord extends Component{//下面那一排提示說明
 }
 
 class StartActionInstruction extends Component{//rec pause的圖片切換
-    pause(){
-        $('.img-rec').addClass('pause');
-        $('.img-pause').removeClass('pause');
-    }
-    cancelPause(){
-        $('.img-rec').removeClass('pause');
-        $('.img-pause').addClass('pause');
-    }
     render(){
-        return(
-                <div className={'startActionInstruction'}>
+        if(this.props.startAction && this.props.pauseRecord)
+            return(
+                    <div className={'startActionInstruction'}>
+                    <img src="img/rec.png" className={'img-rec pause'}></img>
+                    <img src="img/pause.png" className={'img-pause'}></img>
+                    </div>
+                  );
+        else if(this.props.startAction && !this.props.pauseRecord)
+            return(
+                    <div className={'startActionInstruction'}>
                     <img src="img/rec.png" className={'img-rec'}></img>
                     <img src="img/pause.png" className={'img-pause pause'}></img>
-                </div>
-              );
+                    </div>
+                  );
+        else
+            return(
+                    <div className={'startActionInstruction'}>
+                    </div>
+                  );
     }
 }
 
