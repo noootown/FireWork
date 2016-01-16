@@ -1145,7 +1145,7 @@ export function getFireworkPoints(x,y,type,ctx){
             pushBigPoint(fire,x,y,0.075+ran()*0.005-0.005*i/tmpNum,deg2rad(i+115+angle),color,Math.random()*2+0.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction);
         tmpNum=66;
         for(i=0;i<tmpNum;i+=2)
-            pushBigPoint(fire,x,y,0.075*cos(60)/cos(abs(i-66))+ran()*0.005,deg2rad(66-i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx,invisibleTime, friction);
+            pushBigPoint(fire,x,y,0.075*cos(60)/cos(abs(i-66))+ran()*0.005,deg2rad(68-i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx,invisibleTime, friction);
         tmpNum=60;
         for(i=0;i<tmpNum;i+=2)
             pushBigPoint(fire,x,y,0.075*cos(60)/cos(abs(i-60))+ran()*0.005,deg2rad(120+i+angle),color,ran()*2+0.5,ran()*200+800,0,0.00005,ctx,invisibleTime, friction);

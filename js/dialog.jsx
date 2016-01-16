@@ -1,12 +1,8 @@
 'use strict';
 import React,{Component}  from 'react';
 export class SaveDialog extends React.Component{
-    getBtnBack(){
-        setTimeout(function(){
-            $('.optionBtn').removeClass('hide');
-        },600);
-    }
     render(){
+        let continueHideClass=this.props.showType===2?'optionBtn hide':'optionBtn';
         return(
                 <div className={this.props.show?'dialogSave dialog active':'dialogSave dialog'}>
                     <h3 className={'dialogTitle'}>Choose</h3>
@@ -14,7 +10,7 @@ export class SaveDialog extends React.Component{
                         <button id={'dialogSaveSaveBtn'} className={'optionBtn'} onClick={this.props.saveClick}>Save</button>
                         <button id={'dialogSaveReplayBtn'} className={'optionBtn'} onClick={this.props.replayClick}>Replay</button>
                         <button id={'dialogSaveAgainBtn'}className={'optionBtn'} onClick={this.props.againClick}>Restart</button>
-                        <button id={'dialogSaveContinueBtn'} className={'optionBtn'} onClick={this.props.continueClick}>Continue</button>
+                        <button id={'dialogSaveContinueBtn'} className={continueHideClass} onClick={this.props.continueClick}>Continue</button>
                         <button id={'dialogSaveQuitBtn'}className={'optionBtn'} onClick={this.props.quitClick}>Quit</button>
                     </div>
                 </div>
