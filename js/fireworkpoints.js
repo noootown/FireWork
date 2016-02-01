@@ -1,6 +1,10 @@
 'use strict';
 import {FireworkPoint} from './manager';
 import {hsvRand,hsv,cos,sin,abs,deg2rad,ran,rand,sqrt,PI2} from './util';
+
+//important refactor!!!!
+//must change function parameters to one object
+
 export function getFireworkPoints(x,y,type,ctx){
     let fire=[]; //要return 的fireworPoint陣列
     let tmpNum; 
@@ -13,24 +17,18 @@ export function getFireworkPoints(x,y,type,ctx){
     let invisibleTime=0;
     let speed=0;
     let friction=0;
-    if(type==1){//1 正常
+    if(type==1){//1
         tmpNum=rand(200)+200;
         for(i=0;i<tmpNum;i++)
             fire.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,color,Math.random()*2,Math.random()*400+800,0,0.0003,ctx,invisibleTime, friction));
     }
-    else if(type==2){//2 同心圓
-        tmpNum=360;
-        for(i=0;i<6;i++)
-            for(j=0;j<tmpNum/6;j++)
-                fire.push(new FireworkPoint(x,y,i/24+Math.random()*0.02,2*Math.PI*j/(tmpNum/6),color,Math.random()*2,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
-    }
-    else if(type==3){//3 圓
+    else if(type==2){//2
         color=hsvRand(2);
-        tmpNum=720;
+        tmpNum=200;
         for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,0.5,2*Math.PI*i/tmpNum,color,Math.random()*2,Math.random()*200+800,0,0.0003,ctx,invisibleTime, friction));
+            fire.push(new FireworkPoint(x,y,Math.random()*0.3,2*Math.PI*Math.random(),color,Math.random()*2,Math.random()*100+200,0,0.0003,ctx,invisibleTime, friction));
     }
-    else if(type==4){//4 大煙火
+    else if(type==3){//3
         color=hsvRand(2);
         tmpNum=1500;
         for(i=0;i<tmpNum;i++)
@@ -42,7 +40,13 @@ export function getFireworkPoints(x,y,type,ctx){
             fire.push(new FireworkPoint(x-500+rand(1000),y+100+rand(600),0,0,color,Math.random()*2,1610+time,0,0,ctx,1600+time));
         }
     }
-    else if(type==5){//5 破碎圓
+    else if(type==4){//4
+        color=hsvRand(2);
+        tmpNum=720;
+        for(i=0;i<tmpNum;i++)
+            fire.push(new FireworkPoint(x,y,0.5,2*Math.PI*i/tmpNum,color,Math.random()*2,Math.random()*200+800,0,0.0003,ctx,invisibleTime, friction));
+    }
+    else if(type==5){//5
         color=hsvRand(2);
         tmpNum=720;
         for(i=0;i<8;i++)
@@ -56,8 +60,8 @@ export function getFireworkPoints(x,y,type,ctx){
         for(i=0;i<6;i++){
             for(j=0;j<tmpNum;j++){
                 angle=deg2rad(j/tmpNum*360+rand(15));
-                for(let k=0;k<20;k++)
-                    fire.push(new FireworkPoint(x,y,speed+i/32-0.015+ran()*0.03-k/20*0.02,angle,color,(-abs(k-15)+15)/15*1,Math.random()*200+800,0,0.0001,ctx,invisibleTime, friction));
+                for(let k=0;k<10;k++)
+                    fire.push(new FireworkPoint(x,y,speed+i/32-0.015+ran()*0.03-k/15*0.02,angle,color,(-abs(k-5)+5)/5*2,Math.random()*200+800,0,0.0001,ctx,invisibleTime, friction));
 
             }
             tmpNum+=5;
@@ -68,8 +72,8 @@ export function getFireworkPoints(x,y,type,ctx){
         for(i=0;i<6;i++){
             for(j=0;j<tmpNum;j++){
                 angle=deg2rad(j/tmpNum*360+rand(30));
-                for(let k=0;k<20;k++)
-                    fire.push(new FireworkPoint(x,y,speed+i/32-0.015+ran()*0.03-k/20*0.02,angle,color,(-abs(k-15)+15)/15*1,Math.random()*200+800,0,0.0001,ctx,invisibleTime, friction));
+                for(let k=0;k<15;k++)
+                    fire.push(new FireworkPoint(x,y,speed+i/32-0.015+ran()*0.03-k/15*0.02,angle,color,(-abs(k-15)+15)/15*1,Math.random()*200+800,0,0.0001,ctx,invisibleTime, friction));
 
             }
             tmpNum+=3;
@@ -94,13 +98,20 @@ export function getFireworkPoints(x,y,type,ctx){
             }
         }
     }
-    else if(type==8){//8 小炮
-        color=hsvRand(2);
-        tmpNum=200;
-        for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,Math.random()*0.3,2*Math.PI*Math.random(),color,Math.random()*2,Math.random()*100+200,0,0.0003,ctx,invisibleTime, friction));
+    else if(type==8){//8
+        let arealen;
+        color='rgb(255,255,255)';
+        for(let k=0;k<500;k++){
+            arealen=rand(200)+k/5;
+            angle=rand(360);
+            delayTime=0;
+            time=rand(300)+300;
+            let areax=x+arealen*cos(angle);
+            let areay=y+arealen*sin(angle);
+            fire.push(new FireworkPoint(areax,areay,0,0,color,rand(2),time+10,0,0,ctx,time,friction));
+        }
     }
-    else if(type==9){//9 delay炮
+    else if(type==9){//9
         angle=ran()*60;
         delayTime=250+ran()*250;
         tmpNum=100;
@@ -111,97 +122,7 @@ export function getFireworkPoints(x,y,type,ctx){
                 fire.push(new FireworkPoint(x+100*cos(angle+60*j),y+100*sin(angle+60*j),Math.random()*0.3,2*Math.PI*Math.random(),color,Math.random()*2,Math.random()*100+200,delayTime ,0.0003,ctx,invisibleTime, friction));
         }
     }
-    else if(type==0){//0 圓內均勻分布
-        let colAngle=rand(360);
-        color=hsv(colAngle);
-        tmpNum=0;
-        for(i=0;i<6;i++){
-            for(j=0;j<tmpNum;j++)
-                fire.push(new FireworkPoint(x,y,i/20-0.024+ran()*0.048,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,300+rand(300), friction));
-            tmpNum+=30;
-        }
-        color=hsv(colAngle+60+rand(30));
-        tmpNum=0;
-        for(i=0;i<6;i++){
-            for(j=0;j<tmpNum;j++)
-                fire.push(new FireworkPoint(x,y,i/32-0.015+ran()*0.03,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+400,0,0.00005,ctx,invisibleTime, friction));
-            tmpNum+=15;
-        }
-        tmpNum=300;
-        color='rgb(255, 255, 255)';
-        for(i=0;i<tmpNum;i++){
-            let len=rand(100);
-            let theta=rand(360);
-            time=550+rand(300);
-            fire.push(new FireworkPoint(x+len*cos(theta),y+20+len*sin(theta),0,0,color,Math.random()*2,time+10,0,0,ctx,time,0));
-        }
-        tmpNum=800;
-        for(i=0;i<tmpNum;i++){
-            let len=rand(150)+115;
-            let theta=rand(360);
-            time=rand(300)+900;
-            fire.push(new FireworkPoint(x+len*cos(theta),y+40+len*sin(theta),0,0,color,Math.random()*2,time+10,0,0,ctx,time,0));
-        }
-        tmpNum=200;
-        for(i=0;i<tmpNum;i++){
-            let len=rand(115);
-            let theta=rand(360);
-            time=rand(300)+900;
-            fire.push(new FireworkPoint(x+len*cos(theta),y+40+len*sin(theta),0,0,color,Math.random()*2,time+10,0,0,ctx,time,0));
-        }
-    }
-    else if(type==10){//a 圓內均勻分布延遲變色
-        let colAngle=rand(360);
-        color=hsv(colAngle);
-        colAngle=colAngle+90+rand(60);
-        let tmpColor1=hsv(colAngle);
-        colAngle=colAngle+90+rand(60);
-        let tmpColor2=hsv(colAngle);
-        tmpNum=0;
-        for(i=0;i<6;i++){
-            for(j=0;j<tmpNum;j++){
-                speed=i/32-0.015+ran()*0.03;
-                radius=rand(2);
-                time=rand(200)+500;
-                fire.push(new FireworkPoint(x,y,speed,deg2rad(j/tmpNum*360),color,radius,time,0,0.00005,ctx,invisibleTime, friction));
-                fire.push(new FireworkPoint(x,y,speed,deg2rad(j/tmpNum*360),tmpColor1,radius,time+500,0,0.00005,ctx,time,friction));
-                fire.push(new FireworkPoint(x,y,speed,deg2rad(j/tmpNum*360),tmpColor2,radius,time+1000,0,0.00005,ctx,time+500,friction));
-            }
-            tmpNum+=30;
-        }
-    }
-    else if(type==11){//b
-        let arr=[60,62,64,90,128,146,240,300];
-        let col=arr[Math.floor(rand(arr.length))];
-        color=hsv(col);
-        let random=6+Math.floor(rand(4));
-        let gravity=0.0001;
-        angle=deg2rad(rand(360));
-        for(i=0;i<random;i++){
-            angle=angle+deg2rad(360/random-5+rand(10));
-            speed=0.5+rand(0.2);
-            friction=0.0006+rand(0.0001);
-            for(let k=0;k<100;k++){
-                fire.push(new FireworkPoint(x,y,k/100*speed,angle-deg2rad(rand(5)),((col==60 || col==62 || col==64) && rand(1)>0.65)?'rgb(255,255,255)':color,(-abs(k-50)+50)/50*2,Math.random()*200+k/100*700,0,gravity+0.0006*k/100,ctx,invisibleTime, friction));
-            }
-        }
-    }
-    else if(type==12){//c
-        let colAngle=rand(360);
-        color=hsv(colAngle);
-        colAngle=colAngle+90+rand(60);
-        let tmpColor1=hsv(colAngle);
-        colAngle=colAngle+90+rand(60);
-        let tmpColor2=hsv(colAngle);
-        tmpNum=rand(200)+200;
-        for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,color,Math.random()*2,Math.random()*400+800,0,0.0003,ctx,invisibleTime, friction));
-        for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,tmpColor1,Math.random()*2,Math.random()*400+800,0,0.0003,ctx,invisibleTime, friction));
-        for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,tmpColor2,Math.random()*2,Math.random()*400+800,0,0.0003,ctx,invisibleTime, friction));
-    }
-    else if(type==13){//d
+    else if(type==0){//0
         angle=ran()*60;
         for(let k=0;k<6;k++){
             color=hsvRand(2);
@@ -219,280 +140,52 @@ export function getFireworkPoints(x,y,type,ctx){
             }
         }
     }
-    else if(type==14){//e 繁星點點
-        let arealen=0;
-        color=hsvRand(2);
-        for(let k=0;k<60;k++){
-            angle=rand(360);
-            delayTime=100+ran()*300;
-            k>=10?arealen+=1.5:arealen+=8;
-            let areax=x+arealen*cos(angle);
-            let areay=y+arealen*sin(angle);
-            let time=30;
-            radius=3.75;
-            fire.push(new FireworkPoint(areax,areay,0,0,color,radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
-            radius=2;
-            fire.push(new FireworkPoint(areax,areay,0,0,'rgb(255,255,255)',radius,time+30,delayTime,0.00005,ctx,invisibleTime, friction));
-        }
-    }
-    else if(type==15){//f 圓內均勻分布+灑
-        let colAngle=rand(360);
+    else if(type==10){//a
+        let colAngle=rand(80)+300;
         color=hsv(colAngle);
-        tmpNum=0;
-        for(i=0;i<6;i++){
-            for(j=0;j<tmpNum;j++)
-                fire.push(new FireworkPoint(x,y,i/32-0.015+ran()*0.03,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
-            tmpNum+=30;
-        }
-        color=hsv(colAngle+90+rand(60));
-        tmpNum=0;
-        for(i=0;i<6;i++){
-            for(j=0;j<tmpNum;j++){
-                time=rand(300)+500;
-                fire.push(new FireworkPoint(x,y,i/16-0.03+ran()*0.06,deg2rad(j/tmpNum*360),color,Math.random()*2,time+300+rand(200),200,0.0002,ctx,time,friction));
-            }
-            tmpNum+=30;
-        }
-    }
-    else if(type==16){//g
-        let colAngle=rand(360);
-        color=hsv(colAngle);
-        colAngle=colAngle+90+rand(60);
-        let tmpColor1=hsv(colAngle);
-        colAngle=colAngle+90+rand(60);
-        let tmpColor2=hsv(colAngle);
-        tmpNum=rand(200)+200;
-        let gravity=0.0003;
-        for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,color,Math.random()*2,rand(400)+400,0,gravity,ctx,invisibleTime, friction));
-        for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,tmpColor1,Math.random()*2,rand(400)+400,0,gravity,ctx,invisibleTime, friction));
-        for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,tmpColor2,Math.random()*2,rand(400)+400,0,gravity,ctx,invisibleTime, friction));
-        color=hsvRand(2);
-        tmpNum=0;
         delayTime=0;
-        for(let k=0;k<6;k++){
-            for(j=0;j<tmpNum;j++){
-                angle=rand(PI2);
-                speed=k/16-0.03+ran()*0.06;
-                time=rand(400)+400;
-                radius=3;
-                fire.push(new FireworkPoint(x,y,speed,angle,'rgb(0,0,0)',radius,time,delayTime+10,gravity,ctx,invisibleTime, friction));
-                radius=3.1;
-                fire.push(new FireworkPoint(x,y,speed,angle,color,radius,time,delayTime,gravity,ctx,invisibleTime, friction));
-                radius=2;
-                fire.push(new FireworkPoint(x,y,speed,angle,'rgba(255,255,255,0.7)',radius,time,delayTime,gravity,ctx,invisibleTime, friction));
-            }
-            tmpNum+=6;
+        for(let k=0;k<90;k++){
+            angle=deg2rad(-4*k);
+            time=rand(100)+800;
+            speed=0.15*(sqrt(0.5-sin(4*k)/2)+Math.pow(2.718281828,-10*abs(4*k/360*PI2-PI2*0.75)-1.8));
+            radius=3;
+            fire.push(new FireworkPoint(x,y,speed,angle,'rgb(0,0,0)',radius,time,10,0.00005,ctx,invisibleTime, friction));
+            radius=3.1;
+            fire.push(new FireworkPoint(x,y,speed,angle,color,radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
+            radius=2;
+            fire.push(new FireworkPoint(x,y,speed,angle,'rgba(255,255,255,0.6)',radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
         }
+        angle=deg2rad(90);
+        time=rand(100)+800;
+        speed=0.15*(sqrt(0.5-sin(270)/2)+Math.pow(2.718281828,-10*abs(270/360*PI2-PI2*0.75)-1.8));
+        radius=3;
+        fire.push(new FireworkPoint(x,y,speed,angle,'rgb(0,0,0)',radius,time,10,0.00005,ctx,invisibleTime, friction));
+        radius=3.1;
+        fire.push(new FireworkPoint(x,y,speed,angle,color,radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
+        radius=2;
+        fire.push(new FireworkPoint(x,y,speed,angle,'rgba(255,255,255,0.6)',radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
     }
-    else if(type==17){//h
-        angle=ran()*60;
-        for(let k=0;k<6;k++){
-            color=hsvRand(2);
-            delayTime=200+ran()*200;
-            tmpNum=0;
-            let len=50+rand(100);
-            for(i=0;i<6;i++){
-                for(j=0;j<tmpNum;j++){
-                    invisibleTime=rand(100)+200;
-                    speed=i/16-0.03+ran()*0.06;
-                    radius=rand(2);
-                    time=rand(100)+300;
-                    fire.push(new FireworkPoint(x+len*cos(angle+60*k),y+len*sin(angle+60*k),speed,deg2rad(j/tmpNum*360),color,radius,invisibleTime+20+rand(70),delayTime,0.00005,ctx,invisibleTime,friction));
-                }
-                tmpNum+=8;
-            }
-        }
-    }
-    else if(type==18){//i 針狀
-        color=hsvRand(2);
-        tmpNum=0;
-        for(i=0;i<6;i++){
-            for(j=0;j<tmpNum;j++){
-                angle=deg2rad(j/tmpNum*360+rand(15));
-                for(let k=0;k<30;k++)
-                    fire.push(new FireworkPoint(x,y,i/24-0.02+ran()*0.04-k/40*0.08/3,angle,color,(-abs(k-15)+15)/15*1,Math.random()*200+800,0,0.0001,ctx,invisibleTime, friction));
-
-            }
-            tmpNum+=8;
-        }
-    }
-    else if(type==19){//j 圓內均勻分布+環稍微強調,2層
-        let arr=[0,30,40,60,85,230,250,340];
-        let colAngle=arr[Math.floor(rand(arr.length)%arr.length)];
+    else if(type==11){//b
+        let colAngle=rand(360);
         color=hsv(colAngle);
-        for(i=0;i<6;i++){
-            for(j=0;j<tmpNum;j++)
-                fire.push(new FireworkPoint(x,y,i/32-0.015+ran()*0.03,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
-            tmpNum+=24;
-        }
-        tmpNum=720;
-        for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,6/32-ran()*0.06,deg2rad(i/tmpNum*360+rand(5)),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
-        colAngle=colAngle+40+rand(20);
-        color=hsv(colAngle);
-        tmpNum=0;
-        for(i=0;i<6;i++){
-            for(j=0;j<tmpNum;j++)
-                fire.push(new FireworkPoint(x,y,i/64-0.0075+ran()*0.015,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
-            tmpNum+=24;
-        }
-        tmpNum=720;
-        for(i=0;i<tmpNum;i++)
-            fire.push(new FireworkPoint(x,y,6/64-ran()*0.03,deg2rad(i/tmpNum*360+rand(5)),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
-    }
-    else if(type==20){//k
-        let colorAngle=rand(360);
-        color=hsv(colorAngle);
-        speed=0.16/3;
-        tmpNum=0;
-        delayTime=200;
-        for(i=0;i<6;i++){
-            for(j=0;j<tmpNum;j++){
-                angle=deg2rad(j/tmpNum*360-15+rand(30));
-                for(let k=0;k<50;k++)
-                    fire.push(new FireworkPoint(x,y,speed+i/24-0.02+ran()*0.04-k/50*0.28/3,angle,color,(-abs(k-25)+25)/25*1,Math.random()*200+800,delayTime,0.00005,ctx,invisibleTime, friction));
-
-            }
-            tmpNum+=6;
-        }
-        colorAngle=colorAngle+rand(60)+60;
-        color=hsv(colorAngle);
-        tmpNum=0;
-        for(i=0;i<6;i++){
-            for(j=0;j<tmpNum;j++)
-                fire.push(new FireworkPoint(x,y,i/48-0.01+ran()*0.02,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,delayTime,0.00005,ctx,invisibleTime, friction));
-            tmpNum+=14;
-        }
-        colorAngle=colorAngle+rand(60)+60;
-        color=hsv(colorAngle);
-        tmpNum=0;
-        for(i=0;i<6;i++){
-            for(j=0;j<tmpNum;j++){
-                fire.push(new FireworkPoint(x,y,i/24-0.02+ran()*0.04,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,delayTime,0.00005,ctx,invisibleTime, friction));
-            }
-            tmpNum+=8;
-        }
-        tmpNum=720;
-        for(i=0;i<tmpNum;i++){
-            fire.push(new FireworkPoint(x,y,1/4-0.04/3-ran()*0.08,deg2rad(i/tmpNum*360+rand(5)),color,Math.random()*1.5,Math.random()*200+800,delayTime,0.00005,ctx,invisibleTime, friction));
-        }
-    }
-    else if(type==21){//l 細雨
-        color=hsvRand(2);
-        tmpNum=0;
-        for(i=0;i<6;i++){
-            for(j=0;j<tmpNum;j++)
-                fire.push(new FireworkPoint(x,y,i/8-0.06+ran()*0.12,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+2000,0,0.0003,ctx,invisibleTime, 0.00005));
-            tmpNum+=30;
-        }
-    }
-    else if(type==22){//m 流星
-        color=hsvRand(2);
-        tmpNum=0;
-        for(i=0;i<6;i++){
-            for(j=0;j<tmpNum;j++){
-                time=rand(400)+2000;
-                fire.push(new FireworkPoint(x,y,i/8-0.06+ran()*0.12,deg2rad(j/tmpNum*360),color,Math.random()*2,time,0,0.0003,ctx,invisibleTime, 0.001));
-                fire.push(new FireworkPoint(x-500+rand(1000),y+100+rand(600),0,0,'rgb(255,255,255)',Math.random()*2,time+30,0,0,ctx,time+20));
-            }
-            tmpNum+=60;
-        }
-    }
-    else if(type==23){//n 均勻分布+變色
-        let colorAngle=rand(360);
-        color=hsv(colorAngle);
-        let colorAngle2=colorAngle+90+rand(60);
-        let color2=hsv(colorAngle2);
-        let layer=2;
-        for(let k=1;k<=layer;k++){
-            tmpNum=0;
-            for(i=0;i<6;i++){
-                for(j=0;j<tmpNum;j++){
-                    time=rand(200)+600;
-                    speed=i/32/layer*k-0.015/layer*k+ran()*0.03/layer*k;
-                    radius=rand(1.5);
-                    fire.push(new FireworkPoint(x,y,speed,deg2rad(j/tmpNum*360),color,radius,time+k*200,0,0.00005,ctx,invisibleTime, friction));
-                    fire.push(new FireworkPoint(x,y,speed,deg2rad(j/tmpNum*360),color2,radius,time+400+k*200,0,0.00005,ctx,time+k*200, friction));
-
-                }
-                tmpNum+=30;
-            }
-            if(k==layer)
-                break;
-            colorAngle=colorAngle+rand(60)+90;
-            color=hsv(colorAngle);
-            colorAngle2=colorAngle2+rand(60)+90;
-            color2=hsv(colorAngle2);
-        }
-        let arealen=0;
-        color=hsv(colorAngle);
-        for(let k=0;k<30;k++){
-            angle=rand(360);
-            delayTime=1600+rand(200);
-            k>=10?arealen+=1.5:arealen+=8;
-            let areax=x+arealen*cos(angle);
-            let areay=y+100+arealen*sin(angle);
-            radius=2;
-            let len=1.75;
-            let theta;
-            for(i=0;i<20;i++){
-                theta=rand(360);
-                fire.push(new FireworkPoint(areax+len*cos(theta),areay+len*sin(theta),0,0,color,radius,10,delayTime,0.00005,ctx,invisibleTime, friction));
-            }
-            radius=2;
-            fire.push(new FireworkPoint(areax,areay,0,0,'rgb(255,255,255)',radius,70,delayTime,0.00005,ctx,invisibleTime, friction));
-        }
-        arealen=100;
-        color=hsv(colorAngle2);
-        for(let k=0;k<30;k++){
-            angle=rand(360);
-            delayTime=1600+rand(200);
-            k>=10?arealen+=1.5:arealen+=8;
-            let areax=x+arealen*cos(angle);
-            let areay=y+100+arealen*sin(angle);
-            radius=2;
-            let len=3;
-            let theta;
-            for(i=0;i<20;i++){
-                theta=rand(360);
-                fire.push(new FireworkPoint(areax+len*cos(theta),areay+len*sin(theta),0,0,color,radius,10,delayTime,0.00005,ctx,invisibleTime, friction));
-            }
-            radius=1.5;
-            fire.push(new FireworkPoint(areax,areay,0,0,'rgb(255,255,255)',radius,70,delayTime,0.00005,ctx,invisibleTime, friction));
-        }
-    }
-    else if(type==24){//o 毛毛蟲
-        color=hsvRand(2);
-        tmpNum=0;
-        for(i=0;i<6;i++){
-            for(j=0;j<tmpNum;j++){
-                angle=deg2rad(j/tmpNum*360+rand(15));
-                for(let k=0;k<20;k++){
-                    let leng=rand(115);
-                    let angle2=rand(360);
-                    fire.push(new FireworkPoint(x+leng*cos(angle2),y+leng*sin(angle2),i/16-0.03+ran()*0.06-k/20*0.04,angle,color,(-abs(k-10)+10)/10*1,Math.random()*200+800,0,0.0001,ctx,rand(200), friction));
-                }
-            }
-            tmpNum+=8;
-        }
-    }
-    else if(type==25){//p 大塊毛毛蟲
-        let arealen;
-        color='rgb(255,255,255)';
-        for(let k=0;k<500;k++){
-            arealen=rand(200)+k/5;
-            angle=rand(360);
+        let angle2=rand(6);
+        for(let k=0;k<60;k++){
+            angle=deg2rad(6*k+angle2);
             delayTime=0;
-            time=rand(300)+300;
-            let areax=x+arealen*cos(angle);
-            let areay=y+arealen*sin(angle);
-            fire.push(new FireworkPoint(areax,areay,0,0,color,rand(2),time+10,0,0,ctx,time,friction));
+            time=rand(100)+600;
+            speed=0.4+rand(0.02);
+            radius=3;
+            fire.push(new FireworkPoint(x,y,speed,angle,'rgb(0,0,0)',radius,time,10,0.00005,ctx,invisibleTime, friction));
+            radius=3.1;
+            fire.push(new FireworkPoint(x,y,speed,angle,color,radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
+            radius=2;
+            if(60<=colAngle && colAngle<=180)
+                fire.push(new FireworkPoint(x,y,speed,angle,'rgb(255,255,255)',radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
+            else
+                fire.push(new FireworkPoint(x,y,speed,angle,'rgba(255,255,255,0.6)',radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
         }
     }
-    else if(type==26){//q 光
+    else if(type==12){//c
         let arr=[0,40,60,75,90,105,120,240,270,300];
         let colAngle=arr[Math.floor(rand(arr.length))];
         color=hsv(colAngle);
@@ -513,72 +206,7 @@ export function getFireworkPoints(x,y,type,ctx){
                 fire.push(new FireworkPoint(x,y,speed,angle,'rgba(255,255,255,0.7)',radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
         }
     }
-    else if(type==27){//r
-        let arr=[0,40,60,90,120,210,240,270,300];
-        let colAngle=arr[Math.floor(rand(arr.length))];
-        color=hsv(colAngle);
-        for(let j=1;j<=3;j++){
-            for(let k=0;k<45;k++){
-                angle=deg2rad(8*k);
-                delayTime=0;
-                time=rand(100)+200*j;
-                speed=0.13*j+rand(0.05)+0.1;
-                invisibleTime=rand(100)+200*(j-1);
-                radius=3;
-                fire.push(new FireworkPoint(x,y,speed,angle,'rgb(0,0,0)',radius,time,10,0.00005,ctx,invisibleTime, friction));
-                radius=3.1;
-                fire.push(new FireworkPoint(x,y,speed,angle,color,radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
-                radius=2;
-                if(colAngle==60 || colAngle==75 || colAngle==90 || colAngle==105 || colAngle==120)
-                    fire.push(new FireworkPoint(x,y,speed,angle,'rgb(255,255,255)',radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
-                else
-                    fire.push(new FireworkPoint(x,y,speed,angle,'rgba(255,255,255,0.6)',radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
-
-            }
-        }
-    }
-    else if(type==28){//s
-        for(let k=0;k<60;k++){
-            let colAngle=rand(360);
-            color=hsv(colAngle);
-            angle=deg2rad(rand(360));
-            delayTime=rand(200);
-            invisibleTime=rand(200);
-            time=invisibleTime+200;
-            speed=0.4+rand(0.2);
-            friction=0.0025;
-            radius=3;
-            fire.push(new FireworkPoint(x,y,speed,angle,'rgb(0,0,0)',radius,time,10+delayTime,0.00005,ctx,invisibleTime, friction));
-            radius=3.1;
-            fire.push(new FireworkPoint(x,y,speed,angle,color,radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
-            radius=2;
-            if(60<=colAngle && colAngle<=180)
-                fire.push(new FireworkPoint(x,y,speed,angle,'rgb(255,255,255)',radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
-            else
-                fire.push(new FireworkPoint(x,y,speed,angle,'rgba(255,255,255,0.6)',radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
-        }
-    }
-    else if(type==29){//t
-        let colAngle=rand(360);
-        color=hsv(colAngle);
-        let angle2=rand(6);
-        for(let k=0;k<60;k++){
-            angle=deg2rad(6*k+angle2);
-            delayTime=0;
-            time=rand(100)+600;
-            speed=0.4+rand(0.02);
-            radius=3;
-            fire.push(new FireworkPoint(x,y,speed,angle,'rgb(0,0,0)',radius,time,10,0.00005,ctx,invisibleTime, friction));
-            radius=3.1;
-            fire.push(new FireworkPoint(x,y,speed,angle,color,radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
-            radius=2;
-            if(60<=colAngle && colAngle<=180)
-                fire.push(new FireworkPoint(x,y,speed,angle,'rgb(255,255,255)',radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
-            else
-                fire.push(new FireworkPoint(x,y,speed,angle,'rgba(255,255,255,0.6)',radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
-        }
-    }
-    else if(type==30){//u
+    else if(type==13){//d
         let arr=[0,40,60,90,120,180,210,225,230,235,240,242,243,244,245,270,300];
         let colAngle=arr[Math.floor(rand(arr.length))];
         color=hsv(colAngle);
@@ -630,9 +258,308 @@ export function getFireworkPoints(x,y,type,ctx){
             radius=2;
             fire.push(new FireworkPoint(areax,areay,0,0,'rgb(255,255,255)',radius,30,delayTime,0.00005,ctx,invisibleTime, friction));
         }
-
     }
-    else if(type==31){//v
+    else if(type==14){//e
+        let colAngle=rand(360);
+        color=hsv(colAngle);
+        colAngle=colAngle+90+rand(60);
+        let tmpColor1=hsv(colAngle);
+        colAngle=colAngle+90+rand(60);
+        let tmpColor2=hsv(colAngle);
+        tmpNum=rand(200)+200;
+        for(i=0;i<tmpNum;i++)
+            fire.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,color,Math.random()*2,Math.random()*400+800,0,0.0003,ctx,invisibleTime, friction));
+        for(i=0;i<tmpNum;i++)
+            fire.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,tmpColor1,Math.random()*2,Math.random()*400+800,0,0.0003,ctx,invisibleTime, friction));
+        for(i=0;i<tmpNum;i++)
+            fire.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,tmpColor2,Math.random()*2,Math.random()*400+800,0,0.0003,ctx,invisibleTime, friction));
+    }
+    else if(type==15){//f
+        let colAngle=rand(360);
+        color=hsv(colAngle);
+        colAngle=colAngle+90+rand(60);
+        let tmpColor1=hsv(colAngle);
+        colAngle=colAngle+90+rand(60);
+        let tmpColor2=hsv(colAngle);
+        tmpNum=rand(200)+200;
+        let gravity=0.0003;
+        for(i=0;i<tmpNum;i++)
+            fire.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,color,Math.random()*2,rand(400)+400,0,gravity,ctx,invisibleTime, friction));
+        for(i=0;i<tmpNum;i++)
+            fire.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,tmpColor1,Math.random()*2,rand(400)+400,0,gravity,ctx,invisibleTime, friction));
+        for(i=0;i<tmpNum;i++)
+            fire.push(new FireworkPoint(x,y,Math.random()*0.5,Math.random()*2*Math.PI,tmpColor2,Math.random()*2,rand(400)+400,0,gravity,ctx,invisibleTime, friction));
+        color=hsvRand(2);
+        tmpNum=0;
+        delayTime=0;
+        for(let k=0;k<6;k++){
+            for(j=0;j<tmpNum;j++){
+                angle=rand(PI2);
+                speed=k/16-0.03+ran()*0.06;
+                time=rand(400)+400;
+                radius=3;
+                fire.push(new FireworkPoint(x,y,speed,angle,'rgb(0,0,0)',radius,time,delayTime+10,gravity,ctx,invisibleTime, friction));
+                radius=3.1;
+                fire.push(new FireworkPoint(x,y,speed,angle,color,radius,time,delayTime,gravity,ctx,invisibleTime, friction));
+                radius=2;
+                fire.push(new FireworkPoint(x,y,speed,angle,'rgba(255,255,255,0.7)',radius,time,delayTime,gravity,ctx,invisibleTime, friction));
+            }
+            tmpNum+=6;
+        }
+    }
+    else if(type==16){//g
+        let colAngle=rand(360);
+        color=hsv(colAngle);
+        tmpNum=0;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++)
+                fire.push(new FireworkPoint(x,y,i/32-0.015+ran()*0.03,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
+            tmpNum+=30;
+        }
+        color=hsv(colAngle+90+rand(60));
+        tmpNum=0;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++){
+                time=rand(300)+500;
+                fire.push(new FireworkPoint(x,y,i/16-0.03+ran()*0.06,deg2rad(j/tmpNum*360),color,Math.random()*2,time+300+rand(200),200,0.0002,ctx,time,friction));
+            }
+            tmpNum+=30;
+        }
+    }
+    else if(type==17){//h
+        let colAngle=rand(360);
+        color=hsv(colAngle);
+        tmpNum=0;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++)
+                fire.push(new FireworkPoint(x,y,i/20-0.024+ran()*0.048,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,300+rand(300), friction));
+            tmpNum+=30;
+        }
+        color=hsv(colAngle+60+rand(30));
+        tmpNum=0;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++)
+                fire.push(new FireworkPoint(x,y,i/32-0.015+ran()*0.03,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+400,0,0.00005,ctx,invisibleTime, friction));
+            tmpNum+=15;
+        }
+        tmpNum=300;
+        color='rgb(255, 255, 255)';
+        for(i=0;i<tmpNum;i++){
+            let len=rand(100);
+            let theta=rand(360);
+            time=550+rand(300);
+            fire.push(new FireworkPoint(x+len*cos(theta),y+20+len*sin(theta),0,0,color,Math.random()*2,time+10,0,0,ctx,time,0));
+        }
+        tmpNum=800;
+        for(i=0;i<tmpNum;i++){
+            let len=rand(150)+115;
+            let theta=rand(360);
+            time=rand(300)+900;
+            fire.push(new FireworkPoint(x+len*cos(theta),y+40+len*sin(theta),0,0,color,Math.random()*2,time+10,0,0,ctx,time,0));
+        }
+        tmpNum=200;
+        for(i=0;i<tmpNum;i++){
+            let len=rand(115);
+            let theta=rand(360);
+            time=rand(300)+900;
+            fire.push(new FireworkPoint(x+len*cos(theta),y+40+len*sin(theta),0,0,color,Math.random()*2,time+10,0,0,ctx,time,0));
+        }
+    }
+    else if(type==18){//i
+        let arealen=0;
+        color=hsvRand(2);
+        for(let k=0;k<60;k++){
+            angle=rand(360);
+            delayTime=100+ran()*300;
+            k>=10?arealen+=1.5:arealen+=8;
+            let areax=x+arealen*cos(angle);
+            let areay=y+arealen*sin(angle);
+            let time=30;
+            radius=3.75;
+            fire.push(new FireworkPoint(areax,areay,0,0,color,radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
+            radius=2;
+            fire.push(new FireworkPoint(areax,areay,0,0,'rgb(255,255,255)',radius,time+30,delayTime,0.00005,ctx,invisibleTime, friction));
+        }
+    }
+    else if(type==19){//j
+        let arr=[0,30,40,60,85,230,250,340];
+        let colAngle=arr[Math.floor(rand(arr.length)%arr.length)];
+        color=hsv(colAngle);
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++)
+                fire.push(new FireworkPoint(x,y,i/32-0.015+ran()*0.03,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
+            tmpNum+=24;
+        }
+        tmpNum=720;
+        for(i=0;i<tmpNum;i++)
+            fire.push(new FireworkPoint(x,y,6/32-ran()*0.06,deg2rad(i/tmpNum*360+rand(5)),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
+        colAngle=colAngle+40+rand(20);
+        color=hsv(colAngle);
+        tmpNum=0;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++)
+                fire.push(new FireworkPoint(x,y,i/64-0.0075+ran()*0.015,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
+            tmpNum+=24;
+        }
+        tmpNum=720;
+        for(i=0;i<tmpNum;i++)
+            fire.push(new FireworkPoint(x,y,6/64-ran()*0.03,deg2rad(i/tmpNum*360+rand(5)),color,Math.random()*1.5,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
+    }
+    else if(type==20){//k
+        let colorAngle=rand(360);
+        color=hsv(colorAngle);
+        speed=0.16/3;
+        tmpNum=0;
+        delayTime=200;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++){
+                angle=deg2rad(j/tmpNum*360-15+rand(30));
+                for(let k=0;k<20;k++)
+                    fire.push(new FireworkPoint(x,y,speed+i/24-0.02+ran()*0.04-k/20*0.09,angle,color,(-abs(k-10)+10)/10*1.5,Math.random()*200+800,delayTime,0.00005,ctx,invisibleTime, friction));
+
+            }
+            tmpNum+=5;
+        }
+        colorAngle=colorAngle+rand(60)+60;
+        color=hsv(colorAngle);
+        tmpNum=0;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++)
+                fire.push(new FireworkPoint(x,y,i/48-0.01+ran()*0.02,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,delayTime,0.00005,ctx,invisibleTime, friction));
+            tmpNum+=10;
+        }
+        colorAngle=colorAngle+rand(60)+60;
+        color=hsv(colorAngle);
+        tmpNum=0;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++){
+                fire.push(new FireworkPoint(x,y,i/24-0.02+ran()*0.04,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+800,delayTime,0.00005,ctx,invisibleTime, friction));
+            }
+            tmpNum+=8;
+        }
+        tmpNum=600;
+        for(i=0;i<tmpNum;i++){
+            fire.push(new FireworkPoint(x,y,1/4-0.04/3-ran()*0.08,deg2rad(i/tmpNum*360+rand(5)),color,Math.random()*1.5,Math.random()*200+800,delayTime,0.00005,ctx,invisibleTime, friction));
+        }
+    }
+    else if(type==21){//l
+        color=hsvRand(2);
+        tmpNum=0;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++){
+                angle=deg2rad(j/tmpNum*360+rand(15));
+                for(let k=0;k<20;k++){
+                    let leng=rand(115);
+                    let angle2=rand(360);
+                    fire.push(new FireworkPoint(x+leng*cos(angle2),y+leng*sin(angle2),i/16-0.03+ran()*0.06-k/20*0.04,angle,color,(-abs(k-10)+10)/10*1,Math.random()*200+800,0,0.0001,ctx,rand(200), friction));
+                }
+            }
+            tmpNum+=8;
+        }
+    }
+    else if(type==22){//m
+        let colAngle=rand(360);
+        color=hsv(colAngle);
+        colAngle=colAngle+90+rand(60);
+        let tmpColor1=hsv(colAngle);
+        colAngle=colAngle+90+rand(60);
+        let tmpColor2=hsv(colAngle);
+        tmpNum=0;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++){
+                speed=i/32-0.015+ran()*0.03;
+                radius=rand(2);
+                time=rand(200)+500;
+                fire.push(new FireworkPoint(x,y,speed,deg2rad(j/tmpNum*360),color,radius,time,0,0.00005,ctx,invisibleTime, friction));
+                fire.push(new FireworkPoint(x,y,speed,deg2rad(j/tmpNum*360),tmpColor1,radius,time+500,0,0.00005,ctx,time,friction));
+                fire.push(new FireworkPoint(x,y,speed,deg2rad(j/tmpNum*360),tmpColor2,radius,time+1000,0,0.00005,ctx,time+500,friction));
+            }
+            tmpNum+=30;
+        }
+    }
+    else if(type==23){//n
+        let colorAngle=rand(360);
+        color=hsv(colorAngle);
+        let colorAngle2=colorAngle+90+rand(60);
+        let color2=hsv(colorAngle2);
+        let layer=2;
+        for(let k=1;k<=layer;k++){
+            tmpNum=(k-1)*15;
+            for(i=0;i<6;i++){
+                for(j=0;j<tmpNum;j++){
+                    time=rand(200)+600;
+                    speed=i/32/layer*k-0.015/layer*k+ran()*0.03/layer*k;
+                    radius=rand(1.5);
+                    fire.push(new FireworkPoint(x,y,speed,deg2rad(j/tmpNum*360),color,radius,time+k*200,0,0.00005,ctx,invisibleTime, friction));
+                    fire.push(new FireworkPoint(x,y,speed,deg2rad(j/tmpNum*360),color2,radius,time+400+k*200,0,0.00005,ctx,time+k*200, friction));
+
+                }
+                tmpNum+=15;
+            }
+            if(k==layer)
+                break;
+            colorAngle=colorAngle+rand(60)+90;
+            color=hsv(colorAngle);
+            colorAngle2=colorAngle2+rand(60)+90;
+            color2=hsv(colorAngle2);
+        }
+        let arealen=0;
+        color=hsv(colorAngle);
+        for(let k=0;k<30;k++){
+            angle=rand(360);
+            delayTime=1600+rand(200);
+            k>=10?arealen+=1.5:arealen+=8;
+            let areax=x+arealen*cos(angle);
+            let areay=y+100+arealen*sin(angle);
+            radius=2;
+            let len=1.75;
+            let theta;
+            for(i=0;i<20;i++){
+                theta=rand(360);
+                fire.push(new FireworkPoint(areax+len*cos(theta),areay+len*sin(theta),0,0,color,radius,10,delayTime,0.00005,ctx,invisibleTime, friction));
+            }
+            radius=2;
+            fire.push(new FireworkPoint(areax,areay,0,0,'rgb(255,255,255)',radius,70,delayTime,0.00005,ctx,invisibleTime, friction));
+        }
+        arealen=100;
+        color=hsv(colorAngle2);
+        for(let k=0;k<30;k++){
+            angle=rand(360);
+            delayTime=1600+rand(200);
+            k>=10?arealen+=1.5:arealen+=8;
+            let areax=x+arealen*cos(angle);
+            let areay=y+100+arealen*sin(angle);
+            radius=2;
+            let len=3;
+            let theta;
+            for(i=0;i<20;i++){
+                theta=rand(360);
+                fire.push(new FireworkPoint(areax+len*cos(theta),areay+len*sin(theta),0,0,color,radius,10,delayTime,0.00005,ctx,invisibleTime, friction));
+            }
+            radius=1.5;
+            fire.push(new FireworkPoint(areax,areay,0,0,'rgb(255,255,255)',radius,70,delayTime,0.00005,ctx,invisibleTime, friction));
+        }
+    }
+    else if(type==24){//o
+        angle=ran()*60;
+        for(let k=0;k<6;k++){
+            color=hsvRand(2);
+            delayTime=200+ran()*200;
+            tmpNum=0;
+            let len=50+rand(100);
+            for(i=0;i<6;i++){
+                for(j=0;j<tmpNum;j++){
+                    invisibleTime=rand(100)+200;
+                    speed=i/16-0.03+ran()*0.06;
+                    radius=rand(2);
+                    time=rand(100)+300;
+                    fire.push(new FireworkPoint(x+len*cos(angle+60*k),y+len*sin(angle+60*k),speed,deg2rad(j/tmpNum*360),color,radius,invisibleTime+20+rand(70),delayTime,0.00005,ctx,invisibleTime,friction));
+                }
+                tmpNum+=8;
+            }
+        }
+    }
+    else if(type==25){//p
         angle=rand(60);
         let layer=3;
         let len;
@@ -654,7 +581,16 @@ export function getFireworkPoints(x,y,type,ctx){
             }
         }
     }
-    else if(type==32){//w
+    else if(type==26){//q
+        color=hsvRand(2);
+        tmpNum=0;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++)
+                fire.push(new FireworkPoint(x,y,i/8-0.06+ran()*0.12,deg2rad(j/tmpNum*360),color,Math.random()*1.5,Math.random()*200+2000,0,0.0003,ctx,invisibleTime, 0.00005));
+            tmpNum+=30;
+        }
+    }
+    else if(type==27){//r
         color=hsvRand(2);
         tmpNum=0;
         for(i=0;i<6;i++){
@@ -672,6 +608,85 @@ export function getFireworkPoints(x,y,type,ctx){
                 speed=0.3+rand(0.02);
                 fire.push(new FireworkPoint(x,y,speed,deg2rad(i*10-1+rand(2)),color,rand(2),time,0,0.00005,ctx,240, friction));
             }
+        }
+    }
+    else if(type==28){//s
+        for(let k=0;k<60;k++){
+            let colAngle=rand(360);
+            color=hsv(colAngle);
+            angle=deg2rad(rand(360));
+            delayTime=rand(200);
+            invisibleTime=rand(200);
+            time=invisibleTime+200;
+            speed=0.4+rand(0.2);
+            friction=0.0025;
+            radius=3;
+            fire.push(new FireworkPoint(x,y,speed,angle,'rgb(0,0,0)',radius,time,10+delayTime,0.00005,ctx,invisibleTime, friction));
+            radius=3.1;
+            fire.push(new FireworkPoint(x,y,speed,angle,color,radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
+            radius=2;
+            if(60<=colAngle && colAngle<=180)
+                fire.push(new FireworkPoint(x,y,speed,angle,'rgb(255,255,255)',radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
+            else
+                fire.push(new FireworkPoint(x,y,speed,angle,'rgba(255,255,255,0.6)',radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
+        }
+    }
+    else if(type==29){//t
+        tmpNum=360;
+        for(i=0;i<6;i++)
+            for(j=0;j<tmpNum/6;j++)
+                fire.push(new FireworkPoint(x,y,i/24+Math.random()*0.02,2*Math.PI*j/(tmpNum/6),color,Math.random()*2,Math.random()*200+800,0,0.00005,ctx,invisibleTime, friction));
+    }
+    else if(type==30){//u
+        let arr=[60,62,64,90,128,146,240,300];
+        let col=arr[Math.floor(rand(arr.length))];
+        color=hsv(col);
+        let random=6+Math.floor(rand(4));
+        let gravity=0.0001;
+        angle=deg2rad(rand(360));
+        for(i=0;i<random;i++){
+            angle=angle+deg2rad(360/random-5+rand(10));
+            speed=0.5+rand(0.2);
+            friction=0.0006+rand(0.0001);
+            for(let k=0;k<100;k++){
+                fire.push(new FireworkPoint(x,y,k/100*speed,angle-deg2rad(rand(5)),((col==60 || col==62 || col==64) && rand(1)>0.65)?'rgb(255,255,255)':color,(-abs(k-50)+50)/50*2,Math.random()*200+k/100*700,0,gravity+0.0006*k/100,ctx,invisibleTime, friction));
+            }
+        }
+    }
+    else if(type==31){//v
+        let arr=[0,40,60,90,120,210,240,270,300];
+        let colAngle=arr[Math.floor(rand(arr.length))];
+        color=hsv(colAngle);
+        for(let j=1;j<=3;j++){
+            for(let k=0;k<45;k++){
+                angle=deg2rad(8*k);
+                delayTime=0;
+                time=rand(100)+200*j;
+                speed=0.13*j+rand(0.05)+0.1;
+                invisibleTime=rand(100)+200*(j-1);
+                radius=3;
+                fire.push(new FireworkPoint(x,y,speed,angle,'rgb(0,0,0)',radius,time,10,0.00005,ctx,invisibleTime, friction));
+                radius=3.1;
+                fire.push(new FireworkPoint(x,y,speed,angle,color,radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
+                radius=2;
+                if(colAngle==60 || colAngle==75 || colAngle==90 || colAngle==105 || colAngle==120)
+                    fire.push(new FireworkPoint(x,y,speed,angle,'rgb(255,255,255)',radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
+                else
+                    fire.push(new FireworkPoint(x,y,speed,angle,'rgba(255,255,255,0.6)',radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
+
+            }
+        }
+    }
+    else if(type==32){//w
+        color=hsvRand(2);
+        tmpNum=0;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++){
+                time=rand(400)+2000;
+                fire.push(new FireworkPoint(x,y,i/8-0.06+ran()*0.12,deg2rad(j/tmpNum*360),color,Math.random()*2,time,0,0.0003,ctx,invisibleTime, 0.001));
+                fire.push(new FireworkPoint(x-500+rand(1000),y+100+rand(600),0,0,'rgb(255,255,255)',Math.random()*2,time+30,0,0,ctx,time+20));
+            }
+            tmpNum+=60;
         }
     }
     else if(type==33){//x
@@ -694,29 +709,16 @@ export function getFireworkPoints(x,y,type,ctx){
         }
     }
     else if(type==34){//y
-        let colAngle=rand(80)+300;
-        color=hsv(colAngle);
-        delayTime=0;
-        for(let k=0;k<90;k++){
-            angle=deg2rad(-4*k);
-            time=rand(100)+800;
-            speed=0.15*(sqrt(0.5-sin(4*k)/2)+Math.pow(2.718281828,-10*abs(4*k/360*PI2-PI2*0.75)-1.8));
-            radius=3;
-            fire.push(new FireworkPoint(x,y,speed,angle,'rgb(0,0,0)',radius,time,10,0.00005,ctx,invisibleTime, friction));
-            radius=3.1;
-            fire.push(new FireworkPoint(x,y,speed,angle,color,radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
-            radius=2;
-            fire.push(new FireworkPoint(x,y,speed,angle,'rgba(255,255,255,0.6)',radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
+        tmpNum=0;
+        for(i=0;i<6;i++){
+            for(j=0;j<tmpNum;j++){
+                angle=deg2rad(j/tmpNum*360+rand(15));
+                for(let k=0;k<10;k++)
+                    fire.push(new FireworkPoint(x,y,i/24+ran()*0.01-k/40*0.08,angle,color,(-abs(k-5)+5)/5*2,Math.random()*200+800,0,0.0001,ctx,invisibleTime, friction));
+
+            }
+            tmpNum+=8;
         }
-        angle=deg2rad(90);
-        time=rand(100)+800;
-        speed=0.15*(sqrt(0.5-sin(270)/2)+Math.pow(2.718281828,-10*abs(270/360*PI2-PI2*0.75)-1.8));
-        radius=3;
-        fire.push(new FireworkPoint(x,y,speed,angle,'rgb(0,0,0)',radius,time,10,0.00005,ctx,invisibleTime, friction));
-        radius=3.1;
-        fire.push(new FireworkPoint(x,y,speed,angle,color,radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
-        radius=2;
-        fire.push(new FireworkPoint(x,y,speed,angle,'rgba(255,255,255,0.6)',radius,time,delayTime,0.00005,ctx,invisibleTime, friction));
     }
     else if(type==35){//z
         let colAngle=rand(360);

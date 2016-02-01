@@ -21,6 +21,20 @@ window.fps=30;
 class Main extends React.Component{
     constructor(){
         super();
+        this.firework=new FireworkManager();
+        this.wordAll=new WordManager();
+        this.fireworkRecord={//暫存的紀錄
+            saveRecord1:[],
+            saveRecord2:[],
+            endTime:0
+        };
+        this.fireworkSaveRecord={//已儲存的紀錄
+            saveRecord1:[],
+            saveRecord2:[],
+            endTime:0,
+            saveTime:null
+        };
+        this.ORIGIN_VIDEO='_Bq89eF-Pfs';
         this.state={
             sidebarOpen:true,//在一般畫面下切換P
             recordId:null,
@@ -36,7 +50,7 @@ class Main extends React.Component{
             alphabet:false,//true 英數模式 false 一般模式
             rocket:false,
             flag:0,
-            videoId:'_Bq89eF-Pfs',
+            videoId:this.ORIGIN_VIDEO,
             wordTime:1.5,
             videoStartTime:0,
             videoEndTime:0,
@@ -52,19 +66,6 @@ class Main extends React.Component{
             dialogHelpShow:false,
             dialogHintShow:false,
             dialogPlayerShow:false
-        };
-        this.firework=new FireworkManager();
-        this.wordAll=new WordManager();
-        this.fireworkRecord={//暫存的紀錄
-            saveRecord1:[],
-            saveRecord2:[],
-            endTime:0
-        };
-        this.fireworkSaveRecord={//已儲存的紀錄
-            saveRecord1:[],
-            saveRecord2:[],
-            endTime:0,
-            saveTime:null
         };
     }
 //---------------------Input-----------------------------
@@ -110,7 +111,7 @@ class Main extends React.Component{
     getWhichInput(){//得到是哪一個input為focus的
         return $('.word-input:focus')[0];
     }
-    inputCharacter(key){//輸入文字
+    inputCharacter(key,input){//輸入文字
         var nowValue = $(input).val();
         if(key==188 || key==191)
             $(input).val(nowValue);
@@ -272,6 +273,7 @@ class Main extends React.Component{
                 goOver:true
             });
             this.refs.player.loadVideo();
+            this.refs.player.play();
         }.bind(this),8300);
     }
     toggleSidebar(){//sidebar和footer的開啟或關閉
@@ -529,7 +531,10 @@ class Main extends React.Component{
         });
     }
     changeVideoId(video){
-        this.setState({videoId:video});
+        if(video!=='')
+            this.setState({videoId:video});
+        else
+            this.setState({videoId:this.ORIGIN_VIDEO});
     }
     playerDialogQuitClick(){
         this.toggleSidebar();

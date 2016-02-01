@@ -1,5 +1,6 @@
 'use strict';
 import {getFireworkPoints} from './fireworkpoints';
+import FIREWORK2_PROPERTIES from './fireworkproperties';
 
 export function FireworkManager(){
     this.firework1s=[];//firework1陣列
@@ -17,6 +18,8 @@ export function FireworkManager(){
     this.building.src='../img/building2.png';
     this.atmosphere=new Image();
     this.atmosphere.src='../img/atmosphere-blue.png';
+    this.dot=0;
+    this.DOTMAX=10000;
     
     this.changeAtmosphere=function(type){
         switch(type){
@@ -61,11 +64,16 @@ export function FireworkManager(){
                 i--;
             }
         }
-        if(this.firework2s.length!==0)
-            this.ctx.drawImage(this.atmosphere,0,this.$canvas.height()-this.$canvas.width()*13/30,this.$canvas.width(),this.$canvas.width()*13/30);
+        for(i=0;i<this.firework2s.length;i++){
+            if(!this.firework2s[i].checkDark()){
+                this.ctx.drawImage(this.atmosphere,0,this.$canvas.height()-this.$canvas.width()*13/30,this.$canvas.width(),this.$canvas.width()*13/30);
+                break;
+            }
+        }
         for(i=0;i<this.firework2s.length;i++){
             fire=this.firework2s[i];
             if(fire.checkFinish()){//移除畫完的
+                this.dot-=FIREWORK2_PROPERTIES[fire.type].NUM;
                 this.firework2s.splice(i,1);
                 i--;
             }
@@ -78,21 +86,24 @@ export function FireworkManager(){
     };
 
     this.shoot=function(type,ascii,fireworktype,pause){//0 don't buffer
-        if(!pause){//如果不是暫停模式的話
-            let newFire=new Firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx, this.time);
-            this.saveRecord1.push(newFire);
-            this.firework1s.push(newFire);
-        }
-        else{
-            this.alphabetBuffer.push(new Firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx, this.time));
-            this.ctx.font='200 40px Verdana';
-            if(fireworktype===0)
-                this.ctx.fillStyle='rgba(255,255,255,0.8)';
-            else
-                this.ctx.fillStyle='rgba(255,0,0,0.8)';
-            this.ctx.textAlign='center';
-            this.ctx.beginPath();
-            this.ctx.fillText(String.fromCharCode(ascii),this.curPos.x,this.curPos.y);
+        if(this.dot+FIREWORK2_PROPERTIES[type].NUM<=this.DOTMAX){
+            this.dot+=FIREWORK2_PROPERTIES[type].NUM;
+            if(!pause){//如果不是暫停模式的話
+                let newFire=new Firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx, this.time);
+                this.saveRecord1.push(newFire);
+                this.firework1s.push(newFire);
+            }
+            else{
+                this.alphabetBuffer.push(new Firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx, this.time));
+                this.ctx.font='200 40px Verdana';
+                if(fireworktype===0)
+                    this.ctx.fillStyle='rgba(255,255,255,0.8)';
+                else
+                    this.ctx.fillStyle='rgba(255,0,0,0.8)';
+                this.ctx.textAlign='center';
+                this.ctx.beginPath();
+                this.ctx.fillText(String.fromCharCode(ascii),this.curPos.x,this.curPos.y);
+            }
         }
     };
 
@@ -163,8 +174,9 @@ function Firework2(x,y,type,ctx,time){
     this.startPos=new vector(x,y);
     this.fireworkPoints=[];
     this.startTime=time;
+    this.type=type;
     this.init=function(){
-        var tmp=getFireworkPoints(this.startPos.x,this.startPos.y,type,ctx);
+        var tmp=getFireworkPoints(this.startPos.x,this.startPos.y,this.type,ctx);
         let color=tmp[0].color;
         let trueState=true;
         while(trueState==true){
@@ -180,9 +192,16 @@ function Firework2(x,y,type,ctx,time){
             }
         }
     };
-    this.checkFinish=function(){//檢查是否
-        //TODO endtime
-        if(this.fireworkPoints[0] && this.fireworkPoints[0].time>=1600)//1600是直接取一個大的值，比所有煙火的時間都還來的長
+    this.checkDark=function(){//檢查是否暗掉
+        if(this.fireworkPoints[0] && this.fireworkPoints[0].time>=FIREWORK2_PROPERTIES[this.type].TIME+50)
+            return true;
+        else
+            return false;
+    };
+    this.checkFinish=function(){//檢查是否結束
+        if(FIREWORK2_PROPERTIES[this.type].FINISH_TIME && this.fireworkPoints[0] && this.fireworkPoints[0].time>=FIREWORK2_PROPERTIES[this.type].FINISH_TIME+100)//if finish_time !== undefined
+            return true;
+        else if(!FIREWORK2_PROPERTIES[this.type].FINISH_TIME && this.fireworkPoints[0] && this.fireworkPoints[0].time>=FIREWORK2_PROPERTIES[this.type].TIME+100)//if finish_time === undefined
             return true;
         else
             return false;
@@ -240,6 +259,7 @@ export function FireworkPoint(x,y,speed,angle,color,radius,timeMax,delay,acceler
     this.invisibleTimePtr=this.invisibleTime;//隱形時間的指標
     this.timeInterval=400/window.fps;//間隔
     this.color=color;
+
     this.update=function(){
         if(this.delayPtr>0)
             this.delayPtr-=this.timeInterval;
@@ -329,3 +349,6 @@ export function WordManager(ctx){
         }
     };
 }
+
+
+
