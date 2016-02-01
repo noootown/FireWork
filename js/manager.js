@@ -65,7 +65,7 @@ export function FireworkManager(){
             }
         }
         for(i=0;i<this.firework2s.length;i++){
-            if(!this.firework2s[i].checkDark()){
+            if(!this.firework2s[i].checkDark() && this.firework2s[i].checkStart()){
                 this.ctx.drawImage(this.atmosphere,0,this.$canvas.height()-this.$canvas.width()*13/30,this.$canvas.width(),this.$canvas.width()*13/30);
                 break;
             }
@@ -175,6 +175,7 @@ function Firework2(x,y,type,ctx,time){
     this.fireworkPoints=[];
     this.startTime=time;
     this.type=type;
+    this.firstPoint=0;//第一個開始發亮的點，用來判斷要不要亮背景
     this.init=function(){
         var tmp=getFireworkPoints(this.startPos.x,this.startPos.y,this.type,ctx);
         let color=tmp[0].color;
@@ -191,6 +192,20 @@ function Firework2(x,y,type,ctx,time){
                 break;
             }
         }
+        let fire=this.fireworkPoints;
+        for(let i=0;i<this.fireworkPoints.length;i++){
+            if(fire[i].delay+fire[i].invisibleTime<fire[this.firstPoint].delay+fire[this.firstPoint].invisibleTime){
+                this.firstPoint=i;
+                if(fire[i].delay+fire[i].invisibleTime===0)
+                    break;
+            }
+        }
+    };
+    this.checkStart=function(){//檢查是否開始畫
+        if(this.fireworkPoints[0] && this.fireworkPoints[this.firstPoint].delayPtr<=0 && this.fireworkPoints[this.firstPoint].invisibleTimePtr<=0)
+            return true;
+        else
+            return false;
     };
     this.checkDark=function(){//檢查是否暗掉
         if(this.fireworkPoints[0] && this.fireworkPoints[0].time>=FIREWORK2_PROPERTIES[this.type].TIME+50)
