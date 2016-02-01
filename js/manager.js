@@ -15,9 +15,9 @@ export function FireworkManager(){
     this.ctx;
     this.alphabetBuffer=[];//在暫停模式下，儲存的煙火
     this.building=new Image();
-    this.building.src='../img/building2.png';
+    this.building.src='img/building2.png';
     this.atmosphere=new Image();
-    this.atmosphere.src='../img/atmosphere-blue.png';
+    this.atmosphere.src='img/atmosphere-blue.png';
     this.dot=0;
     this.DOTMAX=10000;
     
