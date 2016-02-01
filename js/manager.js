@@ -18,21 +18,23 @@ export function FireworkManager(){
     this.building.src='img/building2.png';
     this.atmosphere=new Image();
     this.atmosphere.src='img/atmosphere-blue.png';
+    this.atmosphereType=0;
     this.dot=0;
-    this.DOTMAX=10000;
+    this.DOTMAX=8000;
     
     this.changeAtmosphere=function(type){
         switch(type){
         case 0:
-            this.atmosphere.src='../img/atmosphere-blue.png';//0066FF
+            this.atmosphere.src='img/atmosphere-blue.png';//#0066FF
             break;
         case 1:
-            this.atmosphere.src='../img/atmosphere-pink.png';//#FF6464
+            this.atmosphere.src='img/atmosphere-pink.png';//#FF6464
             break;
         case 2:
-            this.atmosphere.src='../img/atmosphere-purple.png';//#9955FF
+            this.atmosphere.src='img/atmosphere-purple.png';//#9955FF
             break;
         }
+        this.atmosphereType=type;
     };
 
     this.init=function(replay){

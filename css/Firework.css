@@ -735,6 +735,9 @@ bottom:0;
 right:0;
 
 }
+.settingWordDiv.hide{
+    display:none;
+}
 .settingWordDiv *{  
 font-size:20px;
 color:#333333;

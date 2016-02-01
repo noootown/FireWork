@@ -10,7 +10,7 @@ var FIREWORK2_PROPERTIES={
     },
     1:{
         TIME:1200,
-        NUM:200
+        NUM:400
     },
     2:{
         TIME:300,
@@ -48,7 +48,7 @@ var FIREWORK2_PROPERTIES={
     },
     10:{
         TIME:900,
-        NUM:91
+        NUM:273
     },
     11:{
         TIME:700,
@@ -146,7 +146,7 @@ var FIREWORK2_PROPERTIES={
     32:{
         FINISH_TIME:2400,
         TIME:1200,
-        NUM:540
+        NUM:1080
     },
     33:{
         TIME:500,

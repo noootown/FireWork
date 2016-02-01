@@ -32,7 +32,8 @@ class Main extends React.Component{
             saveRecord1:[],
             saveRecord2:[],
             endTime:0,
-            saveTime:null
+            saveTime:null,
+            atmosphereType:0
         };
         this.ORIGIN_VIDEO='_Bq89eF-Pfs';
         this.state={
@@ -146,8 +147,8 @@ class Main extends React.Component{
         }
     }
     stopRecord(){//按F4的反應，選單或側選單的開關
-        if(!this.state.modal && !this.state.replay && this.state.goOver){
-            if(this.state.pressRecord){
+        if(!this.state.modal && !this.state.replay){
+            if(this.state.pressRecord && this.state.goOver){
                 this.setState({
                     pauseRecord:true,
                     modal:true,
@@ -156,7 +157,7 @@ class Main extends React.Component{
                 });
                 this.refs.player.pause();
             }
-            else if(!$('#word-input').is(':focus'))
+            else if(!this.state.pressRecord && !$('#word-input').is(':focus'))
                 this.setState({sidebarOpen:!this.state.sidebarOpen});
         }
     }
@@ -249,6 +250,7 @@ class Main extends React.Component{
             pressRecord:true,
             goOver:false
         });
+        this.refs.player.stop();
         this.refs.timer.timerCountDown();//開始倒數計時
         clearTimeout(this.state.recordId);//有可能之前有未完的setTimeout，把它clear掉。
         clearTimeout(this.state.recordId2);
@@ -303,6 +305,7 @@ class Main extends React.Component{
     saveDialogReplayClick(){//回放
         this.fireworkRecord.saveRecord1=this.firework.saveRecord1;
         this.fireworkRecord.saveRecord2=this.firework.saveRecord2;
+        this.refs.player.stop();
         this.setState({
             replay:true,
             pauseRecord:false,
@@ -323,6 +326,7 @@ class Main extends React.Component{
                 self.setState({startAction:true});
             },1500);
             self.refs.player.loadVideo();
+            self.refs.player.play();
         },500);//按下按鈕後過500ms才開始回放
     }
 
@@ -423,9 +427,15 @@ class Main extends React.Component{
             replay:true,
             dialogLoadShow:false
         });
+        this.refs.player.stop();
         this.resetRecordState();
         this.firework.firework1s=[];
         this.firework.firework2s=[];
+        this.firework.changeAtmosphere(this.fireworkSaveRecord.atmosphereType);
+        this.setState({
+            atmosphere:this.fireworkSaveRecord.atmosphereType
+        });
+
         var self=this;
         setTimeout(function(){
             self.pushRecordToReplay(self.fireworkSaveRecord,0,0,0,1);
@@ -435,6 +445,7 @@ class Main extends React.Component{
                 });
             },1500);
             self.refs.player.loadVideo();
+            self.refs.player.play();
         },500);
     }
     uploadDialogUploadClick(){
@@ -455,6 +466,7 @@ class Main extends React.Component{
         else    
             this.fireworkSaveRecord.endTime=this.fireworkRecord.endTime;
         this.fireworkSaveRecord.saveTime=new Date();
+        this.fireworkSaveRecord.atmosphereType=this.firework.atmosphereType;
         this.setState({
             dialogUploadShow:false,
             pressRecord:false
@@ -776,7 +788,7 @@ class Timer extends Component{//倒數計時器
 class SettingWord extends Component{//下面那一排提示說明
     render(){
         return(
-                <div className={'settingWordDiv'}>
+                <div className={this.props.settingWord?'settingWordDiv':'settingWordDiv hide'}>
                     <h3 className={'settingWord settingWordKey'}>空白鍵</h3>
                     {this.props.alphabet===true?<h3 className={'settingWord'}>煙火</h3>:<h3 className={'settingWord active'}>煙火</h3>}
                     <h3 className={'settingWord'}>/</h3>
