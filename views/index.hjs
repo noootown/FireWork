@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>{{ title }}</title>
+        <link rel='stylesheet' href='css/Firework.css' />
+        <script src="lib/jquery-2.1.4.min.js"></script>
+        <script src="js/bundle.min.js"></script>
+    </head>
+    <body>
+        <div id="content">
+        </div>
+    </body>
+</html>
