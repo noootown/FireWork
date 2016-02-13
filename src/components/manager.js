@@ -123,14 +123,14 @@ function vector(x,y){
 
 function Firework1(x,y,type,rocketOrNot,ctx,startTime){
     this.type=type;//哪一種煙火
-    this.startPos=new vector(x,$(window).height());//開始的位置
-    this.endPos=new vector(x,y);
-    this.curPos=new vector(this.startPos.x,this.startPos.y);//目前位置
     this.time=Math.random()*480/window.fps+480/window.fps;//在空中發射的時間
-    this.velocity=new vector( (this.endPos.x-this.startPos.x)/this.time , (this.endPos.y-this.startPos.y)/this.time);
     this.color='#FFFFFF';
     this.rocketOrNot=rocketOrNot;//是否有火箭，如果沒有，就隱形
     this.startTime=startTime;//開始的時間
+    this.startPos=new vector(x,$(window).height());//開始的位置
+    this.endPos=new vector(x,y);
+    this.curPos=new vector(this.startPos.x,this.startPos.y);//目前位置
+    this.velocity=new vector( (this.endPos.x-this.startPos.x)/this.time , (this.endPos.y-this.startPos.y)/this.time);
     this.update=function(){
         if(this.curPos.y>this.endPos.y){
             this.curPos.x+=this.velocity.x;
@@ -173,10 +173,10 @@ function Firework1(x,y,type,rocketOrNot,ctx,startTime){
     };
 }
 function Firework2(x,y,type,ctx,time){
-    this.startPos=new vector(x,y);
-    this.fireworkPoints=[];
     this.startTime=time;
     this.type=type;
+    this.startPos=new vector(x,y);
+    this.fireworkPoints=[];
     this.firstPoint=0;//第一個開始發亮的點，用來判斷要不要亮背景
     this.init=function(){
         var tmp=getFireworkPoints(this.startPos.x,this.startPos.y,this.type,ctx);

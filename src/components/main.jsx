@@ -14,7 +14,7 @@ window.requestAnimFrame = (function(){
         window.msRequestAnimationFrame || //IE
         function(callback){ 
             window.setTimeout(callback, 1000 / 60); 
-        }; 
+        };
 })(); 
 window.fps=30;
 
@@ -449,19 +449,54 @@ class Main extends React.Component{
         },500);
     }
     uploadDialogUploadClick(){
-        //this.state.fireworkRecord.saveRecord1=Main.defaultProps.myInputManager.firework.saveRecord1;
-        //this.state.fireworkRecord.saveRecord2=Main.defaultProps.myInputManager.firework.saveRecord2;
-        //this.refs.upLoadDialog.closeDialog();
-        //this.resetRecordState();
-        //this.toggleSidebar();
-        //this.state.pressRecord=false;
-        //TODO
-        //ajax
+        this.fireworkSaveRecord.saveRecord1=this.firework.saveRecord1;
+        this.fireworkSaveRecord.saveRecord2=this.firework.saveRecord2;
+        if(this.fireworkRecord.endTime===0)//代表沒有進過replay mode，直接save
+            this.fireworkSaveRecord.endTime=this.firework.time;
+        else    
+            this.fireworkSaveRecord.endTime=this.fireworkRecord.endTime;
+        this.fireworkSaveRecord.saveTime=new Date();
+        this.fireworkSaveRecord.atmosphereType=this.firework.atmosphereType;
+        let ajaxData=$.extend(true,{},this.fireworkSaveRecord);
+        ajaxData.cardname=$('#uploadCardName-input').val();
+        ajaxData.password=$('#uploadPassword-input').val();
+        //console.log(this.fireworkSaveRecord);
+        //console.log(ajaxData);
+        let self=this;
+        function replacer(key,value){
+            if (typeof value==='function')
+                return undefined;
+            return value;
+        }
+        console.log(JSON.parse(JSON.stringify(ajaxData,replacer)));
+        $.ajax({
+            url:'./api/record',
+            type:'POST',
+            data:JSON.stringify(ajaxData,replacer),
+            dataType:'json',
+            contentType:'application/json',
+            success:function(){
+                //console.log('haha');
+                //self.setState({
+                    //dialogUploadShow:false,
+                    //pressRecord:false
+                //});
+                //self.resetRecordState();
+                //self.toggleSidebar();
+                //self.refs.centerShowWords.showRecordSave();
+                
+                ////reset暫存
+                //self.fireworkRecord.saveRecord1=[];
+                //self.fireworkRecord.saveRecord2=[];
+                //self.fireworkRecord.endTime=0;
+                //self.firework.endTime=0;
+            }
+        });
     }
     uploadDialogQuitClick(){//不上傳只儲存在local
         this.fireworkSaveRecord.saveRecord1=this.firework.saveRecord1;
         this.fireworkSaveRecord.saveRecord2=this.firework.saveRecord2;
-        if(this.fireworkRecord.endTime===0)//代表沒有進replay mode，直接save
+        if(this.fireworkRecord.endTime===0)//代表沒有進過replay mode，直接save
             this.fireworkSaveRecord.endTime=this.firework.time;
         else    
             this.fireworkSaveRecord.endTime=this.fireworkRecord.endTime;

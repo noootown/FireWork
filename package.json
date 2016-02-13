@@ -8,6 +8,10 @@
   },
   "author": "noootown",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/noootown/FireWork.git"
+  },
   "paths": {
     "app": "./src/components/app.jsx"
   },
@@ -34,6 +38,7 @@
     "cookie-parser": "^1.4.1",
     "express": "^4.13.4",
     "hjs": "0.0.6",
+    "jquery": "^2.2.0",
     "mongoose": "^4.4.3",
     "morgan": "^1.6.1",
     "node-jsx": "^0.13.3",
