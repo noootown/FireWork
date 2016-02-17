@@ -30,7 +30,7 @@ export class LoadDialog extends Component{
                      </span>
                      <span className={'dialogLoad-inputform'}>
                          <h3 className={'dialogLoadWord'}>Password:</h3>
-                         <input id={'password-input'} className={'word-input'}/>
+                         <input type="password" id={'password-input'} className={'word-input'}/>
                      </span>
                      <h3 className={'dialogLoadSmallTitle'}>Local</h3>
                      <span className={'dialogLoad-inputform'}>
@@ -63,7 +63,7 @@ export class UploadDialog extends Component{
                     </span>
                     <span className={'dialogUploadSpan'}>
                         <h3 className={'dialogUploadWord'}>Password:</h3>
-                        <input id={'uploadPassword-input'} className={'word-input'}/>
+                        <input type="password" id={'uploadPassword-input'} className={'word-input'}/>
                     </span>
                     <span className={'dialogUploadBtnSpan'}>
                         <button className={'dialogUploadBtn dialogUploadQuitBtn'} onClick={this.props.quitClick}>Don't Upload</button>

@@ -25,15 +25,9 @@ router.use(function(req, res, next) {
     next();
 });
 
-/* GET home page. */
-router.get('/', function(req, res) {
-    res.json({ message: 'hooray! welcome to our api!'});
-});
-
 router.route('/record')
     .post(function(req, res) {
-        //var record = new FireworkDB({name:req.body.name});      // create a new instance of the Bear model
-        var record = new FireworkDB({   // create a new instance of the Bear model
+        var record = new FireworkDB({   // create a new instance of the Firework model
             cardname:req.body.cardname,
             password:req.body.password,
             endTime:req.body.endTime,
@@ -42,32 +36,36 @@ router.route('/record')
         //saveRecord1
         req.body.saveRecord1.forEach(function(element){
             record.saveRecord1.push({
+                x:element.x,
+                y:element.y,
                 type:element.type,
-                time:element.time,
-                color:element.color,
                 rocketOrNot:element.rocketOrNot,
-                startTime:element.startTime,
-                startPos:{x:element.startPos.x,y:element.startPos.y},
-                endPos:{x:element.endPos.x,y:element.endPos.y},
-                velocity:{x:element.velocity.x,y:element.velocity.y}
+                time:element.time,
+                startTime:element.startTime
             });
         });
         req.body.saveRecord2.forEach(function(element){
             var tmp=[];
-            element.fireworkPoints.forEach(function(element1){
+            element.fireworkPoints.forEach(function(element){
                 tmp.push({
-                    startPos:{x:element1.startPos.x,y:element1.startPos.y},
-                    startSpeed:{x:element1.startSpeed.x,y:element1.startSpeed.y},
-                    time:element1.time,
-                    delay:element1.delay,
-                    invisibleTime:element1.invisibleTime,
-                    color:element1.color
+                    x:element.x,
+                    y:element.y,
+                    angle:element.angle,
+                    velocity:element.velocity,
+                    color:element.color,
+                    radius:element.radius,
+                    timeMax:element.timeMax,
+                    delay:element.delay,
+                    acceler:element.acceler,
+                    invisibleTime:element.invisibleTime,
+                    friction:element.friction
                 });
             });
             record.saveRecord2.push({
+                x:element.x,
+                y:element.y,
                 startTime:element.startTime,
                 type:element.type,
-                startPos:{x:element.startPos.x,y:element.startPos.y},
                 fireworkPoints:tmp
             });
         });
@@ -75,9 +73,23 @@ router.route('/record')
             if (err)
                 res.send(err);
             else
-                res.json({message: 'Bear created!'});
+                res.json({message: 'Firework created!'});
         });
         
+    });
+router.route('/load')
+    .post(function(req, res) {
+        var query = FireworkDB.where({
+            cardname:req.body.cardname,
+            password:req.body.password
+        });
+        query.findOne(function(err,firework){
+            if (err) 
+                res.send(err);
+            else if (firework){
+                res.json(firework);
+            }
+        });
     });
 
 

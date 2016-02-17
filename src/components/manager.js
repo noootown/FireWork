@@ -55,7 +55,13 @@ export function FireworkManager(){
                 fire.draw();
             else{//移除第一段火箭，並新增第二段煙火
                 if(!replay){
-                    let newFire= new Firework2(fire.endPos.x,fire.endPos.y,fire.type,this.ctx,this.time);
+                    let newFire= new Firework2({
+                        x:fire.endPos.x,
+                        y:fire.endPos.y,
+                        type:fire.type,
+                        ctx:this.ctx,
+                        startTime:this.time
+                    });
                     newFire.init();
                     this.firework2s.push(newFire);
                     this.saveRecord2.push(newFire);
@@ -90,13 +96,20 @@ export function FireworkManager(){
     this.shoot=function(type,ascii,fireworktype,pause){//0 don't buffer
         if(this.dot+FIREWORK2_PROPERTIES[type].NUM<=this.DOTMAX){
             this.dot+=FIREWORK2_PROPERTIES[type].NUM;
+            let newFire=new Firework1({
+                x:this.curPos.x,
+                y:this.curPos.y,
+                type:type,
+                rocketOrNot:this.rocketOrNot,
+                ctx:this.ctx,
+                startTime:this.time
+            });
             if(!pause){//如果不是暫停模式的話
-                let newFire=new Firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx, this.time);
                 this.saveRecord1.push(newFire);
                 this.firework1s.push(newFire);
             }
             else{
-                this.alphabetBuffer.push(new Firework1(this.curPos.x,this.curPos.y,type,this.rocketOrNot,this.ctx, this.time));
+                this.alphabetBuffer.push(newFire);
                 this.ctx.font='200 40px Verdana';
                 if(fireworktype===0)
                     this.ctx.fillStyle='rgba(255,255,255,0.8)';
@@ -121,187 +134,216 @@ function vector(x,y){
     };
 }
 
-function Firework1(x,y,type,rocketOrNot,ctx,startTime){
-    this.type=type;//哪一種煙火
-    this.time=Math.random()*480/window.fps+480/window.fps;//在空中發射的時間
+export function Firework1(option){
+    //要存的：
+    this.x=option.x || 0;
+    this.y=option.y || 0;
+    this.type=option.type || 0;//哪一種煙火
+    this.rocketOrNot=option.rocketOrNot || true;//是否有火箭，如果沒有，就隱形
+    this.time=option.time || Math.random()*480/window.fps+480/window.fps;//在空中發射的時間
+    this.startTime=option.startTime || 0;//開始的時間
+    
+    //不用存的
     this.color='#FFFFFF';
-    this.rocketOrNot=rocketOrNot;//是否有火箭，如果沒有，就隱形
-    this.startTime=startTime;//開始的時間
-    this.startPos=new vector(x,$(window).height());//開始的位置
-    this.endPos=new vector(x,y);
+    this.startPos=new vector(this.x,$(window).height());//開始的位置
+    this.endPos=new vector(this.x,this.y);
     this.curPos=new vector(this.startPos.x,this.startPos.y);//目前位置
     this.velocity=new vector( (this.endPos.x-this.startPos.x)/this.time , (this.endPos.y-this.startPos.y)/this.time);
-    this.update=function(){
-        if(this.curPos.y>this.endPos.y){
-            this.curPos.x+=this.velocity.x;
-            this.curPos.y+=this.velocity.y;
-            return true;
-        }
-        else
-            return false;
-    };
-
-    this.draw=function(){
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(this.curPos.x,this.curPos.y);
-        ctx.lineTo(this.curPos.x-0.8*this.velocity.x,this.curPos.y-0.8*this.velocity.y);
-        ctx.stroke();
-        ctx.closePath();
-
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.strokeStyle = '#FFE0A4';
-        ctx.moveTo(this.curPos.x-0.8*this.velocity.x,this.curPos.y-0.8*this.velocity.y);
-        ctx.lineTo(this.curPos.x-2*this.velocity.x,this.curPos.y-2*this.velocity.y);
-        ctx.stroke();
-        ctx.closePath();
-
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        for(var i=0;i<5;i++){
-            ctx.strokeStyle = '#CE7A38';
-            ctx.moveTo(this.curPos.x-(2+0.4*i)*this.velocity.x,this.curPos.y-(2+0.4*i)*this.velocity.y);
-            ctx.lineTo(this.curPos.x-(2.2+0.4*i)*this.velocity.x,this.curPos.y-(2.2+0.4*i)*this.velocity.y);
-        }
-        ctx.stroke();
-        ctx.closePath();
-    };
-    this.reset=function(){
-        this.curPos=new vector(this.startPos.x,this.startPos.y);
-    };
+    
+    this.ctx=option.ctx;
 }
-function Firework2(x,y,type,ctx,time){
-    this.startTime=time;
-    this.type=type;
-    this.startPos=new vector(x,y);
+
+Firework1.prototype.update=function(){
+    if(this.curPos.y>this.endPos.y){
+        this.curPos.x+=this.velocity.x;
+        this.curPos.y+=this.velocity.y;
+        return true;
+    }
+    else
+        return false;
+};
+
+Firework1.prototype.draw=function(){
+    this.ctx.strokeStyle = '#FFFFFF';
+    this.ctx.lineWidth = 3;
+    this.ctx.beginPath();
+    this.ctx.moveTo(this.curPos.x,this.curPos.y);
+    this.ctx.lineTo(this.curPos.x-0.8*this.velocity.x,this.curPos.y-0.8*this.velocity.y);
+    this.ctx.stroke();
+    this.ctx.closePath();
+
+    this.ctx.lineWidth = 2;
+    this.ctx.beginPath();
+    this.ctx.strokeStyle = '#FFE0A4';
+    this.ctx.moveTo(this.curPos.x-0.8*this.velocity.x,this.curPos.y-0.8*this.velocity.y);
+    this.ctx.lineTo(this.curPos.x-2*this.velocity.x,this.curPos.y-2*this.velocity.y);
+    this.ctx.stroke();
+    this.ctx.closePath();
+
+    this.ctx.lineWidth = 1;
+    this.ctx.beginPath();
+    for(var i=0;i<5;i++){
+        this.ctx.strokeStyle = '#CE7A38';
+        this.ctx.moveTo(this.curPos.x-(2+0.4*i)*this.velocity.x,this.curPos.y-(2+0.4*i)*this.velocity.y);
+        this.ctx.lineTo(this.curPos.x-(2.2+0.4*i)*this.velocity.x,this.curPos.y-(2.2+0.4*i)*this.velocity.y);
+    }
+    this.ctx.stroke();
+    this.ctx.closePath();
+};
+
+Firework1.prototype.reset=function(){
+    this.curPos=new vector(this.startPos.x,this.startPos.y);
+};
+
+export function Firework2(option){
+    //要存的
+    this.x=option.x || 0;
+    this.y=option.y || 0;
+    this.type=option.type || 0;
+    this.startTime=option.startTime || 0;
     this.fireworkPoints=[];
+
+    //不用存的
+    this.startPos=new vector(option.x,option.y);
     this.firstPoint=0;//第一個開始發亮的點，用來判斷要不要亮背景
-    this.init=function(){
-        var tmp=getFireworkPoints(this.startPos.x,this.startPos.y,this.type,ctx);
-        let color=tmp[0].color;
-        let trueState=true;
-        while(trueState==true){
-            color=tmp[0].color;
-            for(let i=0;i<tmp.length;i++)
-                if(tmp[i].color==color){
-                    this.fireworkPoints.push(tmp[i]);
-                    tmp.splice(i,1);
-                    i--;
-                }
-            if(tmp.length==0){
-                break;
-            }
-        }
-        let fire=this.fireworkPoints;
-        for(let i=0;i<this.fireworkPoints.length;i++){
-            if(fire[i].delay+fire[i].invisibleTime<fire[this.firstPoint].delay+fire[this.firstPoint].invisibleTime){
-                this.firstPoint=i;
-                if(fire[i].delay+fire[i].invisibleTime===0)
-                    break;
-            }
-        }
-    };
-    this.checkStart=function(){//檢查是否開始畫
-        if(this.fireworkPoints[0] && this.fireworkPoints[this.firstPoint].delayPtr<=0 && this.fireworkPoints[this.firstPoint].invisibleTimePtr<=0)
-            return true;
-        else
-            return false;
-    };
-    this.checkDark=function(){//檢查是否暗掉
-        if(this.fireworkPoints[0] && this.fireworkPoints[0].time>=FIREWORK2_PROPERTIES[this.type].TIME+50)
-            return true;
-        else
-            return false;
-    };
-    this.checkFinish=function(){//檢查是否結束
-        if(FIREWORK2_PROPERTIES[this.type].FINISH_TIME && this.fireworkPoints[0] && this.fireworkPoints[0].time>=FIREWORK2_PROPERTIES[this.type].FINISH_TIME+100)//if finish_time !== undefined
-            return true;
-        else if(!FIREWORK2_PROPERTIES[this.type].FINISH_TIME && this.fireworkPoints[0] && this.fireworkPoints[0].time>=FIREWORK2_PROPERTIES[this.type].TIME+100)//if finish_time === undefined
-            return true;
-        else
-            return false;
-    };
-    this.update=function(){
-        for(let i=0;i<this.fireworkPoints.length;i++){
-            this.fireworkPoints[i].update();
-        }
-    };
-    this.draw=function(){
-        ctx.beginPath();
-        ctx.fillStyle='#000000';
-        let ptr=0;
-        for(let i=0;i<this.fireworkPoints.length;i++){
-            if(this.fireworkPoints[i].drawable()){
-                if(ctx.fillStyle=='#000000'){
-                    ctx.fillStyle=this.fireworkPoints[i].color;
-                    ptr=i;
-                }
-                else if(this.fireworkPoints[i].color!==this.fireworkPoints[ptr].color){
-                    ctx.fill();
-                    ctx.closePath();
-                    ctx.beginPath();
-                    ctx.fillStyle=this.fireworkPoints[i].color;
-                    ptr=i;
-                }
-                this.fireworkPoints[i].draw();
-            }
-        }
-        ctx.fill();
-        ctx.closePath();
-    };
-    this.reset=function(){//reset fireworkpoint會隨時間而改變的值
-        for(let i=0;i<this.fireworkPoints.length;i++){
-            let fire=this.fireworkPoints[i];
-            fire.time=0;
-            fire.delayPtr=fire.delay;
-            fire.curPos.x=fire.startPos.x;
-            fire.curPos.y=fire.startPos.y;
-            fire.speed.x=fire.startSpeed.x;
-            fire.speed.y=fire.startSpeed.y;
-            fire.invisibleTimePtr=fire.invisibleTime;
-        }
-    };
+    this.ctx=option.ctx;
 }
-export function FireworkPoint(x,y,speed,angle,color,radius,timeMax,delay,acceler,ctx,invisibleTime,friction){//每一個煙火點
+
+Firework2.prototype.init=function(){
+    var tmp=getFireworkPoints(this.startPos.x,this.startPos.y,this.type,this.ctx);
+    let color=tmp[0].color;
+    let trueState=true;
+    while(trueState==true){
+        color=tmp[0].color;
+        for(let i=0;i<tmp.length;i++)
+            if(tmp[i].color==color){
+                this.fireworkPoints.push(tmp[i]);
+                tmp.splice(i,1);
+                i--;
+            }
+        if(tmp.length==0){
+            break;
+        }
+    }
+    let fire=this.fireworkPoints;
+    for(let i=0;i<this.fireworkPoints.length;i++){
+        if(fire[i].delay+fire[i].invisibleTime<fire[this.firstPoint].delay+fire[this.firstPoint].invisibleTime){
+            this.firstPoint=i;
+            if(fire[i].delay+fire[i].invisibleTime===0)
+                break;
+        }
+    }
+};
+Firework2.prototype.checkStart=function(){//檢查是否開始畫
+    if(this.fireworkPoints[0] && this.fireworkPoints[this.firstPoint].delayPtr<=0 && this.fireworkPoints[this.firstPoint].invisibleTimePtr<=0)
+        return true;
+    else
+        return false;
+};
+Firework2.prototype.checkDark=function(){//檢查是否暗掉
+    if(this.fireworkPoints[0] && this.fireworkPoints[0].time>=FIREWORK2_PROPERTIES[this.type].TIME+50)
+        return true;
+    else
+        return false;
+};
+Firework2.prototype.checkFinish=function(){//檢查是否結束
+    if(FIREWORK2_PROPERTIES[this.type].FINISH_TIME && this.fireworkPoints[0] && this.fireworkPoints[0].time>=FIREWORK2_PROPERTIES[this.type].FINISH_TIME+100)//if finish_time !== undefined
+        return true;
+    else if(!FIREWORK2_PROPERTIES[this.type].FINISH_TIME && this.fireworkPoints[0] && this.fireworkPoints[0].time>=FIREWORK2_PROPERTIES[this.type].TIME+100)//if finish_time === undefined
+        return true;
+    else
+        return false;
+};
+Firework2.prototype.update=function(){
+    for(let i=0;i<this.fireworkPoints.length;i++){
+        this.fireworkPoints[i].update();
+    }
+};
+Firework2.prototype.draw=function(){
+    this.ctx.beginPath();
+    this.ctx.fillStyle='#000000';
+    let ptr=0;
+    for(let i=0;i<this.fireworkPoints.length;i++){
+        if(this.fireworkPoints[i].drawable()){
+            if(this.ctx.fillStyle=='#000000'){
+                this.ctx.fillStyle=this.fireworkPoints[i].color;
+                ptr=i;
+            }
+            else if(this.fireworkPoints[i].color!==this.fireworkPoints[ptr].color){
+                this.ctx.fill();
+                this.ctx.closePath();
+                this.ctx.beginPath();
+                this.ctx.fillStyle=this.fireworkPoints[i].color;
+                ptr=i;
+            }
+            this.fireworkPoints[i].draw();
+        }
+    }
+    this.ctx.fill();
+    this.ctx.closePath();
+};
+Firework2.prototype.reset=function(){//reset fireworkpoint會隨時間而改變的值
+    for(let i=0;i<this.fireworkPoints.length;i++){
+        let fire=this.fireworkPoints[i];
+        fire.time=0;
+        fire.delayPtr=fire.delay;
+        fire.curPos.x=fire.startPos.x;
+        fire.curPos.y=fire.startPos.y;
+        fire.speed.x=fire.startSpeed.x;
+        fire.speed.y=fire.startSpeed.y;
+        fire.invisibleTimePtr=fire.invisibleTime;
+    }
+};
+
+export function FireworkPoint(x,y,velocity,angle,color,radius,timeMax,delay,acceler,ctx,invisibleTime,friction){//每一個煙火點
+    //要存的
+    this.x=x;
+    this.y=y;
+    this.angle=angle;
+    this.velocity=velocity;//速率大小
+    this.color=color;
+    this.radius=radius;
+    this.timeMax=timeMax;
+    this.delay=delay;//延遲
+    this.acceler=acceler;
+    this.invisibleTime=invisibleTime;//隱形的時間
+    this.friction=friction;
+
+    //不用存的
     this.startPos=new vector(x,y);
     this.curPos=new vector(x,y);//目前點的位置
-    this.startSpeed=new vector(speed*Math.cos(angle),speed*Math.sin(angle));
-    this.speed=new vector(speed*Math.cos(angle),speed*Math.sin(angle));//目前速度
+    this.startSpeed=new vector(velocity*Math.cos(this.angle),velocity*Math.sin(this.angle));
+    this.speed=new vector(velocity*Math.cos(this.angle),velocity*Math.sin(this.angle));//目前速度
     this.time=0;
-    this.delay=delay;//延遲
     this.delayPtr=this.delay;//延遲的指標，會隨時間而減少
-    this.invisibleTime=invisibleTime;//隱形的時間
     this.invisibleTimePtr=this.invisibleTime;//隱形時間的指標
     this.timeInterval=400/window.fps;//間隔
-    this.color=color;
-
-    this.update=function(){
-        if(this.delayPtr>0)
-            this.delayPtr-=this.timeInterval;
-        else{
-            this.curPos.x=this.curPos.x+this.speed.x*this.timeInterval;//改變位置
-            this.curPos.y=this.curPos.y+this.speed.y*this.timeInterval;
-            this.time+=this.timeInterval;
-            if( (this.speed.x>0 && this.speed.x<friction*this.speed.x*this.timeInterval) || (this.speed.x<0 && this.speed.x>friction*this.speed.x*this.timeInterval) || this.speed.x==0 )
-                this.speed.x=0;//速度變0
-            else
-                this.speed.x-=friction*this.speed.x*this.timeInterval;//改變速度
-            if(friction*this.speed.y<acceler*2)//尚未達到終端速度
-                this.speed.y=this.speed.y-friction*this.speed.y*10+acceler*2*this.timeInterval;
-            if(this.invisibleTimePtr>0)
-                this.invisibleTimePtr-=this.timeInterval;
-        }
-    };
-    this.draw=function(){
-        ctx.moveTo(this.curPos.x,this.curPos.y);
-        ctx.arc(this.curPos.x,this.curPos.y,radius,0,Math.PI*2,true);
-    };
-    this.drawable=function(){
-        return !(this.time>=timeMax || this.delayPtr>0 || this.invisibleTimePtr>0);
-    };
+    this.ctx=ctx;
 }
+FireworkPoint.prototype.update=function(){
+    if(this.delayPtr>0)
+        this.delayPtr-=this.timeInterval;
+    else{
+        this.curPos.x=this.curPos.x+this.speed.x*this.timeInterval;//改變位置
+        this.curPos.y=this.curPos.y+this.speed.y*this.timeInterval;
+        this.time+=this.timeInterval;
+        if( (this.speed.x>0 && this.speed.x<this.friction*this.speed.x*this.timeInterval) || (this.speed.x<0 && this.speed.x>this.friction*this.speed.x*this.timeInterval) || this.speed.x==0 )
+            this.speed.x=0;//速度變0
+        else
+            this.speed.x-=this.friction*this.speed.x*this.timeInterval;//改變速度
+        if(this.friction*this.speed.y<this.acceler*2)//尚未達到終端速度
+            this.speed.y=this.speed.y-this.friction*this.speed.y*10+this.acceler*2*this.timeInterval;
+        if(this.invisibleTimePtr>0)
+            this.invisibleTimePtr-=this.timeInterval;
+    }
+};
+FireworkPoint.prototype.draw=function(){
+    this.ctx.moveTo(this.curPos.x,this.curPos.y);
+    this.ctx.arc(this.curPos.x,this.curPos.y,this.radius,0,Math.PI*2,true);
+};
+FireworkPoint.prototype.drawable=function(){
+    return !(this.time>=this.timeMax || this.delayPtr>0 || this.invisibleTimePtr>0);
+};
 
 export function WordManager(ctx){
     var FADEOUTTIME=2500;//淡出的時間

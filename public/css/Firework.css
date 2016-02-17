@@ -810,5 +810,26 @@ margin-right:5px;
     color:#FFFFFF;
 }
 
-
-
+.waitforupload{
+    position:absolute;
+    top:40%;
+    left:50%;
+    color:#FFFFFF;
+    font-size:30px;
+    width:500px;
+    margin-left:-250px;
+    display:none;
+    z-index:-1;
+    opacity:0;
+    text-align:center;
+    font-weight:100;
+}
+.waitforupload.active{
+    display:inline;
+    z-index:100001;
+    opacity:1;
+    -webkit-transition: opacity 0.4s linear;
+    -moz-transition: opacity 0.4s linear;
+    -o-transition: opacity 0.4s linear;
+    transition: opacity 0.4s linear;
+}

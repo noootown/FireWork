@@ -4,7 +4,7 @@ import React, {Component}  from 'react';
 import SideBar from './sidebar';
 import PlayerDialog from './playerdialog';
 import {SaveDialog,LoadDialog,UploadDialog,ReplayDialog,AboutDialog,HelpDialog,HintDialog} from './dialog';
-import {FireworkManager,WordManager} from './manager';
+import {FireworkManager,WordManager,Firework1,Firework2,FireworkPoint} from './manager';
 
 window.requestAnimFrame = (function(){ 
     return window.requestAnimationFrame || //Chromium
@@ -35,13 +35,19 @@ class Main extends React.Component{
             saveTime:null,
             atmosphereType:0
         };
+        this.remoteLoadRecord={
+            saveRecord1:[],
+            saveRecord2:[],
+            endTime:0,
+            atmosphereType:0
+        };
         this.ORIGIN_VIDEO='_Bq89eF-Pfs';
         this.state={
             sidebarOpen:true,//在一般畫面下切換P
             recordId:null,
             recordId2:null,
             startAction:false, //after Go disappear
-            pressRecord:false, //press make，開始做這個動作,true代表整個工作階段
+            pressRecord:false, //press make or load，開始做這個動作,true代表整個工作階段
             pauseRecord:false, //暫停，可以編排煙火
             goOver:false,   //Go 結束播映，到startAction這一段時間是開始的延遲
             flashRecId:null,
@@ -66,7 +72,10 @@ class Main extends React.Component{
             dialogAboutShow:false,
             dialogHelpShow:false,
             dialogHintShow:false,
-            dialogPlayerShow:false
+            dialogPlayerShow:false,
+            //
+            waitForUpload:false,
+            loadFromWhich:0
         };
     }
 //---------------------Input-----------------------------
@@ -162,7 +171,9 @@ class Main extends React.Component{
         }
     }
     pauseRecord(){//暫停
-        if(this.state.startAction){//action後的暫停
+        if(this.state.replay)
+            return;
+        else if(this.state.startAction){//action後的暫停
             if(!this.state.pauseRecord){//未暫停的狀態
                 this.setState({
                     pauseRecord:true
@@ -419,13 +430,88 @@ class Main extends React.Component{
         this.toggleSidebar();
     }
     loadDialogRemoteLoadClick(){
-        //TODO
+        let self=this;
+        $.ajax({
+            url:'./api/load',
+            type:'POST',
+            data:{
+                cardname:$('#cardName-input').val(),
+                password:$('#password-input').val()
+            },
+            dataType:'json',
+           //TODO
+            success:function(data){
+                console.log(data);
+                self.setState({
+                    replay:true,
+                    dialogLoadShow:false,
+                    loadFromWhich:1
+                });
+                self.refs.player.stop();
+                self.resetRecordState();
+                self.firework.firework1s=[];
+                self.firework.firework2s=[];
+
+                //atmosphereType
+                self.firework.changeAtmosphere(data.atmosphereType);
+                self.remoteLoadRecord.atmosphereType=data.atmosphereType;
+                self.setState({
+                    atmosphere:data.atmosphereType
+                });
+                //endTime
+                self.remoteLoadRecord.endTime=data.endTime;
+                //saveRecord1
+                data.saveRecord1.forEach(function(element){
+                    self.remoteLoadRecord.saveRecord1.push(self.getFirework1ByObject(element));
+                });
+                data.saveRecord2.forEach(function(element){
+                    self.remoteLoadRecord.saveRecord2.push(self.getFirework2ByObject(element));
+                });
+                
+                setTimeout(function(){
+                    self.pushRecordToReplay(self.remoteLoadRecord,0,0,0,1);
+                    setTimeout(function(){
+                        self.setState({
+                            startAction:true
+                        });
+                    },1500);
+                    self.refs.player.loadVideo();
+                    self.refs.player.play();
+                },500);
+                
+            }
+        });
+    }
+    getFirework1ByObject(element){
+        return new Firework1({
+            x:element.x,
+            y:element.y,
+            type:element.type,
+            rocketOrNot:element.rocketOrNot,
+            time:element.time,
+            startTime:element.startTime,
+            ctx:this.firework.ctx
+        });
+    }
+    getFirework2ByObject(element){
+        let fire = new Firework2({
+            x:element.x,
+            y:element.y,
+            type:element.type,
+            startTime:element.startTime,
+            ctx:this.firework.ctx
+        });
+        let self=this;
+        element.fireworkPoints.forEach(function(element1){
+            fire.fireworkPoints.push(new FireworkPoint(element1.x,element1.y,element1.velocity,element1.angle,element1.color,element1.radius,element1.timeMax,element1.delay,element1.acceler,self.firework.ctx,element1.invisibleTime,element1.friction));
+        });
+        return fire;
     }
     loadDialogLocalLoadClick(){
         this.setState({
-            pressRecord:true,
             replay:true,
-            dialogLoadShow:false
+            dialogLoadShow:false,
+            loadFromWhich:0
         });
         this.refs.player.stop();
         this.resetRecordState();
@@ -460,15 +546,12 @@ class Main extends React.Component{
         let ajaxData=$.extend(true,{},this.fireworkSaveRecord);
         ajaxData.cardname=$('#uploadCardName-input').val();
         ajaxData.password=$('#uploadPassword-input').val();
-        //console.log(this.fireworkSaveRecord);
-        //console.log(ajaxData);
-        let self=this;
         function replacer(key,value){
             if (typeof value==='function')
                 return undefined;
             return value;
         }
-        console.log(JSON.parse(JSON.stringify(ajaxData,replacer)));
+        let self=this;
         $.ajax({
             url:'./api/record',
             type:'POST',
@@ -476,22 +559,23 @@ class Main extends React.Component{
             dataType:'json',
             contentType:'application/json',
             success:function(){
-                //console.log('haha');
-                //self.setState({
-                    //dialogUploadShow:false,
-                    //pressRecord:false
-                //});
-                //self.resetRecordState();
-                //self.toggleSidebar();
-                //self.refs.centerShowWords.showRecordSave();
+                self.toggleSidebar();
+                self.refs.centerShowWords.showRecordSave();
                 
-                ////reset暫存
-                //self.fireworkRecord.saveRecord1=[];
-                //self.fireworkRecord.saveRecord2=[];
-                //self.fireworkRecord.endTime=0;
-                //self.firework.endTime=0;
+                //reset暫存
+                self.fireworkRecord.saveRecord1=[];
+                self.fireworkRecord.saveRecord2=[];
+                self.fireworkRecord.endTime=0;
+                self.firework.endTime=0;
+                self.setState({waitForUpload:false});
             }
         });
+        this.setState({waitForUpload:true});
+        self.setState({
+            dialogUploadShow:false,
+            pressRecord:false
+        });
+        self.resetRecordState();
     }
     uploadDialogQuitClick(){//不上傳只儲存在local
         this.fireworkSaveRecord.saveRecord1=this.firework.saveRecord1;
@@ -517,14 +601,31 @@ class Main extends React.Component{
         this.firework.endTime=0;
     }
     replayDialogReplayClick(){
-        this.setState({dialogReplayShow:false});
-        this.loadDialogLocalLoadClick();
+        let self=this;
+        this.setState({
+            dialogReplayShow:false,
+            replay:true
+        });
+        this.refs.player.stop();
+        this.resetRecordState();
+        setTimeout(function(){
+            if(self.state.loadFromWhich===0)
+                self.pushRecordToReplay(self.fireworkSaveRecord,0,0,0,1);
+            else if(self.state.loadFromWhich===1)
+                self.pushRecordToReplay(self.remoteLoadRecord,0,0,0,1);
+            setTimeout(function(){
+                self.setState({
+                    startAction:true
+                });
+            },1500);
+            self.refs.player.loadVideo();
+            self.refs.player.play();
+        },500);
     }
     replayDialogQuitClick(){
         this.setState({
             settingWord:true,
-            dialogReplayShow:false,
-            pressRecord:false
+            dialogReplayShow:false
         });
         this.resetRecordState();
         this.toggleSidebar();
@@ -690,8 +791,9 @@ class Main extends React.Component{
                             videoStartTime={this.state.videoStartTime}
                             videoEndTime={this.state.videoEndTime}
                             show={this.state.dialogPlayerShow}/>
-                        <Modal show={this.state.modal}/>
+                        <Modal show={this.state.modal || this.state.waitForUpload}/>
                         <CenterShowWords ref='centerShowWords'/>
+                        <WaitForUpload show={this.state.waitForUpload}></WaitForUpload>
                     </div>
                         );
     }
@@ -914,6 +1016,31 @@ class CenterShowWords extends Component{//顯示在中間的字，這是顯示�
         return(
                 <h1 className={"centerShowWords recordSave"}>Saved</h1>
               );
+    }
+}
+class WaitForUpload extends Component{
+    componentDidMount(){
+        $('.waitforupload').typed({
+            strings: ['煙^50火^50資^50料^50上^50傳^50，^300請^300稍^300待^300片^300刻......'],
+            contentType: 'html', // or 'text'
+            showCursor: false,
+            typeSpeed:-1,
+            startDelay:1000,
+            loop:true,
+            backSpeed:-3,
+            backDelay:3000
+        });
+    }
+    render(){
+        if(this.props.show)
+            return(
+                    <h3 className={"waitforupload active"}>煙火資料上傳，請稍待片刻……</h3>
+                  );
+        else
+            return(
+                    <h3 className={"waitforupload"}>煙火資料上傳，請稍待片刻……</h3>
+                  );
+
     }
 }
 export default Main;

@@ -1,33 +1,33 @@
 var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
-var vector = new Schema({
-    x:Number,
-    y:Number
-});
 var fireworkPointSchema = new Schema({
-    startPos:vector,
-    startSpeed:vector,
-    time:Number,
+    x:Number,
+    y:Number,
+    angle:Number,
+    velocity:Number,
+    color:String,
+    radius:Number,
+    timeMax:Number,
     delay:Number,
+    acceler:Number,
     invisibleTime:Number,
-    color:String
+    friction:Number
 });
 
 var firework1Schema = new Schema({
+    x:Number,
+    y:Number,
     type:Number,
-    time:Number,
-    color:String,
     rocketOrNot:Boolean,
-    startTime:Number,
-    startPos:vector,
-    endPos:vector,
-    velocity:vector
+    time:Number,
+    startTime:Number
 });
 var firework2Schema = new Schema({
-    startTime:Number,
+    x:Number,
+    y:Number,
     type:Number,
-    startPos:vector,
+    startTime:Number,
     fireworkPoints:[fireworkPointSchema]
 });
 
