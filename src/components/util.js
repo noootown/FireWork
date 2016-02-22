@@ -94,10 +94,6 @@ export function deg2rad(x){
     return Math.PI*2*x/360;
 }
 
-export function ran(){
-    return Math.random();
-}
-
 export function rand(x){
     return Math.random()*x;
 }

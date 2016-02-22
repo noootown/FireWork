@@ -2,7 +2,7 @@ var gulp = require('gulp'),
     browserify = require('browserify'),
     source = require('vinyl-source-stream'),
     pack = require('./package.json'),
-    nodemon = require('nodemon'),
+    nodemon = require('gulp-nodemon'),
     browserSync=require('browser-sync'),
     babelify = require('babelify'),
     //uglify = require('gulp-uglify'),
@@ -22,7 +22,7 @@ gulp.task('build', function() {
 });
 
 gulp.task('watch',['build'], function () {
-    gulp.watch(['src/**/*.js', 'src/**/*.jsx','src/**/*.scss'],['build',browserSync.reload]);
+    gulp.watch(['src/**/*.js', 'src/**/*.jsx','src/**/*.scss'],['build']);
 });
 
 gulp.task('browser-sync',['nodemon'] , function() {
@@ -34,19 +34,19 @@ gulp.task('browser-sync',['nodemon'] , function() {
 });
 gulp.task('nodemon', function () {
     nodemon({
-        script: 'app.js', 
-        ext: 'js jsx jade',
-        ignore:['public/js/*'],
+        script: './bin/www', 
+        ext: 'jade js',
+        ignore:['public/js/*','src/*'],
         exec: 'node --harmony'
-    })
-    .on('restart', function onRestart() {
-          // reload connected browsers after a slight delay
-        setTimeout(function reload() {
-            browserSync.reload({
-                stream: false
-            });
-        }, 500);
     });
+    //.on('restart', function onRestart() {
+          //// reload connected browsers after a slight delay
+        //setTimeout(function reload() {
+            //browserSync.reload({
+                //stream: false
+            //});
+        //}, 500);
+    //});
 });
 gulp.task('styles', function () {
     gulp.src('stylesheets/*.scss')    // 指定要處理的 Scss 檔案目錄

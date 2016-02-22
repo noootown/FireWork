@@ -20,8 +20,8 @@ export function FireworkManager(){
     this.atmosphere.src='img/atmosphere-blue.png';
     this.atmosphereType=0;
     this.dot=0;
-    this.DOTMAX=8000;
-    
+    this.DOTMAX=12000;
+
     this.changeAtmosphere=function(type){
         switch(type){
         case 0:
@@ -59,7 +59,6 @@ export function FireworkManager(){
                         x:fire.endPos.x,
                         y:fire.endPos.y,
                         type:fire.type,
-                        ctx:this.ctx,
                         startTime:this.time
                     });
                     newFire.init();
@@ -101,7 +100,6 @@ export function FireworkManager(){
                 y:this.curPos.y,
                 type:type,
                 rocketOrNot:this.rocketOrNot,
-                ctx:this.ctx,
                 startTime:this.time
             });
             if(!pause){//如果不是暫停模式的話
@@ -149,8 +147,6 @@ export function Firework1(option){
     this.endPos=new vector(this.x,this.y);
     this.curPos=new vector(this.startPos.x,this.startPos.y);//目前位置
     this.velocity=new vector( (this.endPos.x-this.startPos.x)/this.time , (this.endPos.y-this.startPos.y)/this.time);
-    
-    this.ctx=option.ctx;
 }
 
 Firework1.prototype.update=function(){
@@ -191,6 +187,8 @@ Firework1.prototype.draw=function(){
     this.ctx.closePath();
 };
 
+Firework1.prototype.ctx=null;
+
 Firework1.prototype.reset=function(){
     this.curPos=new vector(this.startPos.x,this.startPos.y);
 };
@@ -206,8 +204,9 @@ export function Firework2(option){
     //不用存的
     this.startPos=new vector(option.x,option.y);
     this.firstPoint=0;//第一個開始發亮的點，用來判斷要不要亮背景
-    this.ctx=option.ctx;
 }
+
+Firework2.prototype.ctx=null;
 
 Firework2.prototype.init=function(){
     var tmp=getFireworkPoints(this.startPos.x,this.startPos.y,this.type,this.ctx);
@@ -295,31 +294,32 @@ Firework2.prototype.reset=function(){//reset fireworkpoint會隨時間而改變�
     }
 };
 
-export function FireworkPoint(x,y,velocity,angle,color,radius,timeMax,delay,acceler,ctx,invisibleTime,friction){//每一個煙火點
+//export function FireworkPoint(x,y,velocity,angle,color,radius,timeMax,delay,acceler,ctx,invisibleTime,friction){//每一個煙火點
+export function FireworkPoint(option){//每一個煙火點
     //要存的
-    this.x=x;
-    this.y=y;
-    this.angle=angle;
-    this.velocity=velocity;//速率大小
-    this.color=color;
-    this.radius=radius;
-    this.timeMax=timeMax;
-    this.delay=delay;//延遲
-    this.acceler=acceler;
-    this.invisibleTime=invisibleTime;//隱形的時間
-    this.friction=friction;
-
+    this.x = option.x || 0;
+    this.y = option.y || 0;
+    this.velocity = option.velocity || 0;//速率大小
+    this.angle = option.angle || 0;
+    this.color = option.color || 'rgba(0,0,0,0)';
+    this.radius = option.radius || 0;
+    this.timeMax = option.timeMax || 0;
+    this.delay = option.delay || 0;//延遲
+    this.acceler = option.acceler===undefined?0.00005:option.acceler;
+    this.invisibleTime = option.invisibleTime || 0;//隱形的時間
+    this.friction = option.friction || 0;
+    
     //不用存的
-    this.startPos=new vector(x,y);
-    this.curPos=new vector(x,y);//目前點的位置
-    this.startSpeed=new vector(velocity*Math.cos(this.angle),velocity*Math.sin(this.angle));
-    this.speed=new vector(velocity*Math.cos(this.angle),velocity*Math.sin(this.angle));//目前速度
+    this.startPos=new vector(this.x,this.y);
+    this.curPos=new vector(this.x,this.y);//目前點的位置
+    this.startSpeed=new vector(this.velocity*Math.cos(this.angle),this.velocity*Math.sin(this.angle));
+    this.speed=new vector(this.velocity*Math.cos(this.angle),this.velocity*Math.sin(this.angle));//目前速度
     this.time=0;
     this.delayPtr=this.delay;//延遲的指標，會隨時間而減少
     this.invisibleTimePtr=this.invisibleTime;//隱形時間的指標
     this.timeInterval=400/window.fps;//間隔
-    this.ctx=ctx;
 }
+FireworkPoint.prototype.ctx=null;
 FireworkPoint.prototype.update=function(){
     if(this.delayPtr>0)
         this.delayPtr-=this.timeInterval;

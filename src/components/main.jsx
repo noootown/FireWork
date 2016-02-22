@@ -108,6 +108,10 @@ class Main extends React.Component{
         }.bind(this));
         this.firework.$canvas=$('#mainCanvas');
         this.firework.ctx=$('#mainCanvas').get(0).getContext('2d');
+        Firework1.prototype.ctx=this.firework.ctx;
+        Firework2.prototype.ctx=this.firework.ctx;
+        FireworkPoint.prototype.ctx=this.firework.ctx;
+
         this.wordAll.$canvas=$('#mainCanvas');
         this.wordAll.ctx=this.firework.ctx;
         this.drawAnim();
@@ -441,7 +445,7 @@ class Main extends React.Component{
             dataType:'json',
            //TODO
             success:function(data){
-                console.log(data);
+                //console.log(data);
                 self.setState({
                     replay:true,
                     dialogLoadShow:false,
@@ -489,8 +493,7 @@ class Main extends React.Component{
             type:element.type,
             rocketOrNot:element.rocketOrNot,
             time:element.time,
-            startTime:element.startTime,
-            ctx:this.firework.ctx
+            startTime:element.startTime
         });
     }
     getFirework2ByObject(element){
@@ -498,12 +501,12 @@ class Main extends React.Component{
             x:element.x,
             y:element.y,
             type:element.type,
-            startTime:element.startTime,
-            ctx:this.firework.ctx
+            startTime:element.startTime
         });
-        let self=this;
+        //let self=this;
         element.fireworkPoints.forEach(function(element1){
-            fire.fireworkPoints.push(new FireworkPoint(element1.x,element1.y,element1.velocity,element1.angle,element1.color,element1.radius,element1.timeMax,element1.delay,element1.acceler,self.firework.ctx,element1.invisibleTime,element1.friction));
+            fire.fireworkPoints.push(new FireworkPoint(element1));
+                        //element1.x,element1.y,element1.velocity,element1.angle,element1.color,element1.radius,element1.timeMax,element1.delay,element1.acceler,self.firework.ctx,element1.invisibleTime,element1.friction));
         });
         return fire;
     }

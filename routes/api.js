@@ -26,7 +26,7 @@ router.use(function(req, res, next) {
 });
 
 router.route('/record')
-    .post(function(req, res) {
+    .post(function(req, res){
         var record = new FireworkDB({   // create a new instance of the Firework model
             cardname:req.body.cardname,
             password:req.body.password,
