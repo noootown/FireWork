@@ -33,7 +33,7 @@ Important:
       speed:20,
       time:30,
       cycle:500,
-      firework:[[0,36]]
+      fire:[[0,36]]
   });
 </script>
 
