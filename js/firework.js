@@ -45,38 +45,55 @@ SOFTWARE.*/
         Firework2.prototype.ctx=firework.ctx;
         FireworkPoint.prototype.ctx=firework.ctx;
         draw();
-        if(option.cycle!==undefined && option.cycle>0){
-            option.firework.forEach(function(element){
+        if(option.period!==undefined && option.period>0){
+            option.fire.forEach(function(element){
                 setTimeout(function(){
                     firework.shoot(element[1]===36?Math.floor(Math.random()*36):element[1],
                             element[2]===undefined ? (Math.random()*0.8+0.1)*firework.$canvas.attr('width') : element[2],
-                            element[3]===undefined ? (Math.random()*0.8+0.1)*firework.$canvas.attr('width') : element[3]
+                            element[3]===undefined ? (Math.random()*0.65+0.1)*firework.$canvas.attr('height') : element[3]
                             );
                 },element[0]);
             });
             setInterval(function(){
-                option.firework.forEach(function(element){
+                option.fire.forEach(function(element){
                     setTimeout(function(){
                         firework.shoot(element[1]===36?Math.floor(Math.random()*36):element[1],
                                 element[2]===undefined ? (Math.random()*0.8+0.1)*firework.$canvas.attr('width') : element[2],
-                                element[3]===undefined ? (Math.random()*0.8+0.1)*firework.$canvas.attr('width') : element[3]
+                                element[3]===undefined ? (Math.random()*0.65+0.1)*firework.$canvas.attr('height') : element[3]
                                 );
                     },element[0]);
                 });
-            },option.cycle);
+            },option.period);
         }
-        else{
-            option.firework.forEach(function(element){
+        else if(option.firework!==undefined){
+            option.fire.forEach(function(element){
                 setTimeout(function(){
                     firework.shoot(element[1]===36?Math.floor(Math.random()*36):element[1],
                             element[2]===undefined ? (Math.random()*0.8+0.1)*firework.$canvas.attr('width') : element[2],
-                            element[3]===undefined ? (Math.random()*0.8+0.1)*firework.$canvas.attr('width') : element[3]
+                            element[3]===undefined ? (Math.random()*0.65+0.1)*firework.$canvas.attr('height') : element[3]
                             );
                 },element[0]);
             });
         }
     };
 
+    $.fn.setCanvas=function(option){
+        if(option===undefined){
+            $(this).attr('height',  $(window).height());
+            $(this).attr('width', $(window).width());
+        }
+        else{
+            $(this).attr('height', option.height===undefined ? $(window).height() : option.height);
+            $(this).attr('width', option.width===undefined ? $(window).width() : option.width);
+        }
+    };
+    
+    $.fn.shoot=function(option){
+        firework.shoot(option[0]===36?Math.floor(Math.random()*36):option[0],
+                option[1]===undefined ? (Math.random()*0.8+0.1)*firework.$canvas.attr('width') : option[1],
+                option[2]===undefined ? (Math.random()*0.65+0.1)*firework.$canvas.attr('height') : option[2]
+                );
+    };
     var requestAnimFrame = (function(){
         return window.requestAnimationFrame || //Chromium
             window.webkitRequestAnimationFrame || //Webkit
@@ -89,17 +106,6 @@ SOFTWARE.*/
     })();
 
     //--------firework-----------
-    if($(window).width()<$(window).height())
-        $('#error-layout').addClass('active');
-    $(window).resize(function(){
-        if($(window).width()<$(window).height())
-            $('#error-layout').addClass('active');
-        else{
-            $('#error-layout').removeClass('active');
-            $('.mycanvas').attr('height',$(window).height());
-            $('.mycanvas').attr('width',$(window).width());
-        }   
-    }); 
     function draw(){
         if(flag===true){
             firework.init();
