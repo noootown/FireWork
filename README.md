@@ -3,6 +3,8 @@ A JQuery library to make online fireworks, as you see in the gif.
 
 #### Demo
 
+Move your mouse, type your keyboard and you'll get fireworks! 
+
 [http://noootown.github.io/FireWork](http://noootown.github.io/FireWork)
 
 #### Gif
