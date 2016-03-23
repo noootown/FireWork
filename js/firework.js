@@ -128,7 +128,7 @@ SOFTWARE.*/
     
     
         this.init=function(){
-            this.time+=10/6*speedRate; //直接用黑幕蓋掉原本的畫面，因為有透明，所以會留有之前煙火的視覺暫留
+            this.time+=10/9*speedRate; //直接用黑幕蓋掉原本的畫面，因為有透明，所以會留有之前煙火的視覺暫留
             this.ctx.fillStyle='rgba(0,0,0,0.15)';//會透明
             this.ctx.beginPath();
             this.ctx.fillRect(0,0,this.$canvas.width(),this.$canvas.height());
@@ -196,7 +196,7 @@ SOFTWARE.*/
         this.y=option.y || 0;
         this.type=option.type || 0;//哪一種煙火
         this.rocketOrNot=option.rocketOrNot || true;//是否有火箭，如果沒有，就隱形
-        this.time=option.time || (Math.random()*16+16)*20/speedRate;//在空中發射的時間
+        this.time=option.time || (Math.random()*16+16)*30/speedRate;//在空中發射的時間
         this.startTime=option.startTime || 0;//開始的時間
         
         //不用存的
@@ -374,7 +374,7 @@ SOFTWARE.*/
         this.time=0;
         this.delayPtr=this.delay;//延遲的指標，會隨時間而減少
         this.invisibleTimePtr=this.invisibleTime;//隱形時間的指標
-        this.timeInterval=2/3*speedRate;//間隔
+        this.timeInterval=4/9*speedRate;//間隔
     }
     FireworkPoint.prototype.ctx=null;
     FireworkPoint.prototype.update=function(){
