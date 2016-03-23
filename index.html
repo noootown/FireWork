@@ -3,37 +3,25 @@
     <head>
         <meta name="viewport" content="width=device-width , initial-scale=1.0" charset="UTF-8">
         <title>Firework</title>
-        <meta property="og:title" content="Firework" />
-        <meta property="og:description" content="Firework" />
-        <link rel="stylesheet" href="css/Firework.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-        <script src="https://fb.me/react-with-addons-0.14.2.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.23/browser.js"></script>
-        <link href='https://fonts.googleapis.com/css?family=Ubuntu:400,300' rel='stylesheet' type='text/css'>
+        <style>
+            body{
+                margin:0;
+                width:100%;
+                height:100%;
+            }
+        </style>
     </head>
     <body>
-        <div id="container">
-        </div>
-        <script src="js/underscore-min.js"></script>
-        <script src="js/analize.js"></script>
-        <script src="dist/bundle.js"></script>
+        <canvas id="mainCanvas" height=500 width=500></canvas>
     </body>
-    <!--custom scrollbar-->
-    <style>
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            -webkit-border-radius: 10px;
-            border-radius: 10px;
-        }
-
-        /* Handle */
-        ::-webkit-scrollbar-thumb {
-            -webkit-border-radius: 10px;
-            border-radius: 10px;
-            background: rgba(0,255,0,0.8); 
-        }
-    </style>
+    <script src="dist/firework.min.js"></script>
+    <script>
+        $('#mainCanvas').firework({
+            speed:20,
+            time:30,
+            cycle:6000,
+            firework:[[0,36,500,100],[1000,36,500,100],[3000,5,500,100],[5000,36,500,100]]
+        });
+    </script>
 </html>
