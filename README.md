@@ -1,9 +1,9 @@
 # FireWork
-A JQuery library to make online fireworks, as you see in the gif.
+A JQuery library to let off online fireworks, as you see in the gif.
 
 #### Demo
 
-Move your mouse, type your keyboard and you'll get fireworks! 
+Move your mouse, type your keyboard and you'll get fireworks! Though the demo website isn't finished, you can still have a try with my fireworks. The website also supports youtube music, replay and captions, which is not packaged in this library. By the way, the upload feature is not done.
 
 [http://noootown.github.io/FireWork](http://noootown.github.io/FireWork)
 
@@ -33,7 +33,7 @@ Important:
       speed:20,
       time:30,
       cycle:500,
-      fire:[[0,36]]
+      fire:[[0,36],[300,5,500,500]]
   });
 </script>
 
@@ -53,7 +53,7 @@ period | integer | null | > 0 | the period of firework (ms) (optional)
 
 Fire array form:
 
-[[time offset,type,x,y]]
+[[time offset,type, x, y]]
 
 Fire parameters:
 
@@ -68,10 +68,23 @@ Example:
 ~~~ javascript
 $('#mainCanvas').firework({
         cycle:500,
-        firework:[[0,36],[300,5,500,500]]
+        firework:[[0, 36], [250, 5, 500, 500]]
     });
 ~~~ 
-means let off a firework with random type every 500ms
+It means letting off a random type firework every 500ms and a type 5 firework at (500, 500) with 250ms time offset.
+
+Coordinate:
+
+~~~javascript
+
+(0,0)--------> x
+  |
+  |
+  |
+  V
+  y
+
+~~~
 
 #### 2. $('#mainCanvas').setCanvas(object)
 
@@ -99,19 +112,40 @@ Purpose:
 
 Form:
 
-[[type,x,y]]
+[type, x, y]
 
 Parameters:
 
 Option | Type | Range | Description
 ------ | ---- | ----- | -----------
-type | number | 0 ~ 36 | specify the type of the firework (36 means random)
+type | number | 0 ~ 36 | specify the type of the firework (36 is random)
 x | number | real number | specify the x-coordinate that the firework explodes (optional, if ignore then it's random)
 y | number | real number | specify the y-coordinate that the firework explodes (optional, if ignore then it's random)
 
 Example:
 ~~~ javascript
-$('#mainCanvas').shoot([[5,500,500]]);
+var fireworkMap={//keycode to ascii code
+        //0~9
+        48:[0,48], //keycode:[type,ascii code]
+        49:[1,49],
+        50:[2,50],
+        51:[3,51],
+        52:[4,52],
+        53:[5,53],
+        54:[6,54],
+        55:[7,55],
+        56:[8,56],
+        57:[9,57]
+}
+document.addEventListener('keydown', function (event) {
+    var modifiers = event.altKey||event.ctrlKey||event.metaKey||event.shiftKey;//加了這些key就不行
+    if (!modifiers) {
+        if (fireworkMap[event.which] !== undefined) {
+            event.preventDefault();
+            $('#mainCanvas').shoot( [ fireworkMap[event.which][0] ] );//random x and y
+        }
+    }
+});
 ~~~ 
 
 # Tools
