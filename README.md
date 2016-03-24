@@ -51,7 +51,7 @@ Option | Type | Default | Range | Description
 ------ | ---- | ------- | ----- | -----------
 height | number | $(window).height() | > 0 | specify the height of the canvas (optional)
 width | number | $(window).width() | > 0 | specify the width of the canvas (optional)
-speed | number | 30 | 10 ~ 60 | specify how fast the firework points explodes (optional)
+speed | number | 30 | 10 ~ 60 | specify how fast the firework points flies (optional)
 time | number | 30 | 10 ~ 60 | specify how long the firework appears (optional)
 fire | array  | null | x | specify the detail of the firework (below this table, optional)
 period | integer | null | > 0 | the period of firework (ms) (optional)
