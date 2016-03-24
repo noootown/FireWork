@@ -11,6 +11,12 @@ Move your mouse, type your keyboard and you'll get fireworks! Though the demo we
 
 ![demo](img/firework.gif)
 
+# Install
+~~~ html
+<script src="jquery.min.js"></script> <!--Firework is a jquery library!!!-->
+<script src="firework.min.js"></script> <!--placed in dist/ directory -->
+~~~
+
 # Features
 
 1. Implemented with html5 canvas api
@@ -30,10 +36,10 @@ Important:
 ~~~ javascript
 <script>
   $('#mainCanvas').firework({
-      speed:20,
-      time:30,
-      cycle:500,
-      fire:[[0,36],[300,5,500,500]]
+      speed: 20,
+      time: 30,
+      cycle: 500,
+      fire:[ [0, 36], [300, 5, 500, 500] ]
   });
 </script>
 
@@ -53,7 +59,7 @@ period | integer | null | > 0 | the period of firework (ms) (optional)
 
 Fire array form:
 
-[[time offset,type, x, y]]
+[ [time offset, type, x, y] ]
 
 Fire parameters:
 
@@ -68,7 +74,7 @@ Example:
 ~~~ javascript
 $('#mainCanvas').firework({
         cycle:500,
-        firework:[[0, 36], [250, 5, 500, 500]]
+        firework:[ [0, 36], [250, 5, 500, 500] ]
     });
 ~~~ 
 It means letting off a random type firework every 500ms and a type 5 firework at (500, 500) with 250ms time offset.
