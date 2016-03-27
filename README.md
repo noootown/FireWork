@@ -73,7 +73,7 @@ y | number | real number | specify the y-coordinate that the firework explodes (
 Example:
 ~~~ javascript
 $('#mainCanvas').firework({
-        cycle:500,
+        period:500,
         firework:[ [0, 36], [250, 5, 500, 500] ]
     });
 ~~~ 
