@@ -66,42 +66,57 @@ class Main extends React.Component{
             dialogAboutShow:false,
             dialogHelpShow:false,
             dialogHintShow:false,
-            dialogPlayerShow:false
+            dialogPlayerShow:false,
+            phone:$(window).width()<750?true:false
         };
     }
 //---------------------Input-----------------------------
     componentDidMount(){
-        $('body').attr('unselectable', 'on').on('selectstart', false);
         let self=this;
-        document.addEventListener('keydown', function (event) {
-            if(event.which==32 || event.which==115)//避免按下enter時，又trigger button event，或者trigger F4原本的功能
-                event.preventDefault();
-            let modifiers = event.altKey||event.ctrlKey||event.metaKey||event.shiftKey;//加了這些key就不行
-            if (!modifiers) {
-                if (Main.fireworkMap[event.which] !== undefined || Main.alphabetMap[event.which] !== undefined) {
-                    event.preventDefault();
-                    self.execFunc(self.shoot,event.which);
-                }
-            }
-            if(!modifiers && event.which==188)//,<
-                self.execFunc(self.switchRocket,event.which);
-            if(!modifiers && event.which==191)// /
-                self.execFunc(self.flushWord,event.which);
-            if(!modifiers && event.which==113)//F2
-                self.execFunc(self.pauseRecord,event.which);
-            if(!modifiers && event.which==115)//F4
-                self.execFunc(self.stopRecord,event.which);
-            if(!modifiers && event.which==32)//space
-                self.execFunc(self.switchInsert,event.which);
+        $(window).on('resize',function(){
+            if(self.state.phone)
+                $('#demoCanvas').setCanvas();
         });
-        $(window).on('mousemove',function(e){
-            self.firework.curPos.setVector(e.pageX,e.pageY);
-        }.bind(this));
-        this.firework.$canvas=$('#mainCanvas');
-        this.firework.ctx=$('#mainCanvas').get(0).getContext('2d');
-        this.wordAll.$canvas=$('#mainCanvas');
-        this.wordAll.ctx=this.firework.ctx;
-        this.drawAnim();
+        if(!this.state.phone){
+            $('body').attr('unselectable', 'on').on('selectstart', false);
+            document.addEventListener('keydown', function (event) {
+                if(event.which==32 || event.which==115)//避免按下enter時，又trigger button event，或者trigger F4原本的功能
+                    event.preventDefault();
+                let modifiers = event.altKey||event.ctrlKey||event.metaKey||event.shiftKey;//加了這些key就不行
+                if (!modifiers) {
+                    if (Main.fireworkMap[event.which] !== undefined || Main.alphabetMap[event.which] !== undefined) {
+                        event.preventDefault();
+                        self.execFunc(self.shoot,event.which);
+                    }
+                }
+                if(!modifiers && event.which==188)//,<
+                    self.execFunc(self.switchRocket,event.which);
+                if(!modifiers && event.which==191)// /
+                    self.execFunc(self.flushWord,event.which);
+                if(!modifiers && event.which==113)//F2
+                    self.execFunc(self.pauseRecord,event.which);
+                if(!modifiers && event.which==115)//F4
+                    self.execFunc(self.stopRecord,event.which);
+                if(!modifiers && event.which==32)//space
+                    self.execFunc(self.switchInsert,event.which);
+            });
+            $(window).on('mousemove',function(e){
+                self.firework.curPos.setVector(e.pageX,e.pageY);
+            }.bind(this));
+            this.firework.$canvas=$('#mainCanvas');
+            this.firework.ctx=$('#mainCanvas').get(0).getContext('2d');
+            this.wordAll.$canvas=$('#mainCanvas');
+            this.wordAll.ctx=this.firework.ctx;
+            this.drawAnim();
+        }
+        else{
+            $('#demoCanvas').firework({
+                speed: 15,
+                time: 10,
+                period: 1000,
+                fire:[ [0, 36] ]
+            });
+        }
     }
     execFunc(event,data){
         event.call(this,data);
@@ -563,76 +578,81 @@ class Main extends React.Component{
         });
     }
     render(){
-        return(
-                <div className={'main'}>
-                     <canvas id={'mainCanvas'} height={$(window).height()} width={$(window).width()}></canvas>
-                     <Navbar
-                        aboutClick={this.navbarAboutClick.bind(this)}
-                        helpClick={this.navbarHelpClick.bind(this)}
-                        hintClick={this.navbarHintClick.bind(this)}
-                        show={this.state.sidebarOpen}/>
-                     <Timer ref='timer'/>
-                     <SideBar
-                        toggleSidebar={this.toggleSidebar.bind(this)}
-                        sidebarMakeClick={this.sidebarMakeClick.bind(this)}
-                        sidebarLoadClick={this.sidebarLoadClick.bind(this)}
-                        sidebarVideoClick={this.sidebarVideoClick.bind(this)}
-                        sidebarBackgroundClick={this.sidebarBackgroundClick.bind(this)}
-                        show={this.state.sidebarOpen}
-                        atmosphere={this.state.atmosphere}/>
-                     <StartActionInstruction
-                        startAction={this.state.startAction}
-                        pauseRecord={this.state.pauseRecord}/>
-                     <SettingWord
-                        rocket={this.state.rocket}
-                        alphabet={this.state.alphabet}
-                        pause={this.state.pauseRecord}
-                        settingWord={this.state.settingWord}/>
-                     <SaveDialog
-                        saveClick={this.saveDialogSaveClick.bind(this)} 
-                        replayClick={this.saveDialogReplayClick.bind(this)} 
-                        againClick={this.saveDialogAgainClick.bind(this)} 
-                        continueClick={this.saveDialogContinueClick.bind(this)} 
-                        quitClick={this.saveDialogQuitClick.bind(this)}
-                        show={this.state.dialogSaveShow}
-                        showType={this.state.dialogSaveShowType}/>
-                    <LoadDialog
-                        quitClick={this.loadDialogQuitClick.bind(this)}
-                        remoteLoadClick={this.loadDialogRemoteLoadClick.bind(this)}
-                        localLoadClick={this.loadDialogLocalLoadClick.bind(this)}
-                        show={this.state.dialogLoadShow}
-                        time={this.state.dialogLoadTime}/>
-                    <UploadDialog
-                        uploadClick={this.uploadDialogUploadClick.bind(this)}
-                        quitClick={this.uploadDialogQuitClick.bind(this)}
-                        show={this.state.dialogUploadShow}/>
-                    <ReplayDialog
-                        replayClick={this.replayDialogReplayClick.bind(this)}
-                        quitClick={this.replayDialogQuitClick.bind(this)}
-                        show={this.state.dialogReplayShow}/>
-                    <AboutDialog
-                        quitClick={this.aboutDialogQuitClick.bind(this)}
-                        show={this.state.dialogAboutShow}/>
-                    <HelpDialog
-                        quitClick={this.helpDialogQuitClick.bind(this)}
-                        show={this.state.dialogHelpShow}/>
-                    <HintDialog
-                        quitClick={this.hintDialogQuitClick.bind(this)}
-                        show={this.state.dialogHintShow}/>
-                    <PlayerDialog
-                        ref='player'
-                        videoId={this.state.videoId}
-                        changeVideoId={this.changeVideoId.bind(this)}
-                        changeVideoTime={this.changeVideoTime.bind(this)}
-                        quitClick={this.playerDialogQuitClick.bind(this)}
-                        wordTime={this.state.wordTime}
-                        videoStartTime={this.state.videoStartTime}
-                        videoEndTime={this.state.videoEndTime}
-                        show={this.state.dialogPlayerShow}/>
-                    <Modal show={this.state.modal}/>
-                    <CenterShowWords ref='centerShowWords'/>
-                    </div>
+        if(this.state.phone)
+            return(
+                    <canvas id={'demoCanvas'} height={$(window).height()} width={$(window).width()}></canvas>
                     );
+        else
+            return(
+                    <div className={'main'}>
+                         <canvas id={'mainCanvas'} height={$(window).height()} width={$(window).width()}></canvas>
+                         <Navbar
+                            aboutClick={this.navbarAboutClick.bind(this)}
+                            helpClick={this.navbarHelpClick.bind(this)}
+                            hintClick={this.navbarHintClick.bind(this)}
+                            show={this.state.sidebarOpen}/>
+                         <Timer ref='timer'/>
+                         <SideBar
+                            toggleSidebar={this.toggleSidebar.bind(this)}
+                            sidebarMakeClick={this.sidebarMakeClick.bind(this)}
+                            sidebarLoadClick={this.sidebarLoadClick.bind(this)}
+                            sidebarVideoClick={this.sidebarVideoClick.bind(this)}
+                            sidebarBackgroundClick={this.sidebarBackgroundClick.bind(this)}
+                            show={this.state.sidebarOpen}
+                            atmosphere={this.state.atmosphere}/>
+                         <StartActionInstruction
+                            startAction={this.state.startAction}
+                            pauseRecord={this.state.pauseRecord}/>
+                         <SettingWord
+                            rocket={this.state.rocket}
+                            alphabet={this.state.alphabet}
+                            pause={this.state.pauseRecord}
+                            settingWord={this.state.settingWord}/>
+                         <SaveDialog
+                            saveClick={this.saveDialogSaveClick.bind(this)} 
+                            replayClick={this.saveDialogReplayClick.bind(this)} 
+                            againClick={this.saveDialogAgainClick.bind(this)} 
+                            continueClick={this.saveDialogContinueClick.bind(this)} 
+                            quitClick={this.saveDialogQuitClick.bind(this)}
+                            show={this.state.dialogSaveShow}
+                            showType={this.state.dialogSaveShowType}/>
+                        <LoadDialog
+                            quitClick={this.loadDialogQuitClick.bind(this)}
+                            remoteLoadClick={this.loadDialogRemoteLoadClick.bind(this)}
+                            localLoadClick={this.loadDialogLocalLoadClick.bind(this)}
+                            show={this.state.dialogLoadShow}
+                            time={this.state.dialogLoadTime}/>
+                        <UploadDialog
+                            uploadClick={this.uploadDialogUploadClick.bind(this)}
+                            quitClick={this.uploadDialogQuitClick.bind(this)}
+                            show={this.state.dialogUploadShow}/>
+                        <ReplayDialog
+                            replayClick={this.replayDialogReplayClick.bind(this)}
+                            quitClick={this.replayDialogQuitClick.bind(this)}
+                            show={this.state.dialogReplayShow}/>
+                        <AboutDialog
+                            quitClick={this.aboutDialogQuitClick.bind(this)}
+                            show={this.state.dialogAboutShow}/>
+                        <HelpDialog
+                            quitClick={this.helpDialogQuitClick.bind(this)}
+                            show={this.state.dialogHelpShow}/>
+                        <HintDialog
+                            quitClick={this.hintDialogQuitClick.bind(this)}
+                            show={this.state.dialogHintShow}/>
+                        <PlayerDialog
+                            ref='player'
+                            videoId={this.state.videoId}
+                            changeVideoId={this.changeVideoId.bind(this)}
+                            changeVideoTime={this.changeVideoTime.bind(this)}
+                            quitClick={this.playerDialogQuitClick.bind(this)}
+                            wordTime={this.state.wordTime}
+                            videoStartTime={this.state.videoStartTime}
+                            videoEndTime={this.state.videoEndTime}
+                            show={this.state.dialogPlayerShow}/>
+                        <Modal show={this.state.modal}/>
+                        <CenterShowWords ref='centerShowWords'/>
+                        </div>
+                        );
     }
 }
 
