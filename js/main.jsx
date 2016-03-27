@@ -113,7 +113,7 @@ class Main extends React.Component{
             $('#demoCanvas').firework({
                 speed: 15,
                 time: 10,
-                period: 1000,
+                period: 2000,
                 fire:[ [0, 36] ]
             });
         }
@@ -580,7 +580,10 @@ class Main extends React.Component{
     render(){
         if(this.state.phone)
             return(
-                    <canvas id={'demoCanvas'} height={$(window).height()} width={$(window).width()}></canvas>
+                    <div>
+                        <canvas id={'demoCanvas'} height={$(window).height()} width={$(window).width()}></canvas>
+                        <h3 className={'demoword'}>用電腦看煙火效果更好！</h3>
+                    </div>
                     );
         else
             return(

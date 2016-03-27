@@ -5,7 +5,7 @@ overflow:hidden;
 margin:0;
 padding:0;
 background-color:#000000;
-font-family:Ubuntu,Microsoft JhengHei;
+font-family:Helvetica,"Helvetica Neue",Arial,"Heiti SC","Microsoft JhengHei","微軟正黑體","Microsoft Yahei","微軟雅黑",sans-serif;
 user-select:none;
 }
 h1,h2,h3,h4,h5,h6{
@@ -783,6 +783,9 @@ margin-right:5px;
 }
 
 
-#demoCanvas{
-        
+.demoword{
+    color:#00FF00;
+    position:absolute;
+    bottom:20px;
+    right:20px;
 }
