@@ -38,7 +38,7 @@ Important:
   $('#mainCanvas').firework({
       speed: 20,
       time: 30,
-      cycle: 500,
+      period: 500,
       fire:[ [0, 36], [300, 5, 500, 500] ]
   });
 </script>
